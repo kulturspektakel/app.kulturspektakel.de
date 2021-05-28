@@ -15,7 +15,7 @@ export default function Page({
   title?: string;
 }) {
   const {data, refetch, error} = useViewerQuery();
-  const {route, ...a} = useRouter();
+  const {route} = useRouter();
 
   if (data?.viewer == null) {
     if (typeof window !== 'undefined') {
@@ -29,8 +29,6 @@ export default function Page({
     }
     return null;
   }
-
-  console.log(route, a);
 
   return (
     <Layout className={styles.layout}>

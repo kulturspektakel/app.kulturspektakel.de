@@ -1,0 +1,11 @@
+.row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: -40px;
+  margin-bottom: 20px;
+}
+
+.item {
+  margin-left: 50px;
+  margin-right: 10px;
+}
