@@ -1512,6 +1512,22 @@
             "deprecationReason": null
           },
           {
+            "name": "alternativeTables",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {"kind": "OBJECT", "name": "Table", "ofType": null}
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "reservationsFromSamePerson",
             "description": null,
             "args": [],

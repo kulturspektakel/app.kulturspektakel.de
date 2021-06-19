@@ -116,19 +116,6 @@ export default function Slots({day}: {day: Date}) {
             ).reduce((acc, cv) => acc + cv.otherPersons.length + 1, 0)
           }
         />
-        <TableRow
-          firstCell={<FirstTableCell>Verfügbar</FirstTableCell>}
-          startTime={startTime}
-          endTime={endTime}
-          cellRenderer={(i) =>
-            getReservations(
-              add(startTime, {
-                minutes: SLOT_LENGTH_MIN * i,
-              }),
-              data,
-            ).reduce((acc, cv) => 0, 0)
-          }
-        />
       </div>
     </>
   );
@@ -142,10 +129,7 @@ function getReservations(
     data?.areas
       .flatMap((a) => a.table.flatMap((t) => t.reservations))
       .filter(
-        (r) =>
-          !isAfter(r.startTime, time) &&
-          isBefore(time, r.endTime) &&
-          r.status !== 'Cleared',
+        (r) => !isAfter(r.startTime, time) && isBefore(time, r.endTime),
       ) ?? []
   );
 }

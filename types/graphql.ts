@@ -229,6 +229,7 @@ export type Reservation = {
   primaryPerson: Scalars['String'];
   otherPersons: Array<Scalars['String']>;
   checkedInPersons: Scalars['Int'];
+  alternativeTables: Array<Maybe<Table>>;
   reservationsFromSamePerson: Array<Reservation>;
 };
 
@@ -356,8 +357,28 @@ export type ReservationModalQuery = {__typename?: 'Query'} & {
       | 'primaryPerson'
       | 'otherPersons'
     > & {
-        table: {__typename?: 'Table'} & Pick<Table, 'maxCapacity'> & {
-            area: {__typename?: 'Area'} & Pick<Area, 'displayName'>;
+        alternativeTables: Array<
+          Maybe<
+            {__typename?: 'Table'} & Pick<Table, 'id' | 'displayName'> & {
+                area: {__typename?: 'Area'} & Pick<Area, 'id' | 'displayName'>;
+              }
+          >
+        >;
+        table: {__typename?: 'Table'} & Pick<Table, 'id' | 'maxCapacity'> & {
+            reservations: Array<
+              {__typename?: 'Reservation'} & Pick<
+                Reservation,
+                'id' | 'startTime' | 'endTime' | 'status'
+              >
+            >;
+            area: {__typename?: 'Area'} & Pick<Area, 'displayName'> & {
+                openingHour: Array<
+                  {__typename?: 'OpeningHour'} & Pick<
+                    OpeningHour,
+                    'startTime' | 'endTime'
+                  >
+                >;
+              };
           };
       }
   >;
@@ -506,10 +527,29 @@ export const ReservationModalDocument = gql`
       checkedInPersons
       primaryPerson
       otherPersons
+      alternativeTables {
+        id
+        displayName
+        area {
+          id
+          displayName
+        }
+      }
       table {
+        id
+        reservations {
+          id
+          startTime
+          endTime
+          status
+        }
         maxCapacity
         area {
           displayName
+          openingHour {
+            startTime
+            endTime
+          }
         }
       }
     }

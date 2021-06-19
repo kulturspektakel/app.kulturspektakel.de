@@ -10,7 +10,6 @@ export default function NowIndicator(props: {startTime: Date; endTime: Date}) {
     // TODO: remove
     now.setDate(props.startTime.getDate());
     now.setMonth(props.startTime.getMonth());
-    console.log(differenceInMinutes(now, props.startTime));
     if (isBefore(now, props.startTime) || isAfter(now, props.endTime)) {
       return -1;
     }

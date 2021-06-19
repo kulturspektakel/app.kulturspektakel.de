@@ -26,8 +26,6 @@ export default function StatusBadge(props: {
     return <Tag color="gold">Überfällig</Tag>;
   } else if (props.status === 'Confirmed' && props.showAll) {
     return <Tag color="green">Bestätigt</Tag>;
-  } else if (props.status === 'Cleared' && props.showAll) {
-    return <Tag color="red">Storniert</Tag>;
   } else if (props.status === 'Pending') {
     return <Tag color="yellow">Unbestätigt</Tag>;
   }

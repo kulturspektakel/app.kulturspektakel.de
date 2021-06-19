@@ -1,0 +1,15 @@
+.rater {
+  text-align: center;
+  margin-bottom: 14px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.spinner {
+  text-align: center;
+  padding: 100px;
+}
+
+.info {
+  padding-top: 10px;
+  opacity: 0.5;
+}
