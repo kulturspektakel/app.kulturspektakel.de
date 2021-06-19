@@ -1,8 +1,16 @@
 import {ExclamationCircleOutlined} from '@ant-design/icons';
 import {gql} from '@apollo/client';
-import {Button, Modal, Rate} from 'antd';
+import {Button, Modal, Rate, Form, Select, Input, Spin} from 'antd';
+import {add} from 'date-fns';
+import differenceInMinutes from 'date-fns/differenceInMinutes';
 import React, {useCallback, useEffect, useState} from 'react';
-import {TableRowFragment, useCheckInMutation} from '../../types/graphql';
+import {
+  TableRowFragment,
+  useCheckInMutation,
+  useReservationModalQuery,
+} from '../../types/graphql';
+import {SLOT_LENGTH_MIN} from './Slots';
+import StatusBadge from './StatusBadge';
 const {confirm} = Modal;
 
 gql`
@@ -11,11 +19,24 @@ gql`
       id
       status
       checkedInPersons
+    }
+  }
+`;
+
+gql`
+  query ReservationModal($token: String!) {
+    reservationForToken(token: $token) {
+      id
+      startTime
+      endTime
+      status
+      checkedInPersons
+      primaryPerson
+      otherPersons
       table {
+        maxCapacity
         area {
-          currentCapacity
-          maxCapacity
-          availableCapacity
+          displayName
         }
       }
     }
@@ -23,81 +44,104 @@ gql`
 `;
 
 export default function useReservationModal(): [
-  (reservation: TableRowFragment) => void,
+  (token: string) => void,
   React.ReactElement,
 ] {
-  const [reservation, setReservation] = useState<TableRowFragment | null>(null);
-  const [checkIn, {loading}] = useCheckInMutation({});
+  const [token, setToken] = useState<string | null>(null);
+  const {data} = useReservationModalQuery({
+    variables: {
+      token,
+    },
+  });
+  const [checkIn] = useCheckInMutation();
 
   useEffect(() => {});
 
   const onClear = useCallback(() => {
     confirm({
-      title: `Reservierung #${reservation?.id} stornieren`,
+      title: `Reservierung #${data?.reservationForToken?.id} löschen`,
       icon: <ExclamationCircleOutlined />,
       content: 'text',
       okButtonProps: {
         danger: true,
       },
-      okText: 'Stornieren',
+      okText: 'Löschen',
       cancelText: 'Abbrechen',
       onOk() {},
     });
-  }, [reservation]);
+  }, [data?.reservationForToken]);
 
   const handleOk = () => {
-    setReservation(null);
+    setToken(null);
   };
 
   const handleCancel = () => {
-    setReservation(null);
+    setToken(null);
   };
 
   let content = null;
 
-  if (reservation) {
+  if (data?.reservationForToken) {
     content = (
-      <>
-        {reservation.startTime.toLocaleTimeString('de', {
-          hour: '2-digit',
-          minute: '2-digit',
-          timeZone: 'Europe/Berlin',
-        })}{' '}
-        bis{' '}
-        {reservation.endTime.toLocaleTimeString('de', {
-          hour: '2-digit',
-          minute: '2-digit',
-          timeZone: 'Europe/Berlin',
-        })}{' '}
-        Uhr
-        <br />
-        {reservation.primaryPerson}, {reservation.otherPersons.join(', ')}
-        <br />
+      <Form labelCol={{span: 8}}>
         <Rate
-          value={reservation.checkedInPersons}
+          value={data.reservationForToken.checkedInPersons}
           count={10}
           character={({index}) => <span>{index + 1}</span>}
           onChange={(persons) => {
             checkIn({
               variables: {
-                id: reservation.id,
+                id: data.reservationForToken.id,
                 persons,
               },
             });
           }}
         />
-        <br />
-      </>
+        <Form.Item label="Status">
+          <StatusBadge
+            status={data.reservationForToken.status}
+            startTime={data.reservationForToken.startTime}
+            endTime={data.reservationForToken.endTime}
+            showAll
+          />
+        </Form.Item>
+        <Form.Item label="Bereich">
+          {data.reservationForToken.table.area.displayName}
+        </Form.Item>
+
+        <Form.Item label="Von">
+          <TimePicker
+            min={data.reservationForToken.startTime}
+            max={data.reservationForToken.endTime}
+            selected={data.reservationForToken.startTime}
+          />
+        </Form.Item>
+        <Form.Item label="Bis">
+          <TimePicker
+            min={data.reservationForToken.startTime}
+            max={data.reservationForToken.endTime}
+            selected={data.reservationForToken.endTime}
+          />
+        </Form.Item>
+        <Form.Item label="Gäste">
+          {data.reservationForToken.primaryPerson},{' '}
+          {data.reservationForToken.otherPersons.join(', ')}
+        </Form.Item>
+      </Form>
     );
+  } else {
+    content = <Spin />;
   }
 
   return [
-    setReservation,
+    setToken,
     <Modal
       title={
-        reservation ? `#${reservation.id}: ${reservation.primaryPerson}` : ''
+        data?.reservationForToken
+          ? `#${data.reservationForToken.id}: ${data.reservationForToken.primaryPerson}`
+          : ''
       }
-      visible={Boolean(reservation)}
+      visible={Boolean(token)}
       onOk={handleOk}
       onCancel={handleCancel}
       footer={
@@ -109,4 +153,34 @@ export default function useReservationModal(): [
       {content}
     </Modal>,
   ];
+}
+
+function TimePicker({
+  min,
+  max,
+  selected,
+}: {
+  selected: Date;
+  min: Date;
+  max: Date;
+}) {
+  return (
+    <Select value={selected.toISOString()}>
+      {Array(differenceInMinutes(max, min) / SLOT_LENGTH_MIN)
+        .fill(null)
+        .map((_, i) => {
+          const time = add(min, {minutes: SLOT_LENGTH_MIN * i});
+          return (
+            <Select.Option value={time.toISOString()}>
+              {time.toLocaleTimeString('de', {
+                hour: '2-digit',
+                minute: '2-digit',
+                timeZone: 'Europe/Berlin',
+              })}{' '}
+              Uhr
+            </Select.Option>
+          );
+        })}
+    </Select>
+  );
 }

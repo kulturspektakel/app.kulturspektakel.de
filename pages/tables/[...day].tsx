@@ -1,22 +1,13 @@
 import {Select, Spin} from 'antd';
 import React, {useState} from 'react';
 import Page from '../../components/shared/Page';
-import {gql} from '@apollo/client';
-import {useTablesQuery} from '../../types/graphql';
 import {Content} from 'antd/lib/layout/layout';
 import {formatISO, isSameDay, parseISO} from 'date-fns';
 import Slots from '../../components/tables/Slots';
+import {useRouter} from 'next/dist/client/router';
+import {useEffect} from 'react';
 
 const {Option} = Select;
-
-gql`
-  query Tables {
-    areas {
-      id
-      displayName
-    }
-  }
-`;
 
 const DAYS = [
   new Date('2021-07-23'),
@@ -25,32 +16,17 @@ const DAYS = [
 ];
 
 export default function Tables() {
-  const {data} = useTablesQuery({
-    onCompleted: (d) => {
-      if (area == null) {
-        setArea(d.areas[0].id);
-      }
-    },
-  });
+  const {query, push} = useRouter();
   const [day, setDay] = useState(
-    DAYS.find((d) => isSameDay(d, new Date())) ?? DAYS[0],
+    DAYS.find((d) => isSameDay(d, new Date(String(query.day)))) ?? DAYS[0],
   );
-  const [area, setArea] = useState<string | null>(null);
+  useEffect(() => {
+    push(`/tables/${day.toISOString().substr(0, 10)}`);
+  }, [day]);
 
   return (
     <Page>
       <Content style={{padding: 24}}>
-        <Select
-          value={area ?? 'Loading...'}
-          onChange={(a) => setArea(a)}
-          disabled={!data}
-        >
-          {data?.areas.map((a) => (
-            <Option key={a.id} value={a.id}>
-              {a.displayName}
-            </Option>
-          ))}
-        </Select>
         &nbsp;
         <Select
           value={formatISO(day, {
@@ -79,8 +55,8 @@ export default function Tables() {
             borderRadius: 5,
           }}
         >
-          {area && day ? (
-            <Slots area={area} day={day} />
+          {day ? (
+            <Slots day={day} />
           ) : (
             <div
               style={{paddingTop: 50, paddingBottom: 50, textAlign: 'center'}}

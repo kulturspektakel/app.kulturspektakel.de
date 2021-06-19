@@ -27,12 +27,11 @@ export type Area = Node & {
   /** Unique identifier for the resource */
   id: Scalars['ID'];
   displayName: Scalars['String'];
+  themeColor: Scalars['String'];
   table: Array<Table>;
-  maxCapacity: Scalars['Int'];
-  openingHour: Array<Availability>;
-  currentCapacity: Scalars['Int'];
-  availableCapacity: Scalars['Int'];
-  availability: Array<Availability>;
+  openingHour: Array<OpeningHour>;
+  availableTables: Scalars['Int'];
+  availability: Array<TableAvailability>;
   bandsPlaying: Array<Band>;
 };
 
@@ -47,6 +46,10 @@ export type AreaOpeningHourArgs = {
   day?: Maybe<Scalars['Date']>;
 };
 
+export type AreaAvailableTablesArgs = {
+  time?: Maybe<Scalars['DateTime']>;
+};
+
 export type AreaAvailabilityArgs = {
   partySize: Scalars['Int'];
   day: Scalars['Date'];
@@ -56,20 +59,19 @@ export type AreaBandsPlayingArgs = {
   day: Scalars['Date'];
 };
 
-export type Availability = {
-  __typename?: 'Availability';
-  startTime: Scalars['DateTime'];
-  endTime: Scalars['DateTime'];
-};
-
 export type Band = {
   __typename?: 'Band';
-  id: Scalars['Int'];
+  id: Scalars['ID'];
   name: Scalars['String'];
   genre?: Maybe<Scalars['String']>;
   startTime: Scalars['DateTime'];
   endTime: Scalars['DateTime'];
   description?: Maybe<Scalars['String']>;
+};
+
+export type Config = {
+  __typename?: 'Config';
+  reservationStart?: Maybe<Scalars['DateTime']>;
 };
 
 export type Mutation = {
@@ -97,6 +99,7 @@ export type MutationRequestReservationArgs = {
   startTime: Scalars['DateTime'];
   endTime: Scalars['DateTime'];
   areaId: Scalars['ID'];
+  tableType?: Maybe<TableType>;
 };
 
 export type MutationUpdateReservationArgs = {
@@ -118,6 +121,12 @@ export type MutationCreateOrderArgs = {
 export type Node = {
   /** Unique identifier for the resource */
   id: Scalars['ID'];
+};
+
+export type OpeningHour = {
+  __typename?: 'OpeningHour';
+  startTime: Scalars['DateTime'];
+  endTime: Scalars['DateTime'];
 };
 
 export type Order = {
@@ -181,14 +190,8 @@ export type ProductListProductOrderByInput = {
   order?: Maybe<SortOrder>;
 };
 
-export type ProductProductListIdOrderCompoundUniqueInput = {
-  productListId: Scalars['Int'];
-  order: Scalars['Int'];
-};
-
 export type ProductWhereUniqueInput = {
   id?: Maybe<Scalars['Int']>;
-  productListId_order?: Maybe<ProductProductListIdOrderCompoundUniqueInput>;
 };
 
 export type Query = {
@@ -199,6 +202,8 @@ export type Query = {
   node?: Maybe<Node>;
   productLists: Array<ProductList>;
   orders: Array<Order>;
+  config?: Maybe<Config>;
+  availableCapacity: Scalars['Int'];
 };
 
 export type QueryReservationForTokenArgs = {
@@ -207,6 +212,10 @@ export type QueryReservationForTokenArgs = {
 
 export type QueryNodeArgs = {
   id: Scalars['ID'];
+};
+
+export type QueryAvailableCapacityArgs = {
+  time?: Maybe<Scalars['DateTime']>;
 };
 
 export type Reservation = {
@@ -240,6 +249,7 @@ export type Table = {
   id: Scalars['String'];
   displayName: Scalars['String'];
   maxCapacity: Scalars['Int'];
+  type: TableType;
   area: Area;
   reservations: Array<Reservation>;
 };
@@ -253,6 +263,18 @@ export type TableAreaIdDisplayNameCompoundUniqueInput = {
   displayName: Scalars['String'];
 };
 
+export type TableAvailability = {
+  __typename?: 'TableAvailability';
+  startTime: Scalars['DateTime'];
+  endTime: Scalars['DateTime'];
+  tableType: TableType;
+};
+
+export enum TableType {
+  Table = 'TABLE',
+  Island = 'ISLAND',
+}
+
 export type TableWhereUniqueInput = {
   id?: Maybe<Scalars['String']>;
   areaId_displayName?: Maybe<TableAreaIdDisplayNameCompoundUniqueInput>;
@@ -265,19 +287,13 @@ export type Viewer = {
   profilePicture?: Maybe<Scalars['String']>;
 };
 
-export type NumbersFragment = {__typename?: 'Area'} & Pick<
-  Area,
-  'maxCapacity' | 'currentCapacity' | 'availableCapacity'
->;
-
 export type SlotsQueryVariables = Exact<{
-  areaId: Scalars['ID'];
   day?: Maybe<Scalars['Date']>;
 }>;
 
 export type SlotsQuery = {__typename?: 'Query'} & {
-  node?: Maybe<
-    {__typename?: 'Area'} & Pick<Area, 'id'> & {
+  areas: Array<
+    {__typename?: 'Area'} & Pick<Area, 'id' | 'displayName' | 'themeColor'> & {
         table: Array<
           {__typename?: 'Table'} & Pick<
             Table,
@@ -289,12 +305,12 @@ export type SlotsQuery = {__typename?: 'Query'} & {
             }
         >;
         openingHour: Array<
-          {__typename?: 'Availability'} & Pick<
-            Availability,
+          {__typename?: 'OpeningHour'} & Pick<
+            OpeningHour,
             'startTime' | 'endTime'
           >
         >;
-      } & NumbersFragment
+      }
   >;
 };
 
@@ -307,6 +323,7 @@ export type TableRowFragment = {__typename?: 'Reservation'} & Pick<
   | 'otherPersons'
   | 'status'
   | 'checkedInPersons'
+  | 'token'
 >;
 
 export type CheckInMutationVariables = Exact<{
@@ -319,13 +336,29 @@ export type CheckInMutation = {__typename?: 'Mutation'} & {
     {__typename?: 'Reservation'} & Pick<
       Reservation,
       'id' | 'status' | 'checkedInPersons'
+    >
+  >;
+};
+
+export type ReservationModalQueryVariables = Exact<{
+  token: Scalars['String'];
+}>;
+
+export type ReservationModalQuery = {__typename?: 'Query'} & {
+  reservationForToken?: Maybe<
+    {__typename?: 'Reservation'} & Pick<
+      Reservation,
+      | 'id'
+      | 'startTime'
+      | 'endTime'
+      | 'status'
+      | 'checkedInPersons'
+      | 'primaryPerson'
+      | 'otherPersons'
     > & {
-        table: {__typename?: 'Table'} & {
-          area: {__typename?: 'Area'} & Pick<
-            Area,
-            'currentCapacity' | 'maxCapacity' | 'availableCapacity'
-          >;
-        };
+        table: {__typename?: 'Table'} & Pick<Table, 'maxCapacity'> & {
+            area: {__typename?: 'Area'} & Pick<Area, 'displayName'>;
+          };
       }
   >;
 };
@@ -338,19 +371,6 @@ export type ViewerQuery = {__typename?: 'Query'} & {
   >;
 };
 
-export type TablesQueryVariables = Exact<{[key: string]: never}>;
-
-export type TablesQuery = {__typename?: 'Query'} & {
-  areas: Array<{__typename?: 'Area'} & Pick<Area, 'id' | 'displayName'>>;
-};
-
-export const NumbersFragmentDoc = gql`
-  fragment Numbers on Area {
-    maxCapacity
-    currentCapacity
-    availableCapacity
-  }
-`;
 export const TableRowFragmentDoc = gql`
   fragment TableRow on Reservation {
     id
@@ -360,31 +380,30 @@ export const TableRowFragmentDoc = gql`
     otherPersons
     status
     checkedInPersons
+    token
   }
 `;
 export const SlotsDocument = gql`
-  query Slots($areaId: ID!, $day: Date) {
-    node(id: $areaId) {
-      ... on Area {
+  query Slots($day: Date) {
+    areas {
+      id
+      displayName
+      themeColor
+      table {
         id
-        table {
-          id
-          displayName
-          maxCapacity
-          reservations(day: $day) {
-            ...TableRow
-          }
+        displayName
+        maxCapacity
+        reservations(day: $day) {
+          ...TableRow
         }
-        openingHour(day: $day) {
-          startTime
-          endTime
-        }
-        ...Numbers
+      }
+      openingHour(day: $day) {
+        startTime
+        endTime
       }
     }
   }
   ${TableRowFragmentDoc}
-  ${NumbersFragmentDoc}
 `;
 
 /**
@@ -399,13 +418,12 @@ export const SlotsDocument = gql`
  * @example
  * const { data, loading, error } = useSlotsQuery({
  *   variables: {
- *      areaId: // value for 'areaId'
  *      day: // value for 'day'
  *   },
  * });
  */
 export function useSlotsQuery(
-  baseOptions: Apollo.QueryHookOptions<SlotsQuery, SlotsQueryVariables>,
+  baseOptions?: Apollo.QueryHookOptions<SlotsQuery, SlotsQueryVariables>,
 ) {
   const options = {...defaultOptions, ...baseOptions};
   return Apollo.useQuery<SlotsQuery, SlotsQueryVariables>(
@@ -434,13 +452,6 @@ export const CheckInDocument = gql`
       id
       status
       checkedInPersons
-      table {
-        area {
-          currentCapacity
-          maxCapacity
-          availableCapacity
-        }
-      }
     }
   }
 `;
@@ -484,6 +495,76 @@ export type CheckInMutationResult = Apollo.MutationResult<CheckInMutation>;
 export type CheckInMutationOptions = Apollo.BaseMutationOptions<
   CheckInMutation,
   CheckInMutationVariables
+>;
+export const ReservationModalDocument = gql`
+  query ReservationModal($token: String!) {
+    reservationForToken(token: $token) {
+      id
+      startTime
+      endTime
+      status
+      checkedInPersons
+      primaryPerson
+      otherPersons
+      table {
+        maxCapacity
+        area {
+          displayName
+        }
+      }
+    }
+  }
+`;
+
+/**
+ * __useReservationModalQuery__
+ *
+ * To run a query within a React component, call `useReservationModalQuery` and pass it any options that fit your needs.
+ * When your component renders, `useReservationModalQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useReservationModalQuery({
+ *   variables: {
+ *      token: // value for 'token'
+ *   },
+ * });
+ */
+export function useReservationModalQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    ReservationModalQuery,
+    ReservationModalQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useQuery<ReservationModalQuery, ReservationModalQueryVariables>(
+    ReservationModalDocument,
+    options,
+  );
+}
+export function useReservationModalLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    ReservationModalQuery,
+    ReservationModalQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useLazyQuery<
+    ReservationModalQuery,
+    ReservationModalQueryVariables
+  >(ReservationModalDocument, options);
+}
+export type ReservationModalQueryHookResult = ReturnType<
+  typeof useReservationModalQuery
+>;
+export type ReservationModalLazyQueryHookResult = ReturnType<
+  typeof useReservationModalLazyQuery
+>;
+export type ReservationModalQueryResult = Apollo.QueryResult<
+  ReservationModalQuery,
+  ReservationModalQueryVariables
 >;
 export const ViewerDocument = gql`
   query Viewer {
@@ -532,52 +613,4 @@ export type ViewerLazyQueryHookResult = ReturnType<typeof useViewerLazyQuery>;
 export type ViewerQueryResult = Apollo.QueryResult<
   ViewerQuery,
   ViewerQueryVariables
->;
-export const TablesDocument = gql`
-  query Tables {
-    areas {
-      id
-      displayName
-    }
-  }
-`;
-
-/**
- * __useTablesQuery__
- *
- * To run a query within a React component, call `useTablesQuery` and pass it any options that fit your needs.
- * When your component renders, `useTablesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useTablesQuery({
- *   variables: {
- *   },
- * });
- */
-export function useTablesQuery(
-  baseOptions?: Apollo.QueryHookOptions<TablesQuery, TablesQueryVariables>,
-) {
-  const options = {...defaultOptions, ...baseOptions};
-  return Apollo.useQuery<TablesQuery, TablesQueryVariables>(
-    TablesDocument,
-    options,
-  );
-}
-export function useTablesLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<TablesQuery, TablesQueryVariables>,
-) {
-  const options = {...defaultOptions, ...baseOptions};
-  return Apollo.useLazyQuery<TablesQuery, TablesQueryVariables>(
-    TablesDocument,
-    options,
-  );
-}
-export type TablesQueryHookResult = ReturnType<typeof useTablesQuery>;
-export type TablesLazyQueryHookResult = ReturnType<typeof useTablesLazyQuery>;
-export type TablesQueryResult = Apollo.QueryResult<
-  TablesQuery,
-  TablesQueryVariables
 >;

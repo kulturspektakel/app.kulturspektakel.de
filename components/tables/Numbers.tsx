@@ -4,14 +4,6 @@ import React from 'react';
 import {NumbersFragment} from '../../types/graphql';
 import styles from './Numbers.module.css';
 
-gql`
-  fragment Numbers on Area {
-    maxCapacity
-    currentCapacity
-    availableCapacity
-  }
-`;
-
 export default function Numbers(props: {data: NumbersFragment}) {
   return (
     <div className={styles.row}>
