@@ -1,13 +1,15 @@
 import {ExclamationCircleOutlined} from '@ant-design/icons';
 import {gql} from '@apollo/client';
 import {Button, Modal, Rate, Form, Select, Spin} from 'antd';
+import TextArea from 'antd/lib/input/TextArea';
 import {add, max, min, sub, isSameDay} from 'date-fns';
 import differenceInMinutes from 'date-fns/differenceInMinutes';
 import React, {useCallback, useState} from 'react';
+import {useEffect} from 'react';
 import {
   ReservationModalQuery,
-  useCheckInMutation,
   useReservationModalQuery,
+  useUpdateReservationMutation,
 } from '../../types/graphql';
 import {SLOT_LENGTH_MIN} from './Slots';
 import StatusBadge from './StatusBadge';
@@ -15,50 +17,66 @@ import styles from './useReservationModal.module.css';
 const {confirm} = Modal;
 
 gql`
-  mutation UpdateReservation($persons: Int, $token: String!) {
-    updateReservation(checkedInPersons: $persons, token: $token) {
+  fragment ReservationFragment on Reservation {
+    id
+    startTime
+    endTime
+    status
+    checkedInPersons
+    primaryPerson
+    otherPersons
+    note
+    alternativeTables {
       id
-      status
-      checkedInPersons
-    }
-  }
-`;
-
-gql`
-  query ReservationModal($token: String!) {
-    reservationForToken(token: $token) {
-      id
-      startTime
-      endTime
-      status
-      checkedInPersons
-      primaryPerson
-      otherPersons
-      alternativeTables {
+      displayName
+      area {
         id
         displayName
-        area {
-          id
-          displayName
-        }
       }
-      table {
+    }
+    table {
+      id
+      reservations {
         id
-        reservations {
-          id
+        startTime
+        endTime
+        status
+      }
+      maxCapacity
+      area {
+        id
+        displayName
+        openingHour {
           startTime
           endTime
-          status
-        }
-        maxCapacity
-        area {
-          displayName
-          openingHour {
-            startTime
-            endTime
-          }
         }
       }
+    }
+  }
+
+  mutation UpdateReservation(
+    $id: Int!
+    $persons: Int
+    $startTime: DateTime
+    $endTime: DateTime
+    $note: String
+    $tableId: ID
+  ) {
+    updateReservation(
+      id: $id
+      checkedInPersons: $persons
+      startTime: $startTime
+      endTime: $endTime
+      note: $note
+      tableId: $tableId
+    ) {
+      ...ReservationFragment
+    }
+  }
+
+  query ReservationModal($token: String!) {
+    reservationForToken(token: $token) {
+      ...ReservationFragment
     }
   }
 `;
@@ -73,8 +91,10 @@ export default function useReservationModal(): [
       token,
     },
     skip: !token,
+    fetchPolicy: 'cache-and-network',
   });
-  const [checkIn] = useCheckInMutation();
+  const [updateReservation] = useUpdateReservationMutation();
+  const [note, setNote] = useState<string | undefined>();
 
   const onClear = useCallback(() => {
     confirm({
@@ -90,11 +110,19 @@ export default function useReservationModal(): [
     });
   }, [data?.reservationForToken]);
 
-  const handleOk = () => {
-    setToken(null);
-  };
+  useEffect(() => setNote(data?.reservationForToken?.note), [
+    data?.reservationForToken?.note,
+  ]);
 
-  const handleCancel = () => {
+  const handleClose = () => {
+    if (data?.reservationForToken?.note !== note) {
+      updateReservation({
+        variables: {
+          id: data?.reservationForToken?.id,
+          note,
+        },
+      });
+    }
     setToken(null);
   };
 
@@ -131,7 +159,7 @@ export default function useReservationModal(): [
             )}
             onChange={(persons) => {
               const onOk = () =>
-                checkIn({
+                updateReservation({
                   variables: {
                     id: data.reservationForToken.id,
                     persons,
@@ -174,11 +202,28 @@ export default function useReservationModal(): [
           <TablePicker
             alternativeTables={data.reservationForToken.alternativeTables}
             selected={data.reservationForToken.table.id}
+            onChange={(value) =>
+              updateReservation({
+                variables: {
+                  id: data.reservationForToken.id,
+                  tableId: value,
+                },
+                refetchQueries: ['Slots'],
+              })
+            }
           />
         </Form.Item>
 
         <Form.Item label="Von">
           <TimePicker
+            onChange={(value) =>
+              updateReservation({
+                variables: {
+                  id: data.reservationForToken.id,
+                  startTime: value,
+                },
+              })
+            }
             min={max(
               [
                 sub(data.reservationForToken.startTime, {
@@ -198,6 +243,14 @@ export default function useReservationModal(): [
         </Form.Item>
         <Form.Item label="Bis">
           <TimePicker
+            onChange={(value) =>
+              updateReservation({
+                variables: {
+                  id: data.reservationForToken.id,
+                  endTime: value,
+                },
+              })
+            }
             min={add(data.reservationForToken.startTime, {
               minutes: SLOT_LENGTH_MIN,
             })}
@@ -219,6 +272,12 @@ export default function useReservationModal(): [
           {data.reservationForToken.primaryPerson},{' '}
           {data.reservationForToken.otherPersons.join(', ')}
         </Form.Item>
+        <TextArea
+          rows={3}
+          placeholder="Notizen"
+          value={note}
+          onChange={(e) => setNote(e.target.value)}
+        />
       </Form>
     );
   } else {
@@ -238,8 +297,8 @@ export default function useReservationModal(): [
           : ''
       }
       visible={Boolean(token)}
-      onOk={handleOk}
-      onCancel={handleCancel}
+      onOk={handleClose}
+      onCancel={handleClose}
       footer={
         <Button danger onClick={onClear}>
           Reservierung stornieren
@@ -255,13 +314,18 @@ function TimePicker({
   min,
   max,
   selected,
+  onChange,
 }: {
   selected: Date;
   min: Date;
   max: Date;
+  onChange: (value: Date) => void;
 }) {
   return (
-    <Select value={selected.toISOString()}>
+    <Select
+      value={selected.toISOString()}
+      onChange={(value) => onChange(new Date(value))}
+    >
       {Array(differenceInMinutes(max, min) / SLOT_LENGTH_MIN)
         .fill(null)
         .map((_, i) => {
@@ -284,9 +348,11 @@ function TimePicker({
 function TablePicker({
   alternativeTables,
   selected,
+  onChange,
 }: {
   alternativeTables: ReservationModalQuery['reservationForToken']['alternativeTables'];
   selected: string;
+  onChange: (value: string) => void;
 }) {
   const areas = alternativeTables.reduce<
     Map<
@@ -295,7 +361,7 @@ function TablePicker({
     >
   >((acc, cv) => acc.set(cv.area.id, cv.area), new Map());
   return (
-    <Select value={selected}>
+    <Select value={selected} onChange={onChange}>
       {[...areas].map(([, {id, displayName}]) => (
         <Select.OptGroup key={id} label={displayName}>
           {alternativeTables

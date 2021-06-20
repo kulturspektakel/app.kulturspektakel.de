@@ -76,12 +76,18 @@ export type Config = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  updateReservationOtherPersons?: Maybe<Reservation>;
   cancelReservation?: Maybe<Scalars['Boolean']>;
   confirmReservation?: Maybe<Reservation>;
   requestReservation: Scalars['Boolean'];
   updateReservation?: Maybe<Reservation>;
   checkInReservation?: Maybe<Reservation>;
   createOrder?: Maybe<Order>;
+};
+
+export type MutationUpdateReservationOtherPersonsArgs = {
+  token: Scalars['String'];
+  otherPersons: Array<Scalars['String']>;
 };
 
 export type MutationCancelReservationArgs = {
@@ -103,8 +109,12 @@ export type MutationRequestReservationArgs = {
 };
 
 export type MutationUpdateReservationArgs = {
-  token: Scalars['String'];
-  otherPersons: Array<Scalars['String']>;
+  id: Scalars['Int'];
+  startTime?: Maybe<Scalars['DateTime']>;
+  endTime?: Maybe<Scalars['DateTime']>;
+  tableId?: Maybe<Scalars['ID']>;
+  checkedInPersons?: Maybe<Scalars['Int']>;
+  note?: Maybe<Scalars['String']>;
 };
 
 export type MutationCheckInReservationArgs = {
@@ -229,6 +239,7 @@ export type Reservation = {
   primaryPerson: Scalars['String'];
   otherPersons: Array<Scalars['String']>;
   checkedInPersons: Scalars['Int'];
+  note?: Maybe<Scalars['String']>;
   alternativeTables: Array<Maybe<Table>>;
   reservationsFromSamePerson: Array<Reservation>;
 };
@@ -237,7 +248,6 @@ export enum ReservationStatus {
   Pending = 'Pending',
   Confirmed = 'Confirmed',
   CheckedIn = 'CheckedIn',
-  Cleared = 'Cleared',
 }
 
 export enum SortOrder {
@@ -327,17 +337,54 @@ export type TableRowFragment = {__typename?: 'Reservation'} & Pick<
   | 'token'
 >;
 
-export type CheckInMutationVariables = Exact<{
-  persons: Scalars['Int'];
+export type ReservationFragmentFragment = {__typename?: 'Reservation'} & Pick<
+  Reservation,
+  | 'id'
+  | 'startTime'
+  | 'endTime'
+  | 'status'
+  | 'checkedInPersons'
+  | 'primaryPerson'
+  | 'otherPersons'
+  | 'note'
+> & {
+    alternativeTables: Array<
+      Maybe<
+        {__typename?: 'Table'} & Pick<Table, 'id' | 'displayName'> & {
+            area: {__typename?: 'Area'} & Pick<Area, 'id' | 'displayName'>;
+          }
+      >
+    >;
+    table: {__typename?: 'Table'} & Pick<Table, 'id' | 'maxCapacity'> & {
+        reservations: Array<
+          {__typename?: 'Reservation'} & Pick<
+            Reservation,
+            'id' | 'startTime' | 'endTime' | 'status'
+          >
+        >;
+        area: {__typename?: 'Area'} & Pick<Area, 'id' | 'displayName'> & {
+            openingHour: Array<
+              {__typename?: 'OpeningHour'} & Pick<
+                OpeningHour,
+                'startTime' | 'endTime'
+              >
+            >;
+          };
+      };
+  };
+
+export type UpdateReservationMutationVariables = Exact<{
   id: Scalars['Int'];
+  persons?: Maybe<Scalars['Int']>;
+  startTime?: Maybe<Scalars['DateTime']>;
+  endTime?: Maybe<Scalars['DateTime']>;
+  note?: Maybe<Scalars['String']>;
+  tableId?: Maybe<Scalars['ID']>;
 }>;
 
-export type CheckInMutation = {__typename?: 'Mutation'} & {
-  checkInReservation?: Maybe<
-    {__typename?: 'Reservation'} & Pick<
-      Reservation,
-      'id' | 'status' | 'checkedInPersons'
-    >
+export type UpdateReservationMutation = {__typename?: 'Mutation'} & {
+  updateReservation?: Maybe<
+    {__typename?: 'Reservation'} & ReservationFragmentFragment
   >;
 };
 
@@ -347,40 +394,7 @@ export type ReservationModalQueryVariables = Exact<{
 
 export type ReservationModalQuery = {__typename?: 'Query'} & {
   reservationForToken?: Maybe<
-    {__typename?: 'Reservation'} & Pick<
-      Reservation,
-      | 'id'
-      | 'startTime'
-      | 'endTime'
-      | 'status'
-      | 'checkedInPersons'
-      | 'primaryPerson'
-      | 'otherPersons'
-    > & {
-        alternativeTables: Array<
-          Maybe<
-            {__typename?: 'Table'} & Pick<Table, 'id' | 'displayName'> & {
-                area: {__typename?: 'Area'} & Pick<Area, 'id' | 'displayName'>;
-              }
-          >
-        >;
-        table: {__typename?: 'Table'} & Pick<Table, 'id' | 'maxCapacity'> & {
-            reservations: Array<
-              {__typename?: 'Reservation'} & Pick<
-                Reservation,
-                'id' | 'startTime' | 'endTime' | 'status'
-              >
-            >;
-            area: {__typename?: 'Area'} & Pick<Area, 'displayName'> & {
-                openingHour: Array<
-                  {__typename?: 'OpeningHour'} & Pick<
-                    OpeningHour,
-                    'startTime' | 'endTime'
-                  >
-                >;
-              };
-          };
-      }
+    {__typename?: 'Reservation'} & ReservationFragmentFragment
   >;
 };
 
@@ -402,6 +416,44 @@ export const TableRowFragmentDoc = gql`
     status
     checkedInPersons
     token
+  }
+`;
+export const ReservationFragmentFragmentDoc = gql`
+  fragment ReservationFragment on Reservation {
+    id
+    startTime
+    endTime
+    status
+    checkedInPersons
+    primaryPerson
+    otherPersons
+    note
+    alternativeTables {
+      id
+      displayName
+      area {
+        id
+        displayName
+      }
+    }
+    table {
+      id
+      reservations {
+        id
+        startTime
+        endTime
+        status
+      }
+      maxCapacity
+      area {
+        id
+        displayName
+        openingHour {
+          startTime
+          endTime
+        }
+      }
+    }
   }
 `;
 export const SlotsDocument = gql`
@@ -467,93 +519,82 @@ export type SlotsQueryResult = Apollo.QueryResult<
   SlotsQuery,
   SlotsQueryVariables
 >;
-export const CheckInDocument = gql`
-  mutation CheckIn($persons: Int!, $id: Int!) {
-    checkInReservation(checkedInPersons: $persons, id: $id) {
-      id
-      status
-      checkedInPersons
+export const UpdateReservationDocument = gql`
+  mutation UpdateReservation(
+    $id: Int!
+    $persons: Int
+    $startTime: DateTime
+    $endTime: DateTime
+    $note: String
+    $tableId: ID
+  ) {
+    updateReservation(
+      id: $id
+      checkedInPersons: $persons
+      startTime: $startTime
+      endTime: $endTime
+      note: $note
+      tableId: $tableId
+    ) {
+      ...ReservationFragment
     }
   }
+  ${ReservationFragmentFragmentDoc}
 `;
-export type CheckInMutationFn = Apollo.MutationFunction<
-  CheckInMutation,
-  CheckInMutationVariables
+export type UpdateReservationMutationFn = Apollo.MutationFunction<
+  UpdateReservationMutation,
+  UpdateReservationMutationVariables
 >;
 
 /**
- * __useCheckInMutation__
+ * __useUpdateReservationMutation__
  *
- * To run a mutation, you first call `useCheckInMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCheckInMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useUpdateReservationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateReservationMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [checkInMutation, { data, loading, error }] = useCheckInMutation({
+ * const [updateReservationMutation, { data, loading, error }] = useUpdateReservationMutation({
  *   variables: {
- *      persons: // value for 'persons'
  *      id: // value for 'id'
+ *      persons: // value for 'persons'
+ *      startTime: // value for 'startTime'
+ *      endTime: // value for 'endTime'
+ *      note: // value for 'note'
+ *      tableId: // value for 'tableId'
  *   },
  * });
  */
-export function useCheckInMutation(
+export function useUpdateReservationMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    CheckInMutation,
-    CheckInMutationVariables
+    UpdateReservationMutation,
+    UpdateReservationMutationVariables
   >,
 ) {
   const options = {...defaultOptions, ...baseOptions};
-  return Apollo.useMutation<CheckInMutation, CheckInMutationVariables>(
-    CheckInDocument,
-    options,
-  );
+  return Apollo.useMutation<
+    UpdateReservationMutation,
+    UpdateReservationMutationVariables
+  >(UpdateReservationDocument, options);
 }
-export type CheckInMutationHookResult = ReturnType<typeof useCheckInMutation>;
-export type CheckInMutationResult = Apollo.MutationResult<CheckInMutation>;
-export type CheckInMutationOptions = Apollo.BaseMutationOptions<
-  CheckInMutation,
-  CheckInMutationVariables
+export type UpdateReservationMutationHookResult = ReturnType<
+  typeof useUpdateReservationMutation
+>;
+export type UpdateReservationMutationResult = Apollo.MutationResult<UpdateReservationMutation>;
+export type UpdateReservationMutationOptions = Apollo.BaseMutationOptions<
+  UpdateReservationMutation,
+  UpdateReservationMutationVariables
 >;
 export const ReservationModalDocument = gql`
   query ReservationModal($token: String!) {
     reservationForToken(token: $token) {
-      id
-      startTime
-      endTime
-      status
-      checkedInPersons
-      primaryPerson
-      otherPersons
-      alternativeTables {
-        id
-        displayName
-        area {
-          id
-          displayName
-        }
-      }
-      table {
-        id
-        reservations {
-          id
-          startTime
-          endTime
-          status
-        }
-        maxCapacity
-        area {
-          displayName
-          openingHour {
-            startTime
-            endTime
-          }
-        }
-      }
+      ...ReservationFragment
     }
   }
+  ${ReservationFragmentFragmentDoc}
 `;
 
 /**

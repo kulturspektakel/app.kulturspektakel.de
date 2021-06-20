@@ -1,13 +1,13 @@
 import styles from './Slots.module.css';
-import React from 'react';
+import React, {useState} from 'react';
 import {gql} from '@apollo/client';
 import {SlotsQuery, useSlotsQuery} from '../../types/graphql';
 import {add, min, max, isAfter, isBefore} from 'date-fns';
 import TableRow, {FirstTableCell} from './TableRow';
 import useReservationModal from './useReservationModal';
-import Numbers from './Numbers';
 import NowIndicator from './NowIndicator';
 import TableBodyRow from './TableBodyRow';
+import {Select} from 'antd';
 
 export const SLOT_LENGTH_MIN = 30;
 export const SLOT_LENGTH_PX = 100;
@@ -43,6 +43,7 @@ export default function Slots({day}: {day: Date}) {
   });
 
   const [editReservation, reservationModal] = useReservationModal();
+  const [areaFilter, setAreaFilter] = useState('all');
 
   if (!data) {
     return null;
@@ -55,13 +56,28 @@ export default function Slots({day}: {day: Date}) {
     data?.areas.flatMap((a) => a.openingHour.map((a) => a.endTime)) ?? [],
   );
   return (
-    <>
-      {/* <Numbers data={data.node} /> */}
+    <div className={styles.container}>
       <div className={styles.table}>
         {reservationModal}
         <NowIndicator startTime={startTime} endTime={endTime} />
         <TableRow
-          firstCell={<FirstTableCell />}
+          firstCell={
+            <FirstTableCell>
+              <Select
+                className={styles.areaFilter}
+                value={areaFilter}
+                onChange={(value) => setAreaFilter(value)}
+                dropdownMatchSelectWidth={false}
+              >
+                <Select.Option value="all">alle Bereiche</Select.Option>
+                {data?.areas.map((a) => (
+                  <Select.Option key={a.id} value={a.id}>
+                    {a.displayName}
+                  </Select.Option>
+                ))}
+              </Select>
+            </FirstTableCell>
+          }
           startTime={startTime}
           endTime={endTime}
           cellRenderer={(i) => (
@@ -77,19 +93,21 @@ export default function Slots({day}: {day: Date}) {
           )}
         />
 
-        {data?.areas.flatMap((a) =>
-          a.table.map((t) => (
-            <TableBodyRow
-              key={t.id}
-              table={t}
-              startTime={startTime}
-              endTime={endTime}
-              editReservation={editReservation}
-              maxCapacity={t.maxCapacity}
-              area={a}
-            />
-          )),
-        )}
+        {data?.areas
+          .filter((a) => (areaFilter === 'all' ? true : areaFilter === a.id))
+          .flatMap((a) =>
+            a.table.map((t) => (
+              <TableBodyRow
+                key={t.id}
+                table={t}
+                startTime={startTime}
+                endTime={endTime}
+                editReservation={editReservation}
+                maxCapacity={t.maxCapacity}
+                area={a}
+              />
+            )),
+          )}
         <TableRow
           firstCell={<FirstTableCell>Eingecheckt</FirstTableCell>}
           startTime={startTime}
@@ -117,7 +135,7 @@ export default function Slots({day}: {day: Date}) {
           }
         />
       </div>
-    </>
+    </div>
   );
 }
 

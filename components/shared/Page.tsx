@@ -6,6 +6,7 @@ import React from 'react';
 const {Header, Footer, Sider, Content} = Layout;
 import Link from 'next/link';
 import {useRouter} from 'next/dist/client/router';
+import {DAYS} from '../../pages/tables/[...day]';
 
 export default function Page({
   children,
@@ -15,7 +16,7 @@ export default function Page({
   title?: string;
 }) {
   const {data, refetch, error} = useViewerQuery();
-  const {route} = useRouter();
+  const {asPath} = useRouter();
 
   if (data?.viewer == null) {
     if (typeof window !== 'undefined') {
@@ -44,11 +45,19 @@ export default function Page({
         <Menu
           theme="dark"
           mode="horizontal"
-          selectedKeys={[route.split('/').slice(0, 2).join('/')]}
+          selectedKeys={asPath.split('/').filter(Boolean)}
         >
-          <Menu.Item key="/tables">
-            <Link href="/tables">Tables</Link>
-          </Menu.Item>
+          <Menu.SubMenu key="tables" title="Reservierungen">
+            {DAYS.map((d) => (
+              <Menu.Item key={d.toISOString().substr(0, 10)}>
+                <Link href={`/tables/${d.toISOString().substr(0, 10)}`}>
+                  {d.toLocaleDateString('de', {
+                    weekday: 'long',
+                  })}
+                </Link>
+              </Menu.Item>
+            ))}
+          </Menu.SubMenu>
           <Menu.Item key="/contactless">
             <Link href="/contactless">Contactless</Link>
           </Menu.Item>
