@@ -13,15 +13,20 @@ export default function TableRow({
   firstCell,
   cellRenderer,
   cells,
+  style,
 }: {
   startTime: Date;
   endTime: Date;
   firstCell: React.ReactElement<typeof FirstTableCell>;
   cellRenderer?: (index: number) => any;
   cells?: React.ReactNodeArray;
+  style?: React.CSSProperties;
 }) {
   return (
-    <div className={cx([styles.row, cellRenderer && styles.rowHead])}>
+    <div
+      className={cx([styles.row, cellRenderer && styles.rowHead])}
+      style={style}
+    >
       {firstCell}
 
       {cells

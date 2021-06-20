@@ -13,6 +13,7 @@ import {
 } from '../../types/graphql';
 import {SLOT_LENGTH_MIN} from './Slots';
 import StatusBadge from './StatusBadge';
+import TimePicker from './TimePicker';
 import styles from './useReservationModal.module.css';
 const {confirm} = Modal;
 
@@ -310,41 +311,6 @@ export default function useReservationModal(): [
   ];
 }
 
-function TimePicker({
-  min,
-  max,
-  selected,
-  onChange,
-}: {
-  selected: Date;
-  min: Date;
-  max: Date;
-  onChange: (value: Date) => void;
-}) {
-  return (
-    <Select
-      value={selected.toISOString()}
-      onChange={(value) => onChange(new Date(value))}
-    >
-      {Array(differenceInMinutes(max, min) / SLOT_LENGTH_MIN)
-        .fill(null)
-        .map((_, i) => {
-          const time = add(min, {minutes: SLOT_LENGTH_MIN * i});
-          return (
-            <Select.Option value={time.toISOString()} key={i}>
-              {time.toLocaleTimeString('de', {
-                hour: '2-digit',
-                minute: '2-digit',
-                timeZone: 'Europe/Berlin',
-              })}{' '}
-              Uhr
-            </Select.Option>
-          );
-        })}
-    </Select>
-  );
-}
-
 function TablePicker({
   alternativeTables,
   selected,
@@ -368,7 +334,7 @@ function TablePicker({
             .filter((t) => t.area.id === id)
             .map((t) => (
               <Select.Option value={t.id} key={t.id}>
-                Tisch {t.displayName}
+                {t.displayName}
               </Select.Option>
             ))}
         </Select.OptGroup>

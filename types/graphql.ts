@@ -255,9 +255,10 @@ export enum SortOrder {
   Desc = 'desc',
 }
 
-export type Table = {
+export type Table = Node & {
   __typename?: 'Table';
-  id: Scalars['String'];
+  /** Unique identifier for the resource */
+  id: Scalars['ID'];
   displayName: Scalars['String'];
   maxCapacity: Scalars['Int'];
   type: TableType;
@@ -336,6 +337,35 @@ export type TableRowFragment = {__typename?: 'Reservation'} & Pick<
   | 'checkedInPersons'
   | 'token'
 >;
+
+export type CreateModalQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+export type CreateModalQuery = {__typename?: 'Query'} & {
+  node?: Maybe<
+    | {__typename?: 'Area'}
+    | ({__typename?: 'Table'} & Pick<
+        Table,
+        'id' | 'maxCapacity' | 'displayName'
+      > & {
+          area: {__typename?: 'Area'} & Pick<Area, 'id' | 'displayName'> & {
+              openingHour: Array<
+                {__typename?: 'OpeningHour'} & Pick<
+                  OpeningHour,
+                  'startTime' | 'endTime'
+                >
+              >;
+            };
+          reservations: Array<
+            {__typename?: 'Reservation'} & Pick<
+              Reservation,
+              'startTime' | 'endTime'
+            >
+          >;
+        })
+  >;
+};
 
 export type ReservationFragmentFragment = {__typename?: 'Reservation'} & Pick<
   Reservation,
@@ -518,6 +548,78 @@ export type SlotsLazyQueryHookResult = ReturnType<typeof useSlotsLazyQuery>;
 export type SlotsQueryResult = Apollo.QueryResult<
   SlotsQuery,
   SlotsQueryVariables
+>;
+export const CreateModalDocument = gql`
+  query CreateModal($id: ID!) {
+    node(id: $id) {
+      ... on Table {
+        id
+        maxCapacity
+        displayName
+        area {
+          id
+          displayName
+          openingHour {
+            startTime
+            endTime
+          }
+        }
+        reservations {
+          startTime
+          endTime
+        }
+      }
+    }
+  }
+`;
+
+/**
+ * __useCreateModalQuery__
+ *
+ * To run a query within a React component, call `useCreateModalQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCreateModalQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCreateModalQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useCreateModalQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    CreateModalQuery,
+    CreateModalQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useQuery<CreateModalQuery, CreateModalQueryVariables>(
+    CreateModalDocument,
+    options,
+  );
+}
+export function useCreateModalLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    CreateModalQuery,
+    CreateModalQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useLazyQuery<CreateModalQuery, CreateModalQueryVariables>(
+    CreateModalDocument,
+    options,
+  );
+}
+export type CreateModalQueryHookResult = ReturnType<typeof useCreateModalQuery>;
+export type CreateModalLazyQueryHookResult = ReturnType<
+  typeof useCreateModalLazyQuery
+>;
+export type CreateModalQueryResult = Apollo.QueryResult<
+  CreateModalQuery,
+  CreateModalQueryVariables
 >;
 export const UpdateReservationDocument = gql`
   mutation UpdateReservation(

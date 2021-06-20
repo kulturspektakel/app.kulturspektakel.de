@@ -35,6 +35,7 @@ export default function TableBodyRow(props: {
   startTime: Date;
   endTime: Date;
   editReservation: (token: string) => void;
+  createReservation: (tableId: string, time: Date) => void;
 }) {
   const slots = [];
   let time = props.startTime;
@@ -89,7 +90,12 @@ export default function TableBodyRow(props: {
 
         content = <div className={styles.disabled} />;
       } else {
-        content = <a className={styles.cellInner} />;
+        content = (
+          <a
+            className={styles.cellInner}
+            onClick={() => props.createReservation(props.table.id, time)}
+          />
+        );
         time = add(time, {minutes: SLOT_LENGTH_MIN});
       }
     }
@@ -172,7 +178,7 @@ function FirstTableBodyCell(props: {
 
   return (
     <FirstTableCell style={{borderLeftColor: props.area.themeColor}}>
-      <Badge status={status} text={`Tisch ${props.table.displayName}`} />
+      <Badge status={status} text={props.table.displayName} />
       <div className={styles.tableNameInfo}>
         {props.maxCapacity}&nbsp;Plätze
       </div>

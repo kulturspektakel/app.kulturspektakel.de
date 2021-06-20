@@ -3,10 +3,12 @@ import styles from './Page.module.css';
 import {useViewerQuery} from '../../types/graphql';
 import {Avatar, Dropdown, Layout, Menu} from 'antd';
 import React from 'react';
-const {Header, Footer, Sider, Content} = Layout;
+const {Header} = Layout;
 import Link from 'next/link';
 import {useRouter} from 'next/dist/client/router';
 import {DAYS} from '../../pages/tables/[...day]';
+
+export const HEADER_HEIGHT = 64;
 
 export default function Page({
   children,
@@ -32,11 +34,11 @@ export default function Page({
   }
 
   return (
-    <Layout className={styles.layout}>
+    <Layout className={styles.layout} style={{paddingTop: HEADER_HEIGHT}}>
       <Head>
         <title>{title ?? 'Crew'} · Kulturspektakel Gauting</title>
       </Head>
-      <Header className={styles.header}>
+      <Header className={styles.header} style={{height: HEADER_HEIGHT}}>
         <Link href="/">
           <a className={styles.logo}>
             <img src="/logo.svg" />
@@ -58,9 +60,14 @@ export default function Page({
               </Menu.Item>
             ))}
           </Menu.SubMenu>
-          <Menu.Item key="/contactless">
-            <Link href="/contactless">Contactless</Link>
-          </Menu.Item>
+          <Menu.SubMenu key="sales" title="Verkauf">
+            <Menu.Item key="lists">
+              <Link href={`/sales/lists`}>Preislisten</Link>
+            </Menu.Item>
+            <Menu.Item key="revenue">
+              <Link href={`/sales/`}>Umsätze</Link>
+            </Menu.Item>
+          </Menu.SubMenu>
           <Menu.Item key="/booking">
             <Link href="/booking">Booking</Link>
           </Menu.Item>

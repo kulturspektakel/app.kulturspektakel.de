@@ -1,17 +1,5 @@
-.container {
-  flex-grow: 1;
-  flex-shrink: 1;
-  width: 100%;
-  position: relative;
-}
-
 .table {
-  overflow: scroll;
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  position: relative;
 }
 
 .th {
