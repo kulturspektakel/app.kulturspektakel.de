@@ -1,13 +1,18 @@
 import {gql} from '@apollo/client';
-import {Form, Modal} from 'antd';
-import {add, isAfter, isSameDay, min} from 'date-fns';
+import {Alert, Button, Form, Input, Modal} from 'antd';
+import TextArea from 'antd/lib/input/TextArea';
+import {add, isAfter, min, differenceInMinutes, isBefore} from 'date-fns';
 import React, {useState} from 'react';
 import {useEffect} from 'react';
-import {CreateModalQuery, useCreateModalQuery} from '../../types/graphql';
+import {
+  CreateModalQuery,
+  CreateReservationMutationVariables,
+  useCreateModalQuery,
+  useCreateReservationMutation,
+} from '../../types/graphql';
+import GuestInput from './GuestInput';
 import {SLOT_LENGTH_MIN} from './Slots';
-import StatusBadge from './StatusBadge';
 import TimePicker from './TimePicker';
-import styles from './useReservationModal.module.css';
 const {confirm} = Modal;
 
 gql`
@@ -32,6 +37,28 @@ gql`
       }
     }
   }
+
+  mutation CreateReservation(
+    $primaryEmail: String!
+    $primaryPerson: String!
+    $otherPersons: [String!]!
+    $startTime: DateTime!
+    $endTime: DateTime!
+    $note: String
+    $tableId: ID!
+  ) {
+    createReservation(
+      primaryEmail: $primaryEmail
+      primaryPerson: $primaryPerson
+      otherPersons: $otherPersons
+      startTime: $startTime
+      endTime: $endTime
+      note: $note
+      tableId: $tableId
+    ) {
+      id
+    }
+  }
 `;
 
 export default function useCreateModal(): [
@@ -50,6 +77,13 @@ export default function useCreateModal(): [
     skip: slot == null,
   });
 
+  const [variables, content] = useModalContent(
+    data?.node?.__typename === 'Table' ? data.node : null,
+    slot ? slot.time : null,
+  );
+
+  const [createReservation] = useCreateReservationMutation({});
+
   const handleClose = () => {
     setSlot(null);
   };
@@ -63,44 +97,96 @@ export default function useCreateModal(): [
       onCancel={handleClose}
       okText="Erstellen"
       cancelText="Abbrechen"
+      footer={
+        <>
+          <Button onClick={() => setSlot(null)}>Abbrechen</Button>
+          <Button
+            disabled={!variables?.primaryEmail || !variables?.primaryPerson}
+            onClick={() => {
+              createReservation({
+                variables: {
+                  ...variables,
+                  startTime: slot.time,
+                },
+                refetchQueries: ['Slots'],
+              }).then(handleClose);
+            }}
+            type="primary"
+          >
+            OK
+          </Button>
+        </>
+      }
     >
-      {data?.node?.__typename === 'Table' && slot != null && (
-        <ModalContent table={data.node} time={slot.time} />
-      )}
+      {content}
     </Modal>,
   ];
 }
 
-function ModalContent({
-  table,
-  time,
-}: {
-  table: Extract<CreateModalQuery['node'], {__typename: 'Table'}>;
-  time: Date;
-}) {
-  const maxEndTime = min(
-    [
-      ...table.reservations
-        .filter((r) => isAfter(r.startTime, time))
-        .map((r) => r.startTime),
-      ...table.area.openingHour
-        .filter((o) => isAfter(o.endTime, time))
-        .map((e) => e.endTime),
-    ].filter(Boolean),
-  );
+function useModalContent(
+  table: Extract<CreateModalQuery['node'], {__typename?: 'Table'}> | null,
+  time: Date | null,
+): [
+  variables: Omit<CreateReservationMutationVariables, 'startTime'> | null,
+  content: React.ReactNode,
+] {
+  const [minEndTime, setMinEndTime] = useState<Date | null>(null);
+  const [maxEndTime, setMaxEndTime] = useState<Date | null>(null);
+  const [endTime, setEndTime] = useState<Date | null>(null);
+  const [otherPersons, setOtherPersons] = useState<string[]>([]);
+  const [primaryEmail, setPrimaryEmail] = useState<string>('');
+  const [note, setNote] = useState<string | undefined>();
 
-  const [endTime, setEndTime] = useState<Date | null>(
-    add(time, {minutes: SLOT_LENGTH_MIN}),
-  );
+  useEffect(() => {
+    if (!time || !table) {
+      return;
+    }
+    const maxEndTime = min(
+      [
+        ...table.reservations
+          .filter((r) => isAfter(r.startTime, time))
+          .map((r) => r.startTime),
+        ...table.area.openingHour
+          .filter((o) => isAfter(o.endTime, time))
+          .map((e) => e.endTime),
+      ].filter(Boolean),
+    );
 
-  if (isAfter(endTime, maxEndTime)) {
-    return 'error';
+    const minEndTime = add(time, {minutes: SLOT_LENGTH_MIN});
+    setMaxEndTime(maxEndTime);
+    setMinEndTime(minEndTime);
+    setEndTime(minEndTime);
+    setOtherPersons([]);
+    setPrimaryEmail('');
+    setNote('');
+  }, [
+    table,
+    time,
+    setEndTime,
+    setMinEndTime,
+    setMaxEndTime,
+    setOtherPersons,
+    setPrimaryEmail,
+    setNote,
+  ]);
+
+  if (!table || !time || !endTime) {
+    return [null, null];
   }
 
-  return (
+  return [
+    {
+      endTime,
+      otherPersons: otherPersons.slice(1),
+      primaryEmail,
+      primaryPerson: otherPersons[0],
+      tableId: table.id,
+      note,
+    },
     <Form labelCol={{span: 8}}>
       <Form.Item label="Ort">
-        {table.area.displayName}, {table.displayName}
+        {table.area.displayName}, {table.displayName} ({table.maxCapacity}{' '}
+        Plätze)
       </Form.Item>
       <Form.Item label="Von">
         {time.toLocaleString('de', {
@@ -109,17 +195,45 @@ function ModalContent({
           month: 'long',
           hour: '2-digit',
           minute: '2-digit',
+          timeZone: 'Europe/Berlin',
         })}{' '}
         Uhr
       </Form.Item>
       <Form.Item label="Bis">
         <TimePicker
-          min={time}
+          min={minEndTime}
           selected={endTime}
           max={maxEndTime}
           onChange={setEndTime}
         />
       </Form.Item>
-    </Form>
-  );
+      <Form.Item label="E-Mail">
+        <Input
+          type="email"
+          value={primaryEmail}
+          onChange={(e) => setPrimaryEmail(e.target.value)}
+        />
+      </Form.Item>
+      <Form.Item label="Gäste">
+        <GuestInput
+          maxCapacity={table.maxCapacity}
+          value={otherPersons}
+          onChange={setOtherPersons}
+        />
+      </Form.Item>
+      <TextArea
+        rows={3}
+        placeholder="Interne Notizen"
+        value={note}
+        onChange={(e) => setNote(e.target.value)}
+      />
+      {differenceInMinutes(time, new Date()) < 15 && (
+        <Alert
+          message="Nach dem Erstellen muss die Reservierung noch manuell eingecheckt werden, sobald die Gäste das Gelände betreten."
+          type="warning"
+          showIcon
+        />
+      )}
+    </Form>,
+  ];
 }

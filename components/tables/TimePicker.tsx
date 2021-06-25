@@ -20,7 +20,7 @@ export default function TimePicker({
       value={selected.toISOString()}
       onChange={(value) => onChange(new Date(value))}
     >
-      {Array(differenceInMinutes(max, min) / SLOT_LENGTH_MIN)
+      {Array(differenceInMinutes(max, min) / SLOT_LENGTH_MIN + 1)
         .fill(null)
         .map((_, i) => {
           const time = add(min, {minutes: SLOT_LENGTH_MIN * i});

@@ -8,9 +8,11 @@ import React, {useCallback, useState} from 'react';
 import {useEffect} from 'react';
 import {
   ReservationModalQuery,
+  useCancelReservationMutation,
   useReservationModalQuery,
   useUpdateReservationMutation,
 } from '../../types/graphql';
+import GuestInput from './GuestInput';
 import {SLOT_LENGTH_MIN} from './Slots';
 import StatusBadge from './StatusBadge';
 import TimePicker from './TimePicker';
@@ -37,13 +39,14 @@ gql`
     }
     table {
       id
+      displayName
+      maxCapacity
       reservations {
         id
         startTime
         endTime
         status
       }
-      maxCapacity
       area {
         id
         displayName
@@ -75,6 +78,10 @@ gql`
     }
   }
 
+  mutation CancelReservation($token: String!) {
+    cancelReservation(token: $token)
+  }
+
   query ReservationModal($token: String!) {
     reservationForToken(token: $token) {
       ...ReservationFragment
@@ -95,19 +102,28 @@ export default function useReservationModal(): [
     fetchPolicy: 'cache-and-network',
   });
   const [updateReservation] = useUpdateReservationMutation();
+  const [cancelReservation] = useCancelReservationMutation();
   const [note, setNote] = useState<string | undefined>();
 
   const onClear = useCallback(() => {
     confirm({
       title: `Reservierung #${data?.reservationForToken?.id} löschen`,
       icon: <ExclamationCircleOutlined />,
-      content: 'text',
+      content:
+        'Die Reservierung ist dann nicht mehr verfügbar und die Plätze können neu vergeben werden.',
       okButtonProps: {
         danger: true,
       },
       okText: 'Löschen',
       cancelText: 'Abbrechen',
-      onOk() {},
+      onOk: () => {
+        cancelReservation({
+          variables: {
+            token,
+          },
+          refetchQueries: ['Slots'],
+        }).then(() => setToken(null));
+      },
     });
   }, [data?.reservationForToken]);
 
@@ -202,7 +218,7 @@ export default function useReservationModal(): [
         <Form.Item label="Tisch">
           <TablePicker
             alternativeTables={data.reservationForToken.alternativeTables}
-            selected={data.reservationForToken.table.id}
+            selected={data.reservationForToken.table}
             onChange={(value) =>
               updateReservation({
                 variables: {
@@ -228,7 +244,7 @@ export default function useReservationModal(): [
             min={max(
               [
                 sub(data.reservationForToken.startTime, {
-                  minutes: SLOT_LENGTH_MIN * 5,
+                  minutes: SLOT_LENGTH_MIN * 4,
                 }),
                 opening,
                 data.reservationForToken.table.reservations[
@@ -258,7 +274,7 @@ export default function useReservationModal(): [
             max={min(
               [
                 add(data.reservationForToken.endTime, {
-                  minutes: SLOT_LENGTH_MIN * 5,
+                  minutes: SLOT_LENGTH_MIN * 4,
                 }),
                 ending,
                 data.reservationForToken.table.reservations[
@@ -270,12 +286,18 @@ export default function useReservationModal(): [
           />
         </Form.Item>
         <Form.Item label="Gäste">
-          {data.reservationForToken.primaryPerson},{' '}
-          {data.reservationForToken.otherPersons.join(', ')}
+          <GuestInput
+            onChange={() => {}}
+            maxCapacity={data.reservationForToken.table.maxCapacity}
+            value={[
+              data.reservationForToken.primaryPerson,
+              ...data.reservationForToken.otherPersons,
+            ]}
+          />
         </Form.Item>
         <TextArea
           rows={3}
-          placeholder="Notizen"
+          placeholder="Interne Notizen"
           value={note}
           onChange={(e) => setNote(e.target.value)}
         />
@@ -317,7 +339,7 @@ function TablePicker({
   onChange,
 }: {
   alternativeTables: ReservationModalQuery['reservationForToken']['alternativeTables'];
-  selected: string;
+  selected: ReservationModalQuery['reservationForToken']['table'];
   onChange: (value: string) => void;
 }) {
   const areas = alternativeTables.reduce<
@@ -327,18 +349,23 @@ function TablePicker({
     >
   >((acc, cv) => acc.set(cv.area.id, cv.area), new Map());
   return (
-    <Select value={selected} onChange={onChange}>
-      {[...areas].map(([, {id, displayName}]) => (
-        <Select.OptGroup key={id} label={displayName}>
-          {alternativeTables
-            .filter((t) => t.area.id === id)
-            .map((t) => (
-              <Select.Option value={t.id} key={t.id}>
-                {t.displayName}
-              </Select.Option>
-            ))}
-        </Select.OptGroup>
-      ))}
+    <Select onChange={onChange} value={selected.id}>
+      {[...areas]
+        .sort(([a], [b]) => (a < b ? -1 : 1))
+        .map(([, {id, displayName}]) => (
+          <Select.OptGroup key={id} label={displayName}>
+            {}
+            {alternativeTables
+              .filter((t) => t.area.id === id)
+              .concat(id === selected.area.id ? [selected] : [])
+              .sort((a, b) => (a.id < b.id ? -1 : 1))
+              .map((t) => (
+                <Select.Option value={t.id} key={t.id}>
+                  {t.displayName}
+                </Select.Option>
+              ))}
+          </Select.OptGroup>
+        ))}
       {}
     </Select>
   );

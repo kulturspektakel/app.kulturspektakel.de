@@ -3,7 +3,7 @@ import TableRowStyles from './TableRow.module.css';
 import React, {useState} from 'react';
 import {gql} from '@apollo/client';
 import {OpeningHour, SlotsQuery} from '../../types/graphql';
-import {add, differenceInMinutes, isBefore, isEqual} from 'date-fns';
+import {add, differenceInMinutes, getTime, isBefore, isEqual} from 'date-fns';
 import {UserOutlined} from '@ant-design/icons';
 import {SLOT_LENGTH_MIN, SLOT_LENGTH_PX} from './Slots';
 import cx from 'classnames';
@@ -64,10 +64,12 @@ export default function TableBodyRow(props: {
               endTime={reservation.endTime}
             />
           </div>
-          <UserOutlined />
-          &nbsp;
-          {reservation.checkedInPersons}/{reservation.otherPersons.length + 1}
-          &nbsp;Personen
+          <div className={styles.bookingContext}>
+            <UserOutlined />
+            &nbsp;
+            {reservation.checkedInPersons}/{reservation.otherPersons.length + 1}
+            &nbsp;Personen
+          </div>
         </div>
       );
       time = reservation.endTime;
@@ -90,10 +92,11 @@ export default function TableBodyRow(props: {
 
         content = <div className={styles.disabled} />;
       } else {
+        const t = time; // capture value in block-scoped variable
         content = (
           <a
             className={styles.cellInner}
-            onClick={() => props.createReservation(props.table.id, time)}
+            onClick={() => props.createReservation(props.table.id, t)}
           />
         );
         time = add(time, {minutes: SLOT_LENGTH_MIN});

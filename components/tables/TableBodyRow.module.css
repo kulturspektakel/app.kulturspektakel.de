@@ -32,6 +32,12 @@
   overflow: hidden;
 }
 
+.bookingContext {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
 .tableNameInfo {
   font-weight: 400;
 }
