@@ -1,19 +1,21 @@
 import {ExclamationCircleOutlined} from '@ant-design/icons';
-import {gql} from '@apollo/client';
+import {gql, useApolloClient} from '@apollo/client';
 import {Button, Modal, Rate, Form, Select, Spin} from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import {add, max, min, sub, isSameDay} from 'date-fns';
 import differenceInMinutes from 'date-fns/differenceInMinutes';
+import {useRouter} from 'next/dist/client/router';
 import React, {useCallback, useState} from 'react';
 import {useEffect} from 'react';
 import {
   ReservationModalQuery,
+  SlotsQuery,
   useCancelReservationMutation,
   useReservationModalQuery,
   useUpdateReservationMutation,
 } from '../../types/graphql';
 import GuestInput from './GuestInput';
-import {SLOT_LENGTH_MIN} from './Slots';
+import {SlotsQueryGQL, SLOT_LENGTH_MIN} from './Slots';
 import StatusBadge from './StatusBadge';
 import TimePicker from './TimePicker';
 import styles from './useReservationModal.module.css';
@@ -29,6 +31,7 @@ gql`
     primaryPerson
     otherPersons
     note
+    availableToCheckIn
     alternativeTables {
       id
       displayName
@@ -83,6 +86,7 @@ gql`
   }
 
   query ReservationModal($token: String!) {
+    availableCapacity
     reservationForToken(token: $token) {
       ...ReservationFragment
     }
@@ -102,7 +106,7 @@ export default function useReservationModal(): [
     fetchPolicy: 'cache-and-network',
   });
   const [updateReservation] = useUpdateReservationMutation();
-  const [cancelReservation] = useCancelReservationMutation();
+  const [cancelReservation, {loading}] = useCancelReservationMutation();
   const [note, setNote] = useState<string | undefined>();
 
   const onClear = useCallback(() => {
@@ -183,7 +187,32 @@ export default function useReservationModal(): [
                   },
                 });
               const now = new Date();
-              if (
+
+              if (data.reservationForToken.availableToCheckIn < persons) {
+                Modal.confirm({
+                  title: 'Kapazitätslimit erreicht',
+                  content: `Wenn du ${persons} Personen eincheckst wird damit das Kapazitätslimit um ${
+                    persons - data.reservationForToken.availableToCheckIn
+                  } Personen überschritten.`,
+                  okText: 'Einchecken',
+                  cancelText: 'Abbrechen',
+                  onOk,
+                });
+              } else if (
+                data.availableCapacity +
+                  data.reservationForToken.checkedInPersons <
+                persons
+              ) {
+                Modal.confirm({
+                  title: 'Mehr Personen als reserviert',
+                  content: `Die Reservierung ist nur für ${
+                    data.reservationForToken.otherPersons.length + 1
+                  } Personen. Wenn du ${persons} Personen für diese Reservierung eincheckst, kann es passieren, dass andere Personen, die reserviert haben keinen Platz mehr bekommen.`,
+                  okText: 'Einchecken',
+                  cancelText: 'Abbrechen',
+                  onOk,
+                });
+              } else if (
                 data.reservationForToken.status !== 'CheckedIn' &&
                 differenceInMinutes(data.reservationForToken.startTime, now) >
                   10
@@ -323,7 +352,7 @@ export default function useReservationModal(): [
       onOk={handleClose}
       onCancel={handleClose}
       footer={
-        <Button danger onClick={onClear}>
+        <Button danger onClick={onClear} loading={loading}>
           Reservierung stornieren
         </Button>
       }

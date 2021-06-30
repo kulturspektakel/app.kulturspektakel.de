@@ -82,7 +82,7 @@ export default function useCreateModal(): [
     slot ? slot.time : null,
   );
 
-  const [createReservation] = useCreateReservationMutation({});
+  const [createReservation, {loading}] = useCreateReservationMutation({});
 
   const handleClose = () => {
     setSlot(null);
@@ -102,6 +102,7 @@ export default function useCreateModal(): [
           <Button onClick={() => setSlot(null)}>Abbrechen</Button>
           <Button
             disabled={!variables?.primaryEmail || !variables?.primaryPerson}
+            loading={loading}
             onClick={() => {
               createReservation({
                 variables: {

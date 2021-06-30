@@ -10,9 +10,8 @@ import cx from 'classnames';
 import TableRow, {FirstTableCell} from './TableRow';
 import isAfter from 'date-fns/isAfter';
 import StatusBadge from './StatusBadge';
-import {Badge} from 'antd';
+import {Tag} from 'antd';
 import {useCallback} from 'react';
-import {PresetStatusColorType} from 'antd/lib/_util/colors';
 import {useEffect} from 'react';
 
 gql`
@@ -24,6 +23,7 @@ gql`
     otherPersons
     status
     checkedInPersons
+    checkInTime
     token
   }
 `;
@@ -148,16 +148,16 @@ function FirstTableBodyCell(props: {
   startTime: Date;
   endTime: Date;
 }) {
-  const calcStatus = useCallback((): PresetStatusColorType => {
+  const calcStatus = useCallback((): string => {
     const now = new Date();
     if (isClosed(props.area.openingHour)) {
-      return 'error';
+      return '#ff4d4f';
     } else if (
       props.table.reservations.some(
         (r) => r.status === 'CheckedIn' && isBefore(now, r.endTime),
       )
     ) {
-      return 'error';
+      return '#ff4d4f';
     }
 
     const in15Min = add(now, {
@@ -168,20 +168,25 @@ function FirstTableBodyCell(props: {
         (r) => isAfter(in15Min, r.startTime) && isBefore(now, r.endTime),
       )
     ) {
-      return 'warning';
+      return '#faad14';
     }
-    return 'success';
+    return '#52c41a';
   }, []);
 
-  const [status, setStatus] = useState<PresetStatusColorType>(calcStatus());
+  const [status, setStatus] = useState<string>(calcStatus());
   useEffect(() => {
     const i = setInterval(() => setStatus(calcStatus()), 10000);
     return () => clearInterval(i);
   }, [setStatus, calcStatus]);
 
   return (
-    <FirstTableCell style={{borderLeftColor: props.area.themeColor}}>
-      <Badge status={status} text={props.table.displayName} />
+    <FirstTableCell style={{borderLeftColor: status}}>
+      <div className={styles.tableName}>
+        <Tag color={props.area.themeColor} className={styles.tag}>
+          {props.area.id.toLocaleUpperCase()}
+        </Tag>
+        {props.table.displayName}
+      </div>
       <div className={styles.tableNameInfo}>
         {props.maxCapacity}&nbsp;Plätze
       </div>

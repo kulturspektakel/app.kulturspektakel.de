@@ -14,7 +14,7 @@ import useCreateModal from './useCreateModal';
 export const SLOT_LENGTH_MIN = 30;
 export const SLOT_LENGTH_PX = 100;
 
-gql`
+export const SlotsQueryGQL = gql`
   query Slots($day: Date) {
     areas {
       id
@@ -119,12 +119,12 @@ export default function Slots({day}: {day: Date}) {
         startTime={startTime}
         endTime={endTime}
         cellRenderer={(i) =>
-          getReservations(
+          checkedInPersons(
             add(startTime, {
               minutes: SLOT_LENGTH_MIN * i,
             }),
             data,
-          ).reduce((acc, cv) => acc + cv.checkedInPersons, 0)
+          )
         }
       />
       <TableRow
@@ -155,5 +155,19 @@ function getReservations(
       .filter(
         (r) => !isAfter(r.startTime, time) && isBefore(time, r.endTime),
       ) ?? []
+  );
+}
+
+function checkedInPersons(time: Date, data: SlotsQuery): number {
+  return (
+    data?.areas
+      .flatMap((a) => a.table.flatMap((t) => t.reservations))
+      .filter(
+        (r) =>
+          r.checkInTime &&
+          isBefore(r.checkInTime, add(time, {minutes: SLOT_LENGTH_MIN})) &&
+          isBefore(time, r.endTime),
+      )
+      .reduce((acc, cv) => acc + cv.checkedInPersons, 0) ?? 0
   );
 }

@@ -251,7 +251,9 @@ export type Reservation = {
   otherPersons: Array<Scalars['String']>;
   checkedInPersons: Scalars['Int'];
   note?: Maybe<Scalars['String']>;
+  checkInTime?: Maybe<Scalars['DateTime']>;
   alternativeTables: Array<Maybe<Table>>;
+  availableToCheckIn: Scalars['Int'];
   reservationsFromSamePerson: Array<Reservation>;
 };
 
@@ -346,6 +348,7 @@ export type TableRowFragment = {__typename?: 'Reservation'} & Pick<
   | 'otherPersons'
   | 'status'
   | 'checkedInPersons'
+  | 'checkInTime'
   | 'token'
 >;
 
@@ -404,6 +407,7 @@ export type ReservationFragmentFragment = {__typename?: 'Reservation'} & Pick<
   | 'primaryPerson'
   | 'otherPersons'
   | 'note'
+  | 'availableToCheckIn'
 > & {
     alternativeTables: Array<
       Maybe<
@@ -461,11 +465,14 @@ export type ReservationModalQueryVariables = Exact<{
   token: Scalars['String'];
 }>;
 
-export type ReservationModalQuery = {__typename?: 'Query'} & {
-  reservationForToken?: Maybe<
-    {__typename?: 'Reservation'} & ReservationFragmentFragment
-  >;
-};
+export type ReservationModalQuery = {__typename?: 'Query'} & Pick<
+  Query,
+  'availableCapacity'
+> & {
+    reservationForToken?: Maybe<
+      {__typename?: 'Reservation'} & ReservationFragmentFragment
+    >;
+  };
 
 export type ViewerQueryVariables = Exact<{[key: string]: never}>;
 
@@ -484,6 +491,7 @@ export const TableRowFragmentDoc = gql`
     otherPersons
     status
     checkedInPersons
+    checkInTime
     token
   }
 `;
@@ -497,6 +505,7 @@ export const ReservationFragmentFragmentDoc = gql`
     primaryPerson
     otherPersons
     note
+    availableToCheckIn
     alternativeTables {
       id
       displayName
@@ -850,6 +859,7 @@ export type CancelReservationMutationOptions = Apollo.BaseMutationOptions<
 >;
 export const ReservationModalDocument = gql`
   query ReservationModal($token: String!) {
+    availableCapacity
     reservationForToken(token: $token) {
       ...ReservationFragment
     }
