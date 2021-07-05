@@ -1,21 +1,28 @@
 import {ExclamationCircleOutlined} from '@ant-design/icons';
-import {gql, useApolloClient} from '@apollo/client';
-import {Button, Modal, Rate, Form, Select, Spin} from 'antd';
+import {gql} from '@apollo/client';
+import {Button, Modal, Rate, Form, Select, Spin, Tag, List} from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
-import {add, max, min, sub, isSameDay} from 'date-fns';
+import {
+  add,
+  max,
+  min,
+  sub,
+  isSameDay,
+  isBefore,
+  isAfter,
+  isEqual,
+} from 'date-fns';
 import differenceInMinutes from 'date-fns/differenceInMinutes';
-import {useRouter} from 'next/dist/client/router';
 import React, {useCallback, useState} from 'react';
 import {useEffect} from 'react';
 import {
   ReservationModalQuery,
-  SlotsQuery,
   useCancelReservationMutation,
   useReservationModalQuery,
   useUpdateReservationMutation,
 } from '../../types/graphql';
 import GuestInput from './GuestInput';
-import {SlotsQueryGQL, SLOT_LENGTH_MIN} from './Slots';
+import {SLOT_LENGTH_MIN} from './Slots';
 import StatusBadge from './StatusBadge';
 import TimePicker from './TimePicker';
 import styles from './useReservationModal.module.css';
@@ -31,6 +38,17 @@ gql`
     primaryPerson
     otherPersons
     note
+    reservationsFromSamePerson {
+      id
+      startTime
+      endTime
+      otherPersons
+      table {
+        area {
+          displayName
+        }
+      }
+    }
     availableToCheckIn
     alternativeTables {
       id
@@ -98,6 +116,7 @@ export default function useReservationModal(): [
   React.ReactElement,
 ] {
   const [token, setToken] = useState<string | null>(null);
+  const [showNotes, setShowNotes] = useState<boolean>(false);
   const {data} = useReservationModalQuery({
     variables: {
       token,
@@ -131,9 +150,10 @@ export default function useReservationModal(): [
     });
   }, [data?.reservationForToken]);
 
-  useEffect(() => setNote(data?.reservationForToken?.note), [
-    data?.reservationForToken?.note,
-  ]);
+  useEffect(() => {
+    setShowNotes(Boolean(data?.reservationForToken?.note));
+    setNote(data?.reservationForToken?.note);
+  }, [data?.reservationForToken?.note]);
 
   const handleClose = () => {
     if (data?.reservationForToken?.note !== note) {
@@ -324,12 +344,72 @@ export default function useReservationModal(): [
             ]}
           />
         </Form.Item>
-        <TextArea
-          rows={3}
-          placeholder="Interne Notizen"
-          value={note}
-          onChange={(e) => setNote(e.target.value)}
-        />
+        {(showNotes || data.reservationForToken.note) && (
+          <TextArea
+            rows={3}
+            placeholder="Interne Notizen"
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+          />
+        )}
+        {!showNotes && !data.reservationForToken.note && (
+          <>
+            <Button onClick={() => setShowNotes(true)}>Notiz hinzufügen</Button>
+            &emsp;
+          </>
+        )}
+        <Button
+          danger
+          onClick={onClear}
+          loading={loading}
+          className={styles.delete}
+        >
+          Reservierung stornieren
+        </Button>
+        {data.reservationForToken.reservationsFromSamePerson.length > 0 && (
+          <div className={styles.otherBookings}>
+            <h3>weitere Reservierungen:</h3>
+            <List
+              itemLayout="horizontal"
+              dataSource={data.reservationForToken.reservationsFromSamePerson}
+              rowKey={(r) => String(r.id)}
+              renderItem={(r) => (
+                <List.Item>
+                  <List.Item.Meta
+                    avatar={<div className={styles.avatar}>#{r.id}</div>}
+                    title={
+                      <>
+                        {r.startTime.toLocaleString('de', {
+                          weekday: 'long',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                          timeZone: 'Europe/Berlin',
+                        })}{' '}
+                        bis{' '}
+                        {r.endTime.toLocaleTimeString('de', {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                          timeZone: 'Europe/Berlin',
+                        })}{' '}
+                        Uhr
+                      </>
+                    }
+                    description={`${r.table.area.displayName}, ${
+                      r.otherPersons.length + 1
+                    } Personen`}
+                  />
+                  <Overlap
+                    reservation={r}
+                    reservations={[
+                      ...data.reservationForToken.reservationsFromSamePerson,
+                      data.reservationForToken,
+                    ]}
+                  />
+                </List.Item>
+              )}
+            />
+          </div>
+        )}
       </Form>
     );
   } else {
@@ -348,14 +428,10 @@ export default function useReservationModal(): [
           ? `#${data.reservationForToken.id}: ${data.reservationForToken.primaryPerson}`
           : ''
       }
+      footer={null}
       visible={Boolean(token)}
       onOk={handleClose}
       onCancel={handleClose}
-      footer={
-        <Button danger onClick={onClear} loading={loading}>
-          Reservierung stornieren
-        </Button>
-      }
     >
       {content}
     </Modal>,
@@ -398,4 +474,30 @@ function TablePicker({
       {}
     </Select>
   );
+}
+
+function Overlap({
+  reservation,
+  reservations,
+}: {
+  reservation: {startTime: Date; endTime: Date; id: number};
+  reservations: Array<{startTime: Date; endTime: Date; id: number}>;
+}) {
+  for (const r of reservations) {
+    if (
+      r.id != reservation.id &&
+      isEqual(r.startTime, reservation.startTime) &&
+      isEqual(r.endTime, reservation.endTime)
+    ) {
+      return <Tag color="error">Doppelbuchung</Tag>;
+    } else if (
+      r.id != reservation.id &&
+      isBefore(r.startTime, reservation.endTime) &&
+      isAfter(r.endTime, reservation.startTime)
+    ) {
+      return <Tag color="warning">Überlappung</Tag>;
+    }
+  }
+
+  return null;
 }

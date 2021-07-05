@@ -35,13 +35,6 @@ export type Area = Node & {
   bandsPlaying: Array<Band>;
 };
 
-export type AreaTableArgs = {
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  before?: Maybe<TableWhereUniqueInput>;
-  after?: Maybe<TableWhereUniqueInput>;
-};
-
 export type AreaOpeningHourArgs = {
   day?: Maybe<Scalars['Date']>;
 };
@@ -283,11 +276,6 @@ export type TableReservationsArgs = {
   day?: Maybe<Scalars['Date']>;
 };
 
-export type TableAreaIdDisplayNameCompoundUniqueInput = {
-  areaId: Scalars['String'];
-  displayName: Scalars['String'];
-};
-
 export type TableAvailability = {
   __typename?: 'TableAvailability';
   startTime: Scalars['DateTime'];
@@ -299,11 +287,6 @@ export enum TableType {
   Table = 'TABLE',
   Island = 'ISLAND',
 }
-
-export type TableWhereUniqueInput = {
-  id?: Maybe<Scalars['String']>;
-  areaId_displayName?: Maybe<TableAreaIdDisplayNameCompoundUniqueInput>;
-};
 
 export type Viewer = {
   __typename?: 'Viewer';
@@ -409,6 +392,16 @@ export type ReservationFragmentFragment = {__typename?: 'Reservation'} & Pick<
   | 'note'
   | 'availableToCheckIn'
 > & {
+    reservationsFromSamePerson: Array<
+      {__typename?: 'Reservation'} & Pick<
+        Reservation,
+        'id' | 'startTime' | 'endTime' | 'otherPersons'
+      > & {
+          table: {__typename?: 'Table'} & {
+            area: {__typename?: 'Area'} & Pick<Area, 'displayName'>;
+          };
+        }
+    >;
     alternativeTables: Array<
       Maybe<
         {__typename?: 'Table'} & Pick<Table, 'id' | 'displayName'> & {
@@ -505,6 +498,17 @@ export const ReservationFragmentFragmentDoc = gql`
     primaryPerson
     otherPersons
     note
+    reservationsFromSamePerson {
+      id
+      startTime
+      endTime
+      otherPersons
+      table {
+        area {
+          displayName
+        }
+      }
+    }
     availableToCheckIn
     alternativeTables {
       id

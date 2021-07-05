@@ -12,7 +12,7 @@ import {HEADER_HEIGHT} from '../shared/Page';
 import useCreateModal from './useCreateModal';
 
 export const SLOT_LENGTH_MIN = 30;
-export const SLOT_LENGTH_PX = 100;
+export const SLOT_LENGTH_PX = 80;
 
 export const SlotsQueryGQL = gql`
   query Slots($day: Date) {

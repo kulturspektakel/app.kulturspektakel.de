@@ -2,6 +2,7 @@
   border: 2px solid transparent;
   cursor: pointer;
   display: block;
+  min-height: 54px;
   height: 100%;
   border-radius: 5px;
 }
@@ -15,7 +16,7 @@
   border-radius: 5px;
   box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.2);
   position: relative;
-  padding: 10px;
+  padding: 5px 10px;
 }
 
 .bookingTitle {
