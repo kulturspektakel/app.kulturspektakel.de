@@ -218,6 +218,7 @@ export type Query = {
   orders: Array<Order>;
   config?: Maybe<Config>;
   availableCapacity: Scalars['Int'];
+  reservationsByPerson: Array<ReservationByPerson>;
 };
 
 export type QueryReservationForTokenArgs = {
@@ -248,6 +249,12 @@ export type Reservation = {
   alternativeTables: Array<Maybe<Table>>;
   availableToCheckIn: Scalars['Int'];
   reservationsFromSamePerson: Array<Reservation>;
+};
+
+export type ReservationByPerson = {
+  __typename?: 'ReservationByPerson';
+  email: Scalars['String'];
+  reservations: Array<Reservation>;
 };
 
 export enum ReservationStatus {
@@ -472,6 +479,39 @@ export type ViewerQueryVariables = Exact<{[key: string]: never}>;
 export type ViewerQuery = {__typename?: 'Query'} & {
   viewer?: Maybe<
     {__typename?: 'Viewer'} & Pick<Viewer, 'profilePicture' | 'displayName'>
+  >;
+};
+
+export type OverlapQueryVariables = Exact<{[key: string]: never}>;
+
+export type OverlapQuery = {__typename?: 'Query'} & {
+  reservationsByPerson: Array<
+    {__typename?: 'ReservationByPerson'} & Pick<
+      ReservationByPerson,
+      'email'
+    > & {
+        reservations: Array<
+          {__typename?: 'Reservation'} & Pick<
+            Reservation,
+            | 'id'
+            | 'status'
+            | 'startTime'
+            | 'endTime'
+            | 'otherPersons'
+            | 'primaryPerson'
+          > & {
+              table: {__typename?: 'Table'} & Pick<
+                Table,
+                'id' | 'displayName'
+              > & {
+                  area: {__typename?: 'Area'} & Pick<
+                    Area,
+                    'id' | 'displayName'
+                  >;
+                };
+            }
+        >;
+      }
   >;
 };
 
@@ -968,4 +1008,70 @@ export type ViewerLazyQueryHookResult = ReturnType<typeof useViewerLazyQuery>;
 export type ViewerQueryResult = Apollo.QueryResult<
   ViewerQuery,
   ViewerQueryVariables
+>;
+export const OverlapDocument = gql`
+  query Overlap {
+    reservationsByPerson {
+      email
+      reservations {
+        id
+        status
+        startTime
+        endTime
+        otherPersons
+        primaryPerson
+        table {
+          id
+          displayName
+          area {
+            id
+            displayName
+          }
+        }
+      }
+    }
+  }
+`;
+
+/**
+ * __useOverlapQuery__
+ *
+ * To run a query within a React component, call `useOverlapQuery` and pass it any options that fit your needs.
+ * When your component renders, `useOverlapQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useOverlapQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useOverlapQuery(
+  baseOptions?: Apollo.QueryHookOptions<OverlapQuery, OverlapQueryVariables>,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useQuery<OverlapQuery, OverlapQueryVariables>(
+    OverlapDocument,
+    options,
+  );
+}
+export function useOverlapLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    OverlapQuery,
+    OverlapQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useLazyQuery<OverlapQuery, OverlapQueryVariables>(
+    OverlapDocument,
+    options,
+  );
+}
+export type OverlapQueryHookResult = ReturnType<typeof useOverlapQuery>;
+export type OverlapLazyQueryHookResult = ReturnType<typeof useOverlapLazyQuery>;
+export type OverlapQueryResult = Apollo.QueryResult<
+  OverlapQuery,
+  OverlapQueryVariables
 >;

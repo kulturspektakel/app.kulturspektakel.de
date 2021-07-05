@@ -59,6 +59,9 @@ export default function Page({
                 </Link>
               </Menu.Item>
             ))}
+            <Menu.Item key="lists">
+              <Link href={`/tables/overlap`}>Überlappungen</Link>
+            </Menu.Item>
           </Menu.SubMenu>
           <Menu.SubMenu key="sales" title="Verkauf">
             <Menu.Item key="lists">
