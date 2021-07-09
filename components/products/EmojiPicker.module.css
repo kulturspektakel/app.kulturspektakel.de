@@ -2,10 +2,6 @@
   margin-top: 4px;
 }
 
-.emoji {
-  margin-top: 2px;
-}
-
 .overlay :global(.ant-popover-inner-content) {
   padding: 0;
 }

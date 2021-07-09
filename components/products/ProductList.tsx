@@ -1,11 +1,12 @@
 import ProductRow from './ProductRow';
 import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
-import {useState, useCallback, useEffect} from 'react';
+import React, {useState, useCallback, useEffect} from 'react';
 import EmojiPicker from './EmojiPicker';
-import {Card, Button, message} from 'antd';
+import {Card, Button, message, Modal} from 'antd';
 import {
   CheckCircleOutlined,
   DeleteOutlined,
+  ExclamationCircleOutlined,
   PlusCircleOutlined,
 } from '@ant-design/icons';
 import styles from './ProductList.module.css';
@@ -77,7 +78,9 @@ export default function ProductList({
   useLeavePageConfirm(dirty, 'Änderungen an Preislisten nicht gespeichert');
 
   const [mutate] = useUpsertProductListMutation({});
-  const [deleteList] = useDeleteProductListMutation({});
+  const [deleteList] = useDeleteProductListMutation({
+    refetchQueries: ['ProductList'],
+  });
 
   const onDragEnd = useCallback(
     (result) => {
@@ -143,7 +146,21 @@ export default function ProductList({
           icon={<DeleteOutlined />}
           type="link"
           danger
-          onClick={() => deleteList({variables: {id: list.id}})}
+          onClick={() => {
+            Modal.confirm({
+              title: 'Preisliste löschen',
+              icon: <ExclamationCircleOutlined />,
+              okText: 'Löschen',
+              okButtonProps: {
+                danger: true,
+              },
+              cancelText: 'Abbrechen',
+              content: `Soll die Preisliste ${list.name} wirklich gelöscht werden?`,
+              onOk() {
+                return deleteList({variables: {id: list.id}});
+              },
+            });
+          }}
         >
           Löschen
         </Button>,
@@ -153,18 +170,21 @@ export default function ProductList({
         avatar={
           <EmojiPicker
             value={list.emoji}
-            onChange={() =>
-              mutate({
+            onChange={async (emoji) => {
+              await mutate({
                 variables: {
                   id: list.id,
-                  emoji: list.emoji,
+                  emoji,
                 },
-              })
-            }
+              });
+              message.success('Emoji geändert');
+            }}
           />
         }
         title={list.name}
-        description="test"
+        description={`${list.product.length} Produkt${
+          list.product.length !== 1 ? 'e' : ''
+        }`}
       />
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="droppable">

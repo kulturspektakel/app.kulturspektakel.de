@@ -1,5 +1,5 @@
 import {Button, Popover} from 'antd';
-import {Emoji, Picker, EmojiData} from 'emoji-mart';
+import {Picker} from 'emoji-mart';
 import {useState} from 'react';
 import styles from './EmojiPicker.module.css';
 import 'emoji-mart/css/emoji-mart.css';
@@ -27,9 +27,10 @@ export default function EmojiPicker({
           style={{border: 0}}
           exclude={['recent']}
           emoji={value ?? ''}
-          onSelect={({colons}) => {
+          showPreview={false}
+          onSelect={({native}: any) => {
             setPickerVisible(false);
-            onChange(colons ?? null);
+            onChange(native ?? null);
           }}
         />
       }
@@ -37,11 +38,7 @@ export default function EmojiPicker({
     >
       <Button
         shape="circle"
-        icon={
-          <div className={styles.emoji}>
-            <Emoji emoji={value ?? ''} size={24} />
-          </div>
-        }
+        icon={value}
         size="large"
         onClick={() => setPickerVisible(!pickerVisible)}
       />
