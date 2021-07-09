@@ -77,6 +77,8 @@ export type Mutation = {
   checkInReservation?: Maybe<Reservation>;
   createOrder?: Maybe<Order>;
   createReservation?: Maybe<Reservation>;
+  upsertProductList?: Maybe<ProductList>;
+  deleteProductList?: Maybe<Scalars['Boolean']>;
 };
 
 export type MutationUpdateReservationOtherPersonsArgs = {
@@ -132,6 +134,17 @@ export type MutationCreateReservationArgs = {
   note?: Maybe<Scalars['String']>;
 };
 
+export type MutationUpsertProductListArgs = {
+  id?: Maybe<Scalars['Int']>;
+  name?: Maybe<Scalars['String']>;
+  emoji?: Maybe<Scalars['String']>;
+  products?: Maybe<Array<ProductInput>>;
+};
+
+export type MutationDeleteProductListArgs = {
+  id: Scalars['Int'];
+};
+
 export type Node = {
   /** Unique identifier for the resource */
   id: Scalars['ID'];
@@ -180,6 +193,11 @@ export enum OrderPayment {
 export type Product = {
   __typename?: 'Product';
   id: Scalars['Int'];
+  name: Scalars['String'];
+  price: Scalars['Int'];
+};
+
+export type ProductInput = {
   name: Scalars['String'];
   price: Scalars['Int'];
 };
@@ -301,6 +319,37 @@ export type Viewer = {
   email: Scalars['String'];
   profilePicture?: Maybe<Scalars['String']>;
 };
+
+export type ProductListFragmentFragment = {__typename?: 'ProductList'} & Pick<
+  ProductList,
+  'id' | 'name' | 'emoji'
+> & {
+    product: Array<
+      {__typename?: 'Product'} & Pick<Product, 'id' | 'name' | 'price'>
+    >;
+  };
+
+export type UpsertProductListMutationVariables = Exact<{
+  id?: Maybe<Scalars['Int']>;
+  emoji?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
+  products?: Maybe<Array<ProductInput> | ProductInput>;
+}>;
+
+export type UpsertProductListMutation = {__typename?: 'Mutation'} & {
+  upsertProductList?: Maybe<
+    {__typename?: 'ProductList'} & ProductListFragmentFragment
+  >;
+};
+
+export type DeleteProductListMutationVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+export type DeleteProductListMutation = {__typename?: 'Mutation'} & Pick<
+  Mutation,
+  'deleteProductList'
+>;
 
 export type SlotsQueryVariables = Exact<{
   day?: Maybe<Scalars['Date']>;
@@ -482,6 +531,25 @@ export type ViewerQuery = {__typename?: 'Query'} & {
   >;
 };
 
+export type ProductListQueryVariables = Exact<{[key: string]: never}>;
+
+export type ProductListQuery = {__typename?: 'Query'} & {
+  productLists: Array<
+    {__typename?: 'ProductList'} & Pick<ProductList, 'id'> &
+      ProductListFragmentFragment
+  >;
+};
+
+export type CreateProductListMutationVariables = Exact<{
+  name: Scalars['String'];
+}>;
+
+export type CreateProductListMutation = {__typename?: 'Mutation'} & {
+  upsertProductList?: Maybe<
+    {__typename?: 'ProductList'} & ProductListFragmentFragment
+  >;
+};
+
 export type OverlapQueryVariables = Exact<{[key: string]: never}>;
 
 export type OverlapQuery = {__typename?: 'Query'} & {
@@ -515,6 +583,18 @@ export type OverlapQuery = {__typename?: 'Query'} & {
   >;
 };
 
+export const ProductListFragmentFragmentDoc = gql`
+  fragment ProductListFragment on ProductList {
+    id
+    name
+    emoji
+    product {
+      id
+      name
+      price
+    }
+  }
+`;
 export const TableRowFragmentDoc = gql`
   fragment TableRow on Reservation {
     id
@@ -579,6 +659,116 @@ export const ReservationFragmentFragmentDoc = gql`
     }
   }
 `;
+export const UpsertProductListDocument = gql`
+  mutation UpsertProductList(
+    $id: Int
+    $emoji: String
+    $name: String
+    $products: [ProductInput!]
+  ) {
+    upsertProductList(
+      id: $id
+      emoji: $emoji
+      name: $name
+      products: $products
+    ) {
+      ...ProductListFragment
+    }
+  }
+  ${ProductListFragmentFragmentDoc}
+`;
+export type UpsertProductListMutationFn = Apollo.MutationFunction<
+  UpsertProductListMutation,
+  UpsertProductListMutationVariables
+>;
+
+/**
+ * __useUpsertProductListMutation__
+ *
+ * To run a mutation, you first call `useUpsertProductListMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpsertProductListMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [upsertProductListMutation, { data, loading, error }] = useUpsertProductListMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      emoji: // value for 'emoji'
+ *      name: // value for 'name'
+ *      products: // value for 'products'
+ *   },
+ * });
+ */
+export function useUpsertProductListMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UpsertProductListMutation,
+    UpsertProductListMutationVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useMutation<
+    UpsertProductListMutation,
+    UpsertProductListMutationVariables
+  >(UpsertProductListDocument, options);
+}
+export type UpsertProductListMutationHookResult = ReturnType<
+  typeof useUpsertProductListMutation
+>;
+export type UpsertProductListMutationResult = Apollo.MutationResult<UpsertProductListMutation>;
+export type UpsertProductListMutationOptions = Apollo.BaseMutationOptions<
+  UpsertProductListMutation,
+  UpsertProductListMutationVariables
+>;
+export const DeleteProductListDocument = gql`
+  mutation DeleteProductList($id: Int!) {
+    deleteProductList(id: $id)
+  }
+`;
+export type DeleteProductListMutationFn = Apollo.MutationFunction<
+  DeleteProductListMutation,
+  DeleteProductListMutationVariables
+>;
+
+/**
+ * __useDeleteProductListMutation__
+ *
+ * To run a mutation, you first call `useDeleteProductListMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteProductListMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteProductListMutation, { data, loading, error }] = useDeleteProductListMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteProductListMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    DeleteProductListMutation,
+    DeleteProductListMutationVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useMutation<
+    DeleteProductListMutation,
+    DeleteProductListMutationVariables
+  >(DeleteProductListDocument, options);
+}
+export type DeleteProductListMutationHookResult = ReturnType<
+  typeof useDeleteProductListMutation
+>;
+export type DeleteProductListMutationResult = Apollo.MutationResult<DeleteProductListMutation>;
+export type DeleteProductListMutationOptions = Apollo.BaseMutationOptions<
+  DeleteProductListMutation,
+  DeleteProductListMutationVariables
+>;
 export const SlotsDocument = gql`
   query Slots($day: Date) {
     areas {
@@ -1008,6 +1198,113 @@ export type ViewerLazyQueryHookResult = ReturnType<typeof useViewerLazyQuery>;
 export type ViewerQueryResult = Apollo.QueryResult<
   ViewerQuery,
   ViewerQueryVariables
+>;
+export const ProductListDocument = gql`
+  query ProductList {
+    productLists {
+      id
+      ...ProductListFragment
+    }
+  }
+  ${ProductListFragmentFragmentDoc}
+`;
+
+/**
+ * __useProductListQuery__
+ *
+ * To run a query within a React component, call `useProductListQuery` and pass it any options that fit your needs.
+ * When your component renders, `useProductListQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useProductListQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useProductListQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    ProductListQuery,
+    ProductListQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useQuery<ProductListQuery, ProductListQueryVariables>(
+    ProductListDocument,
+    options,
+  );
+}
+export function useProductListLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    ProductListQuery,
+    ProductListQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useLazyQuery<ProductListQuery, ProductListQueryVariables>(
+    ProductListDocument,
+    options,
+  );
+}
+export type ProductListQueryHookResult = ReturnType<typeof useProductListQuery>;
+export type ProductListLazyQueryHookResult = ReturnType<
+  typeof useProductListLazyQuery
+>;
+export type ProductListQueryResult = Apollo.QueryResult<
+  ProductListQuery,
+  ProductListQueryVariables
+>;
+export const CreateProductListDocument = gql`
+  mutation CreateProductList($name: String!) {
+    upsertProductList(name: $name) {
+      ...ProductListFragment
+    }
+  }
+  ${ProductListFragmentFragmentDoc}
+`;
+export type CreateProductListMutationFn = Apollo.MutationFunction<
+  CreateProductListMutation,
+  CreateProductListMutationVariables
+>;
+
+/**
+ * __useCreateProductListMutation__
+ *
+ * To run a mutation, you first call `useCreateProductListMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateProductListMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createProductListMutation, { data, loading, error }] = useCreateProductListMutation({
+ *   variables: {
+ *      name: // value for 'name'
+ *   },
+ * });
+ */
+export function useCreateProductListMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CreateProductListMutation,
+    CreateProductListMutationVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useMutation<
+    CreateProductListMutation,
+    CreateProductListMutationVariables
+  >(CreateProductListDocument, options);
+}
+export type CreateProductListMutationHookResult = ReturnType<
+  typeof useCreateProductListMutation
+>;
+export type CreateProductListMutationResult = Apollo.MutationResult<CreateProductListMutation>;
+export type CreateProductListMutationOptions = Apollo.BaseMutationOptions<
+  CreateProductListMutation,
+  CreateProductListMutationVariables
 >;
 export const OverlapDocument = gql`
   query Overlap {
