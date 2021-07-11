@@ -64,7 +64,8 @@ export type Band = {
 
 export type Config = {
   __typename?: 'Config';
-  reservationStart?: Maybe<Scalars['DateTime']>;
+  reservationStart: Scalars['DateTime'];
+  tokenValue: Scalars['Int'];
 };
 
 export type Mutation = {
@@ -111,6 +112,7 @@ export type MutationUpdateReservationArgs = {
   tableId?: Maybe<Scalars['ID']>;
   checkedInPersons?: Maybe<Scalars['Int']>;
   note?: Maybe<Scalars['String']>;
+  primaryPerson?: Maybe<Scalars['String']>;
 };
 
 export type MutationCheckInReservationArgs = {
@@ -119,7 +121,6 @@ export type MutationCheckInReservationArgs = {
 };
 
 export type MutationCreateOrderArgs = {
-  tableId: Scalars['ID'];
   products: Array<OrderItemInput>;
   payment: OrderPayment;
 };
@@ -162,7 +163,6 @@ export type Order = {
   payment: OrderPayment;
   tokens: Scalars['Int'];
   createdAt: Scalars['DateTime'];
-  table?: Maybe<Table>;
   items: Array<OrderItem>;
   total?: Maybe<Scalars['Int']>;
 };
@@ -173,6 +173,7 @@ export type OrderItem = {
   note?: Maybe<Scalars['String']>;
   amount: Scalars['Int'];
   name: Scalars['String'];
+  list?: Maybe<ProductList>;
 };
 
 export type OrderItemInput = {
@@ -195,11 +196,13 @@ export type Product = {
   id: Scalars['Int'];
   name: Scalars['String'];
   price: Scalars['Int'];
+  requiresDeposit: Scalars['Boolean'];
 };
 
 export type ProductInput = {
   name: Scalars['String'];
   price: Scalars['Int'];
+  requireDeposit?: Maybe<Scalars['Boolean']>;
 };
 
 export type ProductList = {
@@ -237,6 +240,7 @@ export type Query = {
   config?: Maybe<Config>;
   availableCapacity: Scalars['Int'];
   reservationsByPerson: Array<ReservationByPerson>;
+  orderItems: Array<OrderItem>;
 };
 
 export type QueryReservationForTokenArgs = {
@@ -249,6 +253,12 @@ export type QueryNodeArgs = {
 
 export type QueryAvailableCapacityArgs = {
   time?: Maybe<Scalars['DateTime']>;
+};
+
+export type QueryOrderItemsArgs = {
+  from?: Maybe<Scalars['DateTime']>;
+  until?: Maybe<Scalars['DateTime']>;
+  productListId?: Maybe<Scalars['Int']>;
 };
 
 export type Reservation = {
@@ -325,7 +335,7 @@ export type ProductListFragmentFragment = {__typename?: 'ProductList'} & Pick<
   'id' | 'name' | 'emoji'
 > & {
     product: Array<
-      {__typename?: 'Product'} & Pick<Product, 'id' | 'name' | 'price'>
+      {__typename?: 'Product'} & Pick<Product, 'id'> & ProductRowFragment
     >;
   };
 
@@ -349,6 +359,11 @@ export type DeleteProductListMutationVariables = Exact<{
 export type DeleteProductListMutation = {__typename?: 'Mutation'} & Pick<
   Mutation,
   'deleteProductList'
+>;
+
+export type ProductRowFragment = {__typename?: 'Product'} & Pick<
+  Product,
+  'id' | 'name' | 'price' | 'requiresDeposit'
 >;
 
 export type SlotsQueryVariables = Exact<{
@@ -493,6 +508,7 @@ export type UpdateReservationMutationVariables = Exact<{
   endTime?: Maybe<Scalars['DateTime']>;
   note?: Maybe<Scalars['String']>;
   tableId?: Maybe<Scalars['ID']>;
+  primaryPerson?: Maybe<Scalars['String']>;
 }>;
 
 export type UpdateReservationMutation = {__typename?: 'Mutation'} & {
@@ -509,6 +525,17 @@ export type CancelReservationMutation = {__typename?: 'Mutation'} & Pick<
   Mutation,
   'cancelReservation'
 >;
+
+export type UpdateOtherPersonsMutationVariables = Exact<{
+  token: Scalars['String'];
+  otherPersons: Array<Scalars['String']> | Scalars['String'];
+}>;
+
+export type UpdateOtherPersonsMutation = {__typename?: 'Mutation'} & {
+  updateReservationOtherPersons?: Maybe<
+    {__typename?: 'Reservation'} & ReservationFragmentFragment
+  >;
+};
 
 export type ReservationModalQueryVariables = Exact<{
   token: Scalars['String'];
@@ -550,6 +577,25 @@ export type CreateProductListMutation = {__typename?: 'Mutation'} & {
   >;
 };
 
+export type ProductPrintQueryVariables = Exact<{[key: string]: never}>;
+
+export type ProductPrintQuery = {__typename?: 'Query'} & {
+  productLists: Array<
+    {__typename?: 'ProductList'} & Pick<
+      ProductList,
+      'id' | 'emoji' | 'name'
+    > & {
+        product: Array<
+          {__typename?: 'Product'} & Pick<
+            Product,
+            'id' | 'name' | 'price' | 'requiresDeposit'
+          >
+        >;
+      }
+  >;
+  config?: Maybe<{__typename?: 'Config'} & Pick<Config, 'tokenValue'>>;
+};
+
 export type OverlapQueryVariables = Exact<{[key: string]: never}>;
 
 export type OverlapQuery = {__typename?: 'Query'} & {
@@ -583,6 +629,14 @@ export type OverlapQuery = {__typename?: 'Query'} & {
   >;
 };
 
+export const ProductRowFragmentDoc = gql`
+  fragment ProductRowFragment on Product {
+    id
+    name
+    price
+    requiresDeposit
+  }
+`;
 export const ProductListFragmentFragmentDoc = gql`
   fragment ProductListFragment on ProductList {
     id
@@ -590,10 +644,10 @@ export const ProductListFragmentFragmentDoc = gql`
     emoji
     product {
       id
-      name
-      price
+      ...ProductRowFragment
     }
   }
+  ${ProductRowFragmentDoc}
 `;
 export const TableRowFragmentDoc = gql`
   fragment TableRow on Reservation {
@@ -983,6 +1037,7 @@ export const UpdateReservationDocument = gql`
     $endTime: DateTime
     $note: String
     $tableId: ID
+    $primaryPerson: String
   ) {
     updateReservation(
       id: $id
@@ -991,6 +1046,7 @@ export const UpdateReservationDocument = gql`
       endTime: $endTime
       note: $note
       tableId: $tableId
+      primaryPerson: $primaryPerson
     ) {
       ...ReservationFragment
     }
@@ -1021,6 +1077,7 @@ export type UpdateReservationMutationFn = Apollo.MutationFunction<
  *      endTime: // value for 'endTime'
  *      note: // value for 'note'
  *      tableId: // value for 'tableId'
+ *      primaryPerson: // value for 'primaryPerson'
  *   },
  * });
  */
@@ -1090,6 +1147,57 @@ export type CancelReservationMutationResult = Apollo.MutationResult<CancelReserv
 export type CancelReservationMutationOptions = Apollo.BaseMutationOptions<
   CancelReservationMutation,
   CancelReservationMutationVariables
+>;
+export const UpdateOtherPersonsDocument = gql`
+  mutation UpdateOtherPersons($token: String!, $otherPersons: [String!]!) {
+    updateReservationOtherPersons(otherPersons: $otherPersons, token: $token) {
+      ...ReservationFragment
+    }
+  }
+  ${ReservationFragmentFragmentDoc}
+`;
+export type UpdateOtherPersonsMutationFn = Apollo.MutationFunction<
+  UpdateOtherPersonsMutation,
+  UpdateOtherPersonsMutationVariables
+>;
+
+/**
+ * __useUpdateOtherPersonsMutation__
+ *
+ * To run a mutation, you first call `useUpdateOtherPersonsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateOtherPersonsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateOtherPersonsMutation, { data, loading, error }] = useUpdateOtherPersonsMutation({
+ *   variables: {
+ *      token: // value for 'token'
+ *      otherPersons: // value for 'otherPersons'
+ *   },
+ * });
+ */
+export function useUpdateOtherPersonsMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UpdateOtherPersonsMutation,
+    UpdateOtherPersonsMutationVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useMutation<
+    UpdateOtherPersonsMutation,
+    UpdateOtherPersonsMutationVariables
+  >(UpdateOtherPersonsDocument, options);
+}
+export type UpdateOtherPersonsMutationHookResult = ReturnType<
+  typeof useUpdateOtherPersonsMutation
+>;
+export type UpdateOtherPersonsMutationResult = Apollo.MutationResult<UpdateOtherPersonsMutation>;
+export type UpdateOtherPersonsMutationOptions = Apollo.BaseMutationOptions<
+  UpdateOtherPersonsMutation,
+  UpdateOtherPersonsMutationVariables
 >;
 export const ReservationModalDocument = gql`
   query ReservationModal($token: String!) {
@@ -1305,6 +1413,74 @@ export type CreateProductListMutationResult = Apollo.MutationResult<CreateProduc
 export type CreateProductListMutationOptions = Apollo.BaseMutationOptions<
   CreateProductListMutation,
   CreateProductListMutationVariables
+>;
+export const ProductPrintDocument = gql`
+  query ProductPrint {
+    productLists {
+      id
+      emoji
+      name
+      product {
+        id
+        name
+        price
+        requiresDeposit
+      }
+    }
+    config {
+      tokenValue
+    }
+  }
+`;
+
+/**
+ * __useProductPrintQuery__
+ *
+ * To run a query within a React component, call `useProductPrintQuery` and pass it any options that fit your needs.
+ * When your component renders, `useProductPrintQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useProductPrintQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useProductPrintQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    ProductPrintQuery,
+    ProductPrintQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useQuery<ProductPrintQuery, ProductPrintQueryVariables>(
+    ProductPrintDocument,
+    options,
+  );
+}
+export function useProductPrintLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    ProductPrintQuery,
+    ProductPrintQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useLazyQuery<ProductPrintQuery, ProductPrintQueryVariables>(
+    ProductPrintDocument,
+    options,
+  );
+}
+export type ProductPrintQueryHookResult = ReturnType<
+  typeof useProductPrintQuery
+>;
+export type ProductPrintLazyQueryHookResult = ReturnType<
+  typeof useProductPrintLazyQuery
+>;
+export type ProductPrintQueryResult = Apollo.QueryResult<
+  ProductPrintQuery,
+  ProductPrintQueryVariables
 >;
 export const OverlapDocument = gql`
   query Overlap {

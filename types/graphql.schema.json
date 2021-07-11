@@ -321,7 +321,23 @@
             "name": "reservationStart",
             "description": null,
             "args": [],
-            "type": {"kind": "SCALAR", "name": "DateTime", "ofType": null},
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {"kind": "SCALAR", "name": "DateTime", "ofType": null}
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "tokenValue",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {"kind": "SCALAR", "name": "Int", "ofType": null}
+            },
             "isDeprecated": false,
             "deprecationReason": null
           }
@@ -621,6 +637,14 @@
                 "defaultValue": null,
                 "isDeprecated": false,
                 "deprecationReason": null
+              },
+              {
+                "name": "primaryPerson",
+                "description": null,
+                "type": {"kind": "SCALAR", "name": "String", "ofType": null},
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
               }
             ],
             "type": {"kind": "OBJECT", "name": "Reservation", "ofType": null},
@@ -664,18 +688,6 @@
             "name": "createOrder",
             "description": null,
             "args": [
-              {
-                "name": "tableId",
-                "description": null,
-                "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {"kind": "SCALAR", "name": "ID", "ofType": null}
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
               {
                 "name": "products",
                 "description": null,
@@ -1035,14 +1047,6 @@
             "deprecationReason": null
           },
           {
-            "name": "table",
-            "description": null,
-            "args": [],
-            "type": {"kind": "OBJECT", "name": "Table", "ofType": null},
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "items",
             "description": null,
             "args": [],
@@ -1126,6 +1130,14 @@
               "name": null,
               "ofType": {"kind": "SCALAR", "name": "String", "ofType": null}
             },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "list",
+            "description": null,
+            "args": [],
+            "type": {"kind": "OBJECT", "name": "ProductList", "ofType": null},
             "isDeprecated": false,
             "deprecationReason": null
           }
@@ -1265,6 +1277,18 @@
             },
             "isDeprecated": false,
             "deprecationReason": null
+          },
+          {
+            "name": "requiresDeposit",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {"kind": "SCALAR", "name": "Boolean", "ofType": null}
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
           }
         ],
         "inputFields": null,
@@ -1298,6 +1322,14 @@
               "name": null,
               "ofType": {"kind": "SCALAR", "name": "Int", "ofType": null}
             },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "requireDeposit",
+            "description": null,
+            "type": {"kind": "SCALAR", "name": "Boolean", "ofType": null},
             "defaultValue": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -1637,6 +1669,55 @@
                   "ofType": {
                     "kind": "OBJECT",
                     "name": "ReservationByPerson",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "orderItems",
+            "description": null,
+            "args": [
+              {
+                "name": "from",
+                "description": null,
+                "type": {"kind": "SCALAR", "name": "DateTime", "ofType": null},
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "until",
+                "description": null,
+                "type": {"kind": "SCALAR", "name": "DateTime", "ofType": null},
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "productListId",
+                "description": null,
+                "type": {"kind": "SCALAR", "name": "Int", "ofType": null},
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "OrderItem",
                     "ofType": null
                   }
                 }

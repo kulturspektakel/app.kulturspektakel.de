@@ -26,7 +26,6 @@ export default function EmojiPicker({
           showSkinTones={false}
           style={{border: 0}}
           exclude={['recent']}
-          emoji={value ?? ''}
           showPreview={false}
           onSelect={({native}: any) => {
             setPickerVisible(false);
@@ -38,7 +37,7 @@ export default function EmojiPicker({
     >
       <Button
         shape="circle"
-        icon={value}
+        icon={value || '-'}
         size="large"
         onClick={() => setPickerVisible(!pickerVisible)}
       />

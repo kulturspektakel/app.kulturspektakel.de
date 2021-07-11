@@ -1,13 +1,23 @@
 import styles from './ProductRow.module.css';
-import {Input} from 'antd';
+import {Input, Tooltip} from 'antd';
 import React, {useRef} from 'react';
-import {ProductT} from './ProductList';
+import Checkbox from 'antd/lib/checkbox/Checkbox';
+import {gql} from '@apollo/client';
+import {ProductRowFragment} from '../../types/graphql';
+
+gql`
+  fragment ProductRow on Product {
+    id
+    name
+    price
+    requiresDeposit
+  }
+`;
 
 type Props = {
   index: number;
-  product: string | null;
-  price: number | null;
-  onChange: (i: number, newProduct: Partial<ProductT>) => void;
+  data: ProductRowFragment;
+  onChange: (i: number, newProduct: Partial<ProductRowFragment>) => void;
 };
 type Ref = HTMLLIElement;
 
@@ -17,13 +27,13 @@ const formatter = new Intl.NumberFormat('de-DE', {
 });
 
 export default React.forwardRef<Ref, Props>(
-  ({product, price, index, onChange, ...props}: Props, ref) => {
+  ({data, index, onChange, ...props}: Props, ref) => {
     const inputRef = useRef<Input>(null);
     return (
       <li className={styles.root} ref={ref} {...props}>
         <span className={styles.index}>{index}</span>
         <Input
-          value={product ?? ''}
+          value={data.name ?? ''}
           onChange={(e) => {
             onChange(index - 1, {name: e.target.value});
           }}
@@ -32,7 +42,9 @@ export default React.forwardRef<Ref, Props>(
         <Input
           ref={inputRef}
           inputMode="decimal"
-          defaultValue={price ? formatter.format(price / 100) : undefined}
+          defaultValue={
+            data.price ? formatter.format(data.price / 100) : undefined
+          }
           onBlur={(e) => {
             let newPrice = Math.floor(
               parseFloat((e.target.value || '0').replace(/,/g, '.')) * 100,
@@ -40,7 +52,7 @@ export default React.forwardRef<Ref, Props>(
             if (newPrice > 9999) {
               newPrice = 9999;
             }
-            if (newPrice === price) {
+            if (newPrice === data.price) {
               return;
             }
             onChange(index - 1, {price: newPrice});
@@ -48,8 +60,17 @@ export default React.forwardRef<Ref, Props>(
           style={{width: '115px'}}
           min={0}
           max={9999}
-          suffix={price ? `€` : ''}
+          suffix={data.price ? `€` : ''}
         />
+        <Tooltip title="Pfand">
+          <Checkbox
+            className={styles.deposit}
+            checked={data.requiresDeposit}
+            onChange={(e) =>
+              onChange(index - 1, {requiresDeposit: e.target.checked})
+            }
+          />
+        </Tooltip>
       </li>
     );
   },

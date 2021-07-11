@@ -13,6 +13,7 @@ import styles from './ProductList.module.css';
 import {gql} from '@apollo/client';
 import {
   ProductListFragmentFragment,
+  ProductRowFragment,
   useDeleteProductListMutation,
   useUpsertProductListMutation,
 } from '../../types/graphql';
@@ -25,10 +26,14 @@ function reorder<T>(list: T[], startIndex: number, endIndex: number): T[] {
   return result;
 }
 
-export type ProductT = {id: string; name: string | null; price: number | null};
-
-function generateRow(name: string | null, price: number | null): ProductT {
-  return {id: Math.random().toString(36), name, price};
+function generateRow(data: Partial<ProductRowFragment>): ProductRowFragment {
+  return {
+    id: data.id ?? Math.random(),
+    name: '',
+    price: 0,
+    requiresDeposit: false,
+    ...data,
+  };
 }
 
 gql`
@@ -38,8 +43,7 @@ gql`
     emoji
     product {
       id
-      name
-      price
+      ...ProductRowFragment
     }
   }
 
@@ -69,10 +73,10 @@ export default function ProductList({
 }: {
   list: ProductListFragmentFragment;
 }) {
-  const [products, setProducts] = useState<ProductT[]>([]);
+  const [products, setProducts] = useState<ProductRowFragment[]>([]);
   const [dirty, setDirty] = useState(false);
   useEffect(() => {
-    setProducts(list.product.map(({name, price}) => generateRow(name, price)));
+    setProducts(list.product.map(generateRow));
   }, [list.product]);
 
   useLeavePageConfirm(dirty, 'Änderungen an Preislisten nicht gespeichert');
@@ -87,7 +91,7 @@ export default function ProductList({
       if (!result.destination) {
         return;
       }
-      const items = reorder<ProductT>(
+      const items = reorder<ProductRowFragment>(
         products,
         result.source.index,
         result.destination.index,
@@ -99,7 +103,7 @@ export default function ProductList({
   );
 
   const onProductChange = useCallback(
-    (i: number, newProduct: Partial<ProductT>) => {
+    (i: number, newProduct: Partial<ProductRowFragment>) => {
       const newProducts = [...products];
       newProducts.splice(i, 1, {...products[i], ...newProduct});
       setProducts(newProducts);
@@ -124,7 +128,7 @@ export default function ProductList({
                 id: list.id,
                 products: products
                   .filter((p) => Boolean(p.name && p.price))
-                  .map(({name, price}) => ({name, price})),
+                  .map(({id, __typename, ...data}) => data),
               },
             });
             message.success('Änderung gespeichert');
@@ -137,7 +141,7 @@ export default function ProductList({
           type="link"
           style={{color: '#52c41a'}}
           onClick={() => {
-            setProducts([...products, generateRow('', 0)]);
+            setProducts([...products, generateRow({})]);
           }}
         >
           Produkt
@@ -191,15 +195,18 @@ export default function ProductList({
           {(provided) => (
             <div {...provided.droppableProps} ref={provided.innerRef}>
               {products.map((product, i) => (
-                <Draggable key={product.id} draggableId={product.id} index={i}>
+                <Draggable
+                  key={product.id}
+                  draggableId={String(product.id)}
+                  index={i}
+                >
                   {(provided) => (
                     <ProductRow
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
                       ref={provided.innerRef}
                       index={i + 1}
-                      product={product.name}
-                      price={product.price}
+                      data={product}
                       onChange={onProductChange}
                     />
                   )}

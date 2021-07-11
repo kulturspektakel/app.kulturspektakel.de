@@ -19,6 +19,7 @@ import {
   ReservationModalQuery,
   useCancelReservationMutation,
   useReservationModalQuery,
+  useUpdateOtherPersonsMutation,
   useUpdateReservationMutation,
 } from '../../types/graphql';
 import GuestInput from './GuestInput';
@@ -86,6 +87,7 @@ gql`
     $endTime: DateTime
     $note: String
     $tableId: ID
+    $primaryPerson: String
   ) {
     updateReservation(
       id: $id
@@ -94,6 +96,7 @@ gql`
       endTime: $endTime
       note: $note
       tableId: $tableId
+      primaryPerson: $primaryPerson
     ) {
       ...ReservationFragment
     }
@@ -101,6 +104,12 @@ gql`
 
   mutation CancelReservation($token: String!) {
     cancelReservation(token: $token)
+  }
+
+  mutation UpdateOtherPersons($token: String!, $otherPersons: [String!]!) {
+    updateReservationOtherPersons(otherPersons: $otherPersons, token: $token) {
+      ...ReservationFragment
+    }
   }
 
   query ReservationModal($token: String!) {
@@ -124,7 +133,14 @@ export default function useReservationModal(): [
     skip: !token,
     fetchPolicy: 'cache-and-network',
   });
-  const [updateReservation] = useUpdateReservationMutation();
+  const [
+    updateReservation,
+    {loading: updatingReservation},
+  ] = useUpdateReservationMutation();
+  const [
+    updateOtherPersons,
+    {loading: updatingOtherPersons},
+  ] = useUpdateOtherPersonsMutation();
   const [cancelReservation, {loading}] = useCancelReservationMutation();
   const [note, setNote] = useState<string | undefined>();
 
@@ -336,7 +352,39 @@ export default function useReservationModal(): [
         </Form.Item>
         <Form.Item label="Gäste">
           <GuestInput
-            onChange={() => {}}
+            onChange={(guests) => {
+              let primaryUpdate;
+              if (guests[0] !== data.reservationForToken.primaryPerson) {
+                primaryUpdate = updateReservation({
+                  variables: {
+                    id: data.reservationForToken.id,
+                    primaryPerson: guests[0],
+                  },
+                  optimisticResponse: {
+                    updateReservation: {
+                      ...data.reservationForToken,
+                      primaryPerson: guests[0],
+                    },
+                  },
+                });
+              }
+
+              return Promise.all([
+                primaryUpdate,
+                updateOtherPersons({
+                  variables: {
+                    token,
+                    otherPersons: guests.slice(1),
+                  },
+                  optimisticResponse: {
+                    updateReservationOtherPersons: {
+                      ...data.reservationForToken,
+                      otherPersons: guests.slice(1),
+                    },
+                  },
+                }),
+              ]);
+            }}
             maxCapacity={data.reservationForToken.table.maxCapacity}
             value={[
               data.reservationForToken.primaryPerson,

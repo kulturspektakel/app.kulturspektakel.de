@@ -29,6 +29,21 @@ export default function Lists() {
   const {data} = useProductListQuery();
   const [create] = useCreateProductListMutation({});
 
+  const createList = useCallback(async () => {
+    if (!newListName) {
+      return;
+    }
+    await create({
+      variables: {
+        name: newListName,
+      },
+      refetchQueries: ['ProductList'],
+      awaitRefetchQueries: true,
+    });
+    setNewListName('');
+    setCreateModalVisible(false);
+  }, [setNewListName, setCreateModalVisible, newListName, create]);
+
   return (
     <Page>
       <Modal
@@ -39,31 +54,31 @@ export default function Lists() {
         onCancel={() => setCreateModalVisible(false)}
         okButtonProps={{
           disabled: !newListName,
-          onClick: async () => {
-            await create({
-              variables: {
-                name: newListName,
-              },
-              refetchQueries: ['ProductList'],
-              awaitRefetchQueries: true,
-            });
-            setNewListName('');
-            setCreateModalVisible(false);
-          },
+          onClick: createList,
         }}
       >
-        <Input
-          placeholder="Name"
-          autoFocus
-          value={newListName ?? ''}
-          onChange={(e) => setNewListName(e.target.value)}
-        />
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            return createList();
+          }}
+        >
+          <Input
+            placeholder="Name"
+            autoFocus
+            value={newListName ?? ''}
+            onChange={(e) => setNewListName(e.target.value)}
+          />
+        </form>
       </Modal>
       <PageHeader
         title="Preislisten"
         extra={[
+          <Button key="1" href="/products/print" target="_blank">
+            Drucken
+          </Button>,
           <Button
-            key="1"
+            key="2"
             type="primary"
             onClick={() => setCreateModalVisible(true)}
           >

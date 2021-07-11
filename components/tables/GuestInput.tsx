@@ -6,13 +6,16 @@ export default function GuestInput({
   value,
   maxCapacity,
   onChange,
+  disabled,
 }: {
   maxCapacity: number;
   value: string[];
   onChange: (guests: string[]) => void;
+  disabled?: boolean;
 }) {
   return (
     <Select
+      disabled={disabled}
       value={value}
       tokenSeparators={[',']}
       mode="tags"
