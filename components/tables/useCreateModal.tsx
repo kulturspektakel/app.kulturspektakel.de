@@ -1,7 +1,7 @@
 import {gql} from '@apollo/client';
 import {Alert, Button, Form, Input, Modal} from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
-import {add, isAfter, min, differenceInMinutes, isBefore} from 'date-fns';
+import {add, isAfter, min, differenceInMinutes} from 'date-fns';
 import React, {useState} from 'react';
 import {useEffect} from 'react';
 import {
@@ -13,7 +13,6 @@ import {
 import GuestInput from './GuestInput';
 import {SLOT_LENGTH_MIN} from './Slots';
 import TimePicker from './TimePicker';
-const {confirm} = Modal;
 
 gql`
   query CreateModal($id: ID!) {
@@ -109,6 +108,7 @@ export default function useCreateModal(): [
                   ...variables,
                   startTime: slot.time,
                 },
+                awaitRefetchQueries: true,
                 refetchQueries: ['Slots'],
               }).then(handleClose);
             }}

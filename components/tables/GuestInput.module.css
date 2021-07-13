@@ -1,7 +1,3 @@
-.dropdown {
-  visibility: hidden;
-}
-
-.select {
-  width: 100%;
+.input {
+  margin-bottom: 4px;
 }

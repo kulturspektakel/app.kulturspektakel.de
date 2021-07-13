@@ -161,6 +161,7 @@ export default function useReservationModal(): [
             token,
           },
           refetchQueries: ['Slots'],
+          awaitRefetchQueries: true,
         }).then(() => setToken(null));
       },
     });
@@ -295,60 +296,60 @@ export default function useReservationModal(): [
             }
           />
         </Form.Item>
-
-        <Form.Item label="Von">
-          <TimePicker
-            onChange={(value) =>
-              updateReservation({
-                variables: {
-                  id: data.reservationForToken.id,
-                  startTime: value,
-                },
-              })
-            }
-            min={max(
-              [
-                sub(data.reservationForToken.startTime, {
-                  minutes: SLOT_LENGTH_MIN * 4,
-                }),
-                opening,
-                data.reservationForToken.table.reservations[
-                  reservationIndex - 1
-                ]?.endTime,
-              ].filter(Boolean),
-            )}
-            max={sub(data.reservationForToken.endTime, {
-              minutes: SLOT_LENGTH_MIN,
-            })}
-            selected={data.reservationForToken.startTime}
-          />
-        </Form.Item>
-        <Form.Item label="Bis">
-          <TimePicker
-            onChange={(value) =>
-              updateReservation({
-                variables: {
-                  id: data.reservationForToken.id,
-                  endTime: value,
-                },
-              })
-            }
-            min={add(data.reservationForToken.startTime, {
-              minutes: SLOT_LENGTH_MIN,
-            })}
-            max={min(
-              [
-                add(data.reservationForToken.endTime, {
-                  minutes: SLOT_LENGTH_MIN * 4,
-                }),
-                ending,
-                data.reservationForToken.table.reservations[
-                  reservationIndex + 1
-                ]?.startTime,
-              ].filter(Boolean),
-            )}
-            selected={data.reservationForToken.endTime}
-          />
+        <Form.Item label="Zeit">
+          <div className={styles.row}>
+            <TimePicker
+              onChange={(value) =>
+                updateReservation({
+                  variables: {
+                    id: data.reservationForToken.id,
+                    startTime: value,
+                  },
+                })
+              }
+              min={max(
+                [
+                  sub(data.reservationForToken.startTime, {
+                    minutes: SLOT_LENGTH_MIN * 4,
+                  }),
+                  opening,
+                  data.reservationForToken.table.reservations[
+                    reservationIndex - 1
+                  ]?.endTime,
+                ].filter(Boolean),
+              )}
+              max={sub(data.reservationForToken.endTime, {
+                minutes: SLOT_LENGTH_MIN,
+              })}
+              selected={data.reservationForToken.startTime}
+            />
+            <span>bis</span>
+            <TimePicker
+              onChange={(value) =>
+                updateReservation({
+                  variables: {
+                    id: data.reservationForToken.id,
+                    endTime: value,
+                  },
+                })
+              }
+              min={add(data.reservationForToken.startTime, {
+                minutes: SLOT_LENGTH_MIN,
+              })}
+              max={min(
+                [
+                  add(data.reservationForToken.endTime, {
+                    minutes: SLOT_LENGTH_MIN * 4,
+                  }),
+                  ending,
+                  data.reservationForToken.table.reservations[
+                    reservationIndex + 1
+                  ]?.startTime,
+                ].filter(Boolean),
+              )}
+              selected={data.reservationForToken.endTime}
+            />
+          </div>
         </Form.Item>
         <Form.Item label="Gäste">
           <GuestInput

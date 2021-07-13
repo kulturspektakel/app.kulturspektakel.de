@@ -8,6 +8,7 @@ import Page from '../../components/shared/Page';
 import {OverlapQuery, useOverlapQuery} from '../../types/graphql';
 import styles from './overlap.module.css';
 import {DAYS} from './[...day]';
+import memoize from 'lodash.memoize';
 
 gql`
   query Overlap {
@@ -54,7 +55,10 @@ export default function Overlap() {
           {
             title: 'Überlappungen',
             align: 'right',
-            render: (r) => overlaps(r.reservations),
+            render: (r) => memoizedOverlaps(r.reservations),
+            sorter: (a, b) =>
+              memoizedOverlaps(a.reservations) -
+              memoizedOverlaps(b.reservations),
           },
           {
             title: 'Tage',
@@ -92,6 +96,7 @@ function overlaps(
 
   return overlaps;
 }
+const memoizedOverlaps = memoize(overlaps);
 
 type Res = OverlapQuery['reservationsByPerson'][number]['reservations'][number];
 
@@ -138,21 +143,30 @@ function PersonRow({reservations}: {reservations: Res[]}) {
 function Days({reservations}: {reservations: Res[]}) {
   return (
     <>
-      {DAYS.map((d) => (
-        <Tooltip
-          title={d.toLocaleDateString('de', {
-            weekday: 'long',
-          })}
-        >
-          <Badge
-            status={
-              reservations.some((r) => isSameDay(d, r.startTime))
-                ? 'success'
-                : 'default'
-            }
-          />
-        </Tooltip>
-      ))}
+      {DAYS.map((d) => {
+        const count = reservations.reduce(
+          (acc, cv) => (isSameDay(d, cv.startTime) ? acc + 1 : acc),
+          0,
+        );
+
+        return (
+          <Tooltip
+            title={d.toLocaleDateString('de', {
+              weekday: 'long',
+            })}
+          >
+            <Badge
+              count={count}
+              showZero
+              style={{
+                fontWeight: 500,
+                backgroundColor:
+                  count === 0 ? '#bbb' : count === 1 ? '#87e8de' : '#006d75',
+              }}
+            />
+          </Tooltip>
+        );
+      })}
     </>
   );
 }

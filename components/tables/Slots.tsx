@@ -165,6 +165,7 @@ function checkedInPersons(time: Date, data: SlotsQuery): number {
       .filter(
         (r) =>
           r.checkInTime &&
+          !isBefore(time, r.startTime) &&
           isBefore(r.checkInTime, add(time, {minutes: SLOT_LENGTH_MIN})) &&
           isBefore(time, r.endTime),
       )
