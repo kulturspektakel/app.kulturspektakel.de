@@ -202,7 +202,7 @@ export type Product = {
 export type ProductInput = {
   name: Scalars['String'];
   price: Scalars['Int'];
-  requireDeposit?: Maybe<Scalars['Boolean']>;
+  requiresDeposit?: Maybe<Scalars['Boolean']>;
 };
 
 export type ProductList = {
@@ -330,7 +330,7 @@ export type Viewer = {
   profilePicture?: Maybe<Scalars['String']>;
 };
 
-export type ProductListFragmentFragment = {__typename?: 'ProductList'} & Pick<
+export type ProductListFragment = {__typename?: 'ProductList'} & Pick<
   ProductList,
   'id' | 'name' | 'emoji'
 > & {
@@ -347,9 +347,7 @@ export type UpsertProductListMutationVariables = Exact<{
 }>;
 
 export type UpsertProductListMutation = {__typename?: 'Mutation'} & {
-  upsertProductList?: Maybe<
-    {__typename?: 'ProductList'} & ProductListFragmentFragment
-  >;
+  upsertProductList?: Maybe<{__typename?: 'ProductList'} & ProductListFragment>;
 };
 
 export type DeleteProductListMutationVariables = Exact<{
@@ -562,8 +560,7 @@ export type ProductListQueryVariables = Exact<{[key: string]: never}>;
 
 export type ProductListQuery = {__typename?: 'Query'} & {
   productLists: Array<
-    {__typename?: 'ProductList'} & Pick<ProductList, 'id'> &
-      ProductListFragmentFragment
+    {__typename?: 'ProductList'} & Pick<ProductList, 'id'> & ProductListFragment
   >;
 };
 
@@ -572,9 +569,7 @@ export type CreateProductListMutationVariables = Exact<{
 }>;
 
 export type CreateProductListMutation = {__typename?: 'Mutation'} & {
-  upsertProductList?: Maybe<
-    {__typename?: 'ProductList'} & ProductListFragmentFragment
-  >;
+  upsertProductList?: Maybe<{__typename?: 'ProductList'} & ProductListFragment>;
 };
 
 export type ProductPrintQueryVariables = Exact<{[key: string]: never}>;
@@ -629,22 +624,52 @@ export type OverlapQuery = {__typename?: 'Query'} & {
   >;
 };
 
+export type OverviewReservationFragment = {__typename?: 'Reservation'} & Pick<
+  Reservation,
+  'id' | 'status' | 'startTime' | 'endTime' | 'primaryPerson' | 'otherPersons'
+>;
+
+export type OverviewQueryVariables = Exact<{
+  area: Scalars['ID'];
+  day: Scalars['Date'];
+}>;
+
+export type OverviewQuery = {__typename?: 'Query'} & {
+  areas: Array<{__typename?: 'Area'} & Pick<Area, 'id' | 'displayName'>>;
+  node?: Maybe<
+    | ({__typename?: 'Area'} & {
+        table: Array<
+          {__typename?: 'Table'} & Pick<
+            Table,
+            'id' | 'displayName' | 'maxCapacity'
+          > & {
+              reservations: Array<
+                {__typename?: 'Reservation'} & Pick<Reservation, 'id'> &
+                  OverviewReservationFragment
+              >;
+            }
+        >;
+      })
+    | {__typename?: 'Table'}
+  >;
+};
+
 export const ProductRowFragmentDoc = gql`
-  fragment ProductRowFragment on Product {
+  fragment ProductRow on Product {
     id
     name
     price
     requiresDeposit
   }
 `;
-export const ProductListFragmentFragmentDoc = gql`
-  fragment ProductListFragment on ProductList {
+export const ProductListFragmentDoc = gql`
+  fragment ProductList on ProductList {
     id
     name
     emoji
     product {
       id
-      ...ProductRowFragment
+      ...ProductRow
     }
   }
   ${ProductRowFragmentDoc}
@@ -713,6 +738,16 @@ export const ReservationFragmentFragmentDoc = gql`
     }
   }
 `;
+export const OverviewReservationFragmentDoc = gql`
+  fragment OverviewReservation on Reservation {
+    id
+    status
+    startTime
+    endTime
+    primaryPerson
+    otherPersons
+  }
+`;
 export const UpsertProductListDocument = gql`
   mutation UpsertProductList(
     $id: Int
@@ -726,10 +761,10 @@ export const UpsertProductListDocument = gql`
       name: $name
       products: $products
     ) {
-      ...ProductListFragment
+      ...ProductList
     }
   }
-  ${ProductListFragmentFragmentDoc}
+  ${ProductListFragmentDoc}
 `;
 export type UpsertProductListMutationFn = Apollo.MutationFunction<
   UpsertProductListMutation,
@@ -1311,10 +1346,10 @@ export const ProductListDocument = gql`
   query ProductList {
     productLists {
       id
-      ...ProductListFragment
+      ...ProductList
     }
   }
-  ${ProductListFragmentFragmentDoc}
+  ${ProductListFragmentDoc}
 `;
 
 /**
@@ -1367,10 +1402,10 @@ export type ProductListQueryResult = Apollo.QueryResult<
 export const CreateProductListDocument = gql`
   mutation CreateProductList($name: String!) {
     upsertProductList(name: $name) {
-      ...ProductListFragment
+      ...ProductList
     }
   }
-  ${ProductListFragmentFragmentDoc}
+  ${ProductListFragmentDoc}
 `;
 export type CreateProductListMutationFn = Apollo.MutationFunction<
   CreateProductListMutation,
@@ -1547,4 +1582,73 @@ export type OverlapLazyQueryHookResult = ReturnType<typeof useOverlapLazyQuery>;
 export type OverlapQueryResult = Apollo.QueryResult<
   OverlapQuery,
   OverlapQueryVariables
+>;
+export const OverviewDocument = gql`
+  query Overview($area: ID!, $day: Date!) {
+    areas {
+      id
+      displayName
+    }
+    node(id: $area) {
+      ... on Area {
+        table {
+          id
+          displayName
+          maxCapacity
+          reservations(day: $day) {
+            id
+            ...OverviewReservation
+          }
+        }
+      }
+    }
+  }
+  ${OverviewReservationFragmentDoc}
+`;
+
+/**
+ * __useOverviewQuery__
+ *
+ * To run a query within a React component, call `useOverviewQuery` and pass it any options that fit your needs.
+ * When your component renders, `useOverviewQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useOverviewQuery({
+ *   variables: {
+ *      area: // value for 'area'
+ *      day: // value for 'day'
+ *   },
+ * });
+ */
+export function useOverviewQuery(
+  baseOptions: Apollo.QueryHookOptions<OverviewQuery, OverviewQueryVariables>,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useQuery<OverviewQuery, OverviewQueryVariables>(
+    OverviewDocument,
+    options,
+  );
+}
+export function useOverviewLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    OverviewQuery,
+    OverviewQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useLazyQuery<OverviewQuery, OverviewQueryVariables>(
+    OverviewDocument,
+    options,
+  );
+}
+export type OverviewQueryHookResult = ReturnType<typeof useOverviewQuery>;
+export type OverviewLazyQueryHookResult = ReturnType<
+  typeof useOverviewLazyQuery
+>;
+export type OverviewQueryResult = Apollo.QueryResult<
+  OverviewQuery,
+  OverviewQueryVariables
 >;

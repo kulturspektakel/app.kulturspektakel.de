@@ -12,7 +12,7 @@ import {
 import styles from './ProductList.module.css';
 import {gql} from '@apollo/client';
 import {
-  ProductListFragmentFragment,
+  ProductListFragment,
   ProductRowFragment,
   useDeleteProductListMutation,
   useUpsertProductListMutation,
@@ -37,13 +37,13 @@ function generateRow(data: Partial<ProductRowFragment>): ProductRowFragment {
 }
 
 gql`
-  fragment ProductListFragment on ProductList {
+  fragment ProductList on ProductList {
     id
     name
     emoji
     product {
       id
-      ...ProductRowFragment
+      ...ProductRow
     }
   }
 
@@ -59,7 +59,7 @@ gql`
       name: $name
       products: $products
     ) {
-      ...ProductListFragment
+      ...ProductList
     }
   }
 
@@ -68,11 +68,7 @@ gql`
   }
 `;
 
-export default function ProductList({
-  list,
-}: {
-  list: ProductListFragmentFragment;
-}) {
+export default function ProductList({list}: {list: ProductListFragment}) {
   const [products, setProducts] = useState<ProductRowFragment[]>([]);
   const [dirty, setDirty] = useState(false);
   useEffect(() => {

@@ -1327,7 +1327,7 @@
             "deprecationReason": null
           },
           {
-            "name": "requireDeposit",
+            "name": "requiresDeposit",
             "description": null,
             "type": {"kind": "SCALAR", "name": "Boolean", "ofType": null},
             "defaultValue": null,

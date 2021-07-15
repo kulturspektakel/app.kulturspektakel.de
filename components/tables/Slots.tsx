@@ -124,6 +124,7 @@ export default function Slots({day}: {day: Date}) {
               minutes: SLOT_LENGTH_MIN * i,
             }),
             data,
+            areaFilter,
           )
         }
       />
@@ -138,6 +139,7 @@ export default function Slots({day}: {day: Date}) {
               minutes: SLOT_LENGTH_MIN * i,
             }),
             data,
+            areaFilter,
           ).reduce((acc, cv) => acc + cv.otherPersons.length + 1, 0)
         }
       />
@@ -148,23 +150,40 @@ export default function Slots({day}: {day: Date}) {
 function getReservations(
   time: Date,
   data: SlotsQuery,
+  areaFilter: string,
 ): SlotsQuery['areas'][number]['table'][number]['reservations'] {
   return (
     data?.areas
-      .flatMap((a) => a.table.flatMap((t) => t.reservations))
+      .flatMap((a) =>
+        a.table.flatMap((t) =>
+          t.reservations.map((r) => ({...r, areaId: a.id})),
+        ),
+      )
       .filter(
-        (r) => !isAfter(r.startTime, time) && isBefore(time, r.endTime),
+        (r) =>
+          (areaFilter === 'all' || r.areaId === areaFilter) &&
+          !isAfter(r.startTime, time) &&
+          isBefore(time, r.endTime),
       ) ?? []
   );
 }
 
-function checkedInPersons(time: Date, data: SlotsQuery): number {
+function checkedInPersons(
+  time: Date,
+  data: SlotsQuery,
+  areaFilter: string,
+): number {
   return (
     data?.areas
-      .flatMap((a) => a.table.flatMap((t) => t.reservations))
+      .flatMap((a) =>
+        a.table.flatMap((t) =>
+          t.reservations.map((r) => ({...r, areaId: a.id})),
+        ),
+      )
       .filter(
         (r) =>
           r.checkInTime &&
+          (areaFilter === 'all' || r.areaId === areaFilter) &&
           !isBefore(time, r.startTime) &&
           isBefore(r.checkInTime, add(time, {minutes: SLOT_LENGTH_MIN})) &&
           isBefore(time, r.endTime),

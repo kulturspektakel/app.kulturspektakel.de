@@ -12,13 +12,13 @@ gql`
   query ProductList {
     productLists {
       id
-      ...ProductListFragment
+      ...ProductList
     }
   }
 
   mutation CreateProductList($name: String!) {
     upsertProductList(name: $name) {
-      ...ProductListFragment
+      ...ProductList
     }
   }
 `;
