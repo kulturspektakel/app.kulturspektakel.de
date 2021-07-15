@@ -7,6 +7,7 @@ import {useEffect} from 'react';
 import Page from '../../components/shared/Page';
 import {
   OverviewReservationFragment,
+  useOverviewAreasQuery,
   useOverviewQuery,
 } from '../../types/graphql';
 import styles from './overview.module.css';
@@ -20,13 +21,17 @@ gql`
     endTime
     primaryPerson
     otherPersons
+    checkedInPersons
   }
 
-  query Overview($area: ID!, $day: Date!) {
+  query OverviewAreas {
     areas {
       id
       displayName
     }
+  }
+
+  query Overview($area: ID!, $day: Date!) {
     node(id: $area) {
       ... on Area {
         table {
@@ -53,7 +58,7 @@ function useNow() {
   return now;
 }
 
-export default function Overlap() {
+export default function Overview() {
   const now = useNow();
   const [area, setArea] = useState('gb');
   const [day, setDay] = useState(DAYS.find((d) => isToday(d)) ?? DAYS[0]);
@@ -65,6 +70,8 @@ export default function Overlap() {
     pollInterval: 10000,
   });
 
+  const {data: areas} = useOverviewAreasQuery();
+
   return (
     <Page>
       <Head>
@@ -75,14 +82,18 @@ export default function Overlap() {
           className={styles.select}
           dropdownMatchSelectWidth={false}
           onChange={(d) => setDay(new Date(d))}
-          value={day.toDateString()}
+          value={day.toISOString().substr(0, 10) + 'T10:00:00'}
         >
           {DAYS.map((d) => (
-            <Select.Option key={d.toDateString()} value={d.toDateString()}>
+            <Select.Option
+              key={d.toDateString()}
+              value={d.toISOString().substr(0, 10) + 'T10:00:00'}
+            >
               {d.toLocaleDateString('de', {
                 weekday: 'long',
                 day: '2-digit',
                 month: 'long',
+                timeZone: 'Europe/Berlin',
               })}
             </Select.Option>
           ))}
@@ -93,7 +104,7 @@ export default function Overlap() {
           dropdownMatchSelectWidth={false}
           onChange={(a) => setArea(a.toString())}
         >
-          {data?.areas.map((a) => (
+          {areas?.areas.map((a) => (
             <Select.Option key={a.id} value={a.id}>
               {a.displayName}
             </Select.Option>
@@ -104,7 +115,17 @@ export default function Overlap() {
         rowKey="id"
         columns={[
           {title: 'Name', dataIndex: 'displayName'},
-          {title: 'Plätze', dataIndex: 'maxCapacity'},
+          {
+            title: 'Plätze',
+            render: (_, r) => {
+              const currentReservation = r.reservations.find(
+                (r) => isAfter(r.startTime, now) && isBefore(r.endTime, now),
+              );
+              return `${currentReservation?.checkedInPersons ?? 0}/${
+                r.maxCapacity
+              }`;
+            },
+          },
           {
             title: 'Status',
             align: 'right',

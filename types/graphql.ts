@@ -626,8 +626,20 @@ export type OverlapQuery = {__typename?: 'Query'} & {
 
 export type OverviewReservationFragment = {__typename?: 'Reservation'} & Pick<
   Reservation,
-  'id' | 'status' | 'startTime' | 'endTime' | 'primaryPerson' | 'otherPersons'
+  | 'id'
+  | 'status'
+  | 'startTime'
+  | 'endTime'
+  | 'primaryPerson'
+  | 'otherPersons'
+  | 'checkedInPersons'
 >;
+
+export type OverviewAreasQueryVariables = Exact<{[key: string]: never}>;
+
+export type OverviewAreasQuery = {__typename?: 'Query'} & {
+  areas: Array<{__typename?: 'Area'} & Pick<Area, 'id' | 'displayName'>>;
+};
 
 export type OverviewQueryVariables = Exact<{
   area: Scalars['ID'];
@@ -635,7 +647,6 @@ export type OverviewQueryVariables = Exact<{
 }>;
 
 export type OverviewQuery = {__typename?: 'Query'} & {
-  areas: Array<{__typename?: 'Area'} & Pick<Area, 'id' | 'displayName'>>;
   node?: Maybe<
     | ({__typename?: 'Area'} & {
         table: Array<
@@ -746,6 +757,7 @@ export const OverviewReservationFragmentDoc = gql`
     endTime
     primaryPerson
     otherPersons
+    checkedInPersons
   }
 `;
 export const UpsertProductListDocument = gql`
@@ -1583,12 +1595,66 @@ export type OverlapQueryResult = Apollo.QueryResult<
   OverlapQuery,
   OverlapQueryVariables
 >;
-export const OverviewDocument = gql`
-  query Overview($area: ID!, $day: Date!) {
+export const OverviewAreasDocument = gql`
+  query OverviewAreas {
     areas {
       id
       displayName
     }
+  }
+`;
+
+/**
+ * __useOverviewAreasQuery__
+ *
+ * To run a query within a React component, call `useOverviewAreasQuery` and pass it any options that fit your needs.
+ * When your component renders, `useOverviewAreasQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useOverviewAreasQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useOverviewAreasQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    OverviewAreasQuery,
+    OverviewAreasQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useQuery<OverviewAreasQuery, OverviewAreasQueryVariables>(
+    OverviewAreasDocument,
+    options,
+  );
+}
+export function useOverviewAreasLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    OverviewAreasQuery,
+    OverviewAreasQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useLazyQuery<OverviewAreasQuery, OverviewAreasQueryVariables>(
+    OverviewAreasDocument,
+    options,
+  );
+}
+export type OverviewAreasQueryHookResult = ReturnType<
+  typeof useOverviewAreasQuery
+>;
+export type OverviewAreasLazyQueryHookResult = ReturnType<
+  typeof useOverviewAreasLazyQuery
+>;
+export type OverviewAreasQueryResult = Apollo.QueryResult<
+  OverviewAreasQuery,
+  OverviewAreasQueryVariables
+>;
+export const OverviewDocument = gql`
+  query Overview($area: ID!, $day: Date!) {
     node(id: $area) {
       ... on Area {
         table {
