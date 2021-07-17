@@ -123,6 +123,9 @@ export type MutationCheckInReservationArgs = {
 export type MutationCreateOrderArgs = {
   products: Array<OrderItemInput>;
   payment: OrderPayment;
+  clientId?: Maybe<Scalars['String']>;
+  deposit: Scalars['Int'];
+  deviceTime: Scalars['DateTime'];
 };
 
 export type MutationCreateReservationArgs = {
@@ -163,6 +166,8 @@ export type Order = {
   payment: OrderPayment;
   tokens: Scalars['Int'];
   createdAt: Scalars['DateTime'];
+  deviceTime: Scalars['DateTime'];
+  deviceId: Scalars['String'];
   items: Array<OrderItem>;
   total?: Maybe<Scalars['Int']>;
 };
@@ -174,11 +179,14 @@ export type OrderItem = {
   amount: Scalars['Int'];
   name: Scalars['String'];
   list?: Maybe<ProductList>;
+  perUnitPrice: Scalars['Int'];
 };
 
 export type OrderItemInput = {
-  productId: Scalars['Int'];
+  perUnitPrice: Scalars['Int'];
+  name: Scalars['String'];
   amount: Scalars['Int'];
+  listId?: Maybe<Scalars['Int']>;
   note?: Maybe<Scalars['String']>;
 };
 
@@ -270,6 +278,7 @@ export type Reservation = {
   startTime: Scalars['DateTime'];
   endTime: Scalars['DateTime'];
   primaryPerson: Scalars['String'];
+  primaryEmail: Scalars['String'];
   otherPersons: Array<Scalars['String']>;
   checkedInPersons: Scalars['Int'];
   note?: Maybe<Scalars['String']>;
@@ -457,6 +466,7 @@ export type ReservationFragmentFragment = {__typename?: 'Reservation'} & Pick<
   | 'status'
   | 'checkedInPersons'
   | 'primaryPerson'
+  | 'primaryEmail'
   | 'otherPersons'
   | 'note'
   | 'availableToCheckIn'
@@ -546,6 +556,7 @@ export type ReservationModalQuery = {__typename?: 'Query'} & Pick<
     reservationForToken?: Maybe<
       {__typename?: 'Reservation'} & ReservationFragmentFragment
     >;
+    areas: Array<{__typename?: 'Area'} & Pick<Area, 'id' | 'displayName'>>;
   };
 
 export type ViewerQueryVariables = Exact<{[key: string]: never}>;
@@ -706,6 +717,7 @@ export const ReservationFragmentFragmentDoc = gql`
     status
     checkedInPersons
     primaryPerson
+    primaryEmail
     otherPersons
     note
     reservationsFromSamePerson {
@@ -1251,6 +1263,10 @@ export const ReservationModalDocument = gql`
     availableCapacity
     reservationForToken(token: $token) {
       ...ReservationFragment
+    }
+    areas {
+      id
+      displayName
     }
   }
   ${ReservationFragmentFragmentDoc}

@@ -37,6 +37,7 @@ gql`
     status
     checkedInPersons
     primaryPerson
+    primaryEmail
     otherPersons
     note
     reservationsFromSamePerson {
@@ -117,6 +118,10 @@ gql`
     reservationForToken(token: $token) {
       ...ReservationFragment
     }
+    areas {
+      id
+      displayName
+    }
   }
 `;
 
@@ -133,14 +138,8 @@ export default function useReservationModal(): [
     skip: !token,
     fetchPolicy: 'cache-and-network',
   });
-  const [
-    updateReservation,
-    {loading: updatingReservation},
-  ] = useUpdateReservationMutation();
-  const [
-    updateOtherPersons,
-    {loading: updatingOtherPersons},
-  ] = useUpdateOtherPersonsMutation();
+  const [updateReservation] = useUpdateReservationMutation();
+  const [updateOtherPersons] = useUpdateOtherPersonsMutation();
   const [cancelReservation, {loading}] = useCancelReservationMutation();
   const [note, setNote] = useState<string | undefined>();
 
@@ -283,6 +282,7 @@ export default function useReservationModal(): [
         </Form.Item>
         <Form.Item label="Tisch">
           <TablePicker
+            areas={data.areas}
             alternativeTables={data.reservationForToken.alternativeTables}
             selected={data.reservationForToken.table}
             onChange={(value) =>
@@ -408,6 +408,31 @@ export default function useReservationModal(): [
           </>
         )}
         <Button
+          onClick={async () => {
+            const {default: printJS} = await import('print-js');
+            printJS({
+              printable: [
+                {
+                  name: data.reservationForToken.primaryPerson,
+                  email: data.reservationForToken.primaryEmail,
+                  telefon: '',
+                },
+                ...data.reservationForToken.otherPersons.map((p) => ({
+                  name: p,
+                  email: '',
+                  telefon: '',
+                })),
+              ],
+              type: 'json',
+              properties: ['name', 'email', 'telefon'],
+              header: `<h1>Reservierung #${data.reservationForToken?.id}</h1>`,
+              style: 'td { padding: 10px }',
+            });
+          }}
+        >
+          Drucken
+        </Button>
+        <Button
           danger
           onClick={onClear}
           loading={loading}
@@ -488,39 +513,31 @@ export default function useReservationModal(): [
 }
 
 function TablePicker({
+  areas,
   alternativeTables,
   selected,
   onChange,
 }: {
+  areas: ReservationModalQuery['areas'];
   alternativeTables: ReservationModalQuery['reservationForToken']['alternativeTables'];
   selected: ReservationModalQuery['reservationForToken']['table'];
   onChange: (value: string) => void;
 }) {
-  const areas = alternativeTables.reduce<
-    Map<
-      string,
-      ReservationModalQuery['reservationForToken']['alternativeTables'][number]['area']
-    >
-  >((acc, cv) => acc.set(cv.area.id, cv.area), new Map());
   return (
     <Select onChange={onChange} value={selected.id}>
-      {[...areas]
-        .sort(([a], [b]) => (a < b ? -1 : 1))
-        .map(([, {id, displayName}]) => (
-          <Select.OptGroup key={id} label={displayName}>
-            {}
-            {alternativeTables
-              .filter((t) => t.area.id === id)
-              .concat(id === selected.area.id ? [selected] : [])
-              .sort((a, b) => (a.id < b.id ? -1 : 1))
-              .map((t) => (
-                <Select.Option value={t.id} key={t.id}>
-                  {t.displayName}
-                </Select.Option>
-              ))}
-          </Select.OptGroup>
-        ))}
-      {}
+      {areas.map(({displayName, id}) => (
+        <Select.OptGroup key={id} label={displayName}>
+          {alternativeTables
+            .filter((t) => t.area.id === id)
+            .concat(id === selected.area.id ? [selected] : [])
+            .sort((a, b) => (a.id < b.id ? -1 : 1))
+            .map((t) => (
+              <Select.Option value={t.id} key={t.id}>
+                {t.displayName}
+              </Select.Option>
+            ))}
+        </Select.OptGroup>
+      ))}
     </Select>
   );
 }
