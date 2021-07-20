@@ -80,6 +80,7 @@ export type Mutation = {
   createReservation?: Maybe<Reservation>;
   upsertProductList?: Maybe<ProductList>;
   deleteProductList?: Maybe<Scalars['Boolean']>;
+  swapReservations?: Maybe<Scalars['Boolean']>;
 };
 
 export type MutationUpdateReservationOtherPersonsArgs = {
@@ -147,6 +148,11 @@ export type MutationUpsertProductListArgs = {
 
 export type MutationDeleteProductListArgs = {
   id: Scalars['Int'];
+};
+
+export type MutationSwapReservationsArgs = {
+  a: Scalars['Int'];
+  b: Scalars['Int'];
 };
 
 export type Node = {
@@ -283,6 +289,7 @@ export type Reservation = {
   checkedInPersons: Scalars['Int'];
   note?: Maybe<Scalars['String']>;
   checkInTime?: Maybe<Scalars['DateTime']>;
+  swappableWith: Array<Maybe<Reservation>>;
   alternativeTables: Array<Maybe<Table>>;
   availableToCheckIn: Scalars['Int'];
   reservationsFromSamePerson: Array<Reservation>;
@@ -476,9 +483,9 @@ export type ReservationFragmentFragment = {__typename?: 'Reservation'} & Pick<
         Reservation,
         'id' | 'startTime' | 'endTime' | 'otherPersons'
       > & {
-          table: {__typename?: 'Table'} & {
-            area: {__typename?: 'Area'} & Pick<Area, 'displayName'>;
-          };
+          table: {__typename?: 'Table'} & Pick<Table, 'id'> & {
+              area: {__typename?: 'Area'} & Pick<Area, 'id' | 'displayName'>;
+            };
         }
     >;
     alternativeTables: Array<
@@ -507,6 +514,14 @@ export type ReservationFragmentFragment = {__typename?: 'Reservation'} & Pick<
             >;
           };
       };
+    swappableWith: Array<
+      Maybe<
+        {__typename?: 'Reservation'} & Pick<
+          Reservation,
+          'id' | 'primaryPerson' | 'status'
+        > & {table: {__typename?: 'Table'} & Pick<Table, 'id' | 'displayName'>}
+      >
+    >;
   };
 
 export type UpdateReservationMutationVariables = Exact<{
@@ -544,6 +559,16 @@ export type UpdateOtherPersonsMutation = {__typename?: 'Mutation'} & {
     {__typename?: 'Reservation'} & ReservationFragmentFragment
   >;
 };
+
+export type SwapReservationsMutationVariables = Exact<{
+  a: Scalars['Int'];
+  b: Scalars['Int'];
+}>;
+
+export type SwapReservationsMutation = {__typename?: 'Mutation'} & Pick<
+  Mutation,
+  'swapReservations'
+>;
 
 export type ReservationModalQueryVariables = Exact<{
   token: Scalars['String'];
@@ -726,7 +751,9 @@ export const ReservationFragmentFragmentDoc = gql`
       endTime
       otherPersons
       table {
+        id
         area {
+          id
           displayName
         }
       }
@@ -757,6 +784,15 @@ export const ReservationFragmentFragmentDoc = gql`
           startTime
           endTime
         }
+      }
+    }
+    swappableWith {
+      id
+      primaryPerson
+      status
+      table {
+        id
+        displayName
       }
     }
   }
@@ -1257,6 +1293,54 @@ export type UpdateOtherPersonsMutationResult = Apollo.MutationResult<UpdateOther
 export type UpdateOtherPersonsMutationOptions = Apollo.BaseMutationOptions<
   UpdateOtherPersonsMutation,
   UpdateOtherPersonsMutationVariables
+>;
+export const SwapReservationsDocument = gql`
+  mutation SwapReservations($a: Int!, $b: Int!) {
+    swapReservations(a: $a, b: $b)
+  }
+`;
+export type SwapReservationsMutationFn = Apollo.MutationFunction<
+  SwapReservationsMutation,
+  SwapReservationsMutationVariables
+>;
+
+/**
+ * __useSwapReservationsMutation__
+ *
+ * To run a mutation, you first call `useSwapReservationsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSwapReservationsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [swapReservationsMutation, { data, loading, error }] = useSwapReservationsMutation({
+ *   variables: {
+ *      a: // value for 'a'
+ *      b: // value for 'b'
+ *   },
+ * });
+ */
+export function useSwapReservationsMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    SwapReservationsMutation,
+    SwapReservationsMutationVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useMutation<
+    SwapReservationsMutation,
+    SwapReservationsMutationVariables
+  >(SwapReservationsDocument, options);
+}
+export type SwapReservationsMutationHookResult = ReturnType<
+  typeof useSwapReservationsMutation
+>;
+export type SwapReservationsMutationResult = Apollo.MutationResult<SwapReservationsMutation>;
+export type SwapReservationsMutationOptions = Apollo.BaseMutationOptions<
+  SwapReservationsMutation,
+  SwapReservationsMutationVariables
 >;
 export const ReservationModalDocument = gql`
   query ReservationModal($token: String!) {

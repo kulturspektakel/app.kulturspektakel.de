@@ -1,5 +1,5 @@
 import {Tag} from 'antd';
-import {differenceInMinutes, isPast} from 'date-fns';
+import {differenceInMinutes} from 'date-fns';
 import React, {useEffect, useState} from 'react';
 import {ReservationStatus} from '../../types/graphql';
 
@@ -18,12 +18,10 @@ export default function StatusBadge(props: {
     return () => clearInterval(interval);
   }, [props.startTime]);
 
-  if (isPast(props.endTime)) {
-    return <Tag color="red">Abgelaufen</Tag>;
-  } else if (props.status === 'CheckedIn') {
+  if (props.status === 'CheckedIn') {
     return <Tag color="green">Eingecheckt</Tag>;
   } else if (props.status === 'Confirmed' && time > 15) {
-    return <Tag color="gold">Überfällig</Tag>;
+    return <Tag color="red">Überfällig</Tag>;
   } else if (props.status === 'Confirmed' && props.showAll) {
     return <Tag color="green">Bestätigt</Tag>;
   } else if (props.status === 'Pending') {

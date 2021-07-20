@@ -951,6 +951,39 @@
             "type": {"kind": "SCALAR", "name": "Boolean", "ofType": null},
             "isDeprecated": false,
             "deprecationReason": null
+          },
+          {
+            "name": "swapReservations",
+            "description": null,
+            "args": [
+              {
+                "name": "a",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {"kind": "SCALAR", "name": "Int", "ofType": null}
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "b",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {"kind": "SCALAR", "name": "Int", "ofType": null}
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
+            "type": {"kind": "SCALAR", "name": "Boolean", "ofType": null},
+            "isDeprecated": false,
+            "deprecationReason": null
           }
         ],
         "inputFields": null,
@@ -1974,6 +2007,26 @@
             "description": null,
             "args": [],
             "type": {"kind": "SCALAR", "name": "DateTime", "ofType": null},
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "swappableWith",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Reservation",
+                  "ofType": null
+                }
+              }
+            },
             "isDeprecated": false,
             "deprecationReason": null
           },

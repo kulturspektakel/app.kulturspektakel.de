@@ -23,8 +23,10 @@
 }
 
 .page {
-  font-size: 15px;
+  font-size: 13px;
   padding: 1em;
+  padding-left: 2em;
+  padding-right: 2em;
   font-family: 'Lato';
 }
 
@@ -35,7 +37,7 @@
   align-items: flex-end;
   font-family: 'nexalight';
   line-height: 1em;
-  padding-bottom: 0.5em;
+  padding-bottom: 0.2em;
 }
 
 .title strong {
@@ -43,7 +45,7 @@
 }
 
 .title img {
-  width: 4em;
+  width: 3.5em;
   margin-bottom: -0.5em;
 }
 
@@ -61,7 +63,7 @@
 .list {
   page-break-inside: avoid;
   break-inside: avoid;
-  margin-bottom: 1.2em;
+  margin-bottom: 0.8em;
 }
 
 .list ul,
@@ -71,7 +73,7 @@
 }
 
 .list h2 {
-  margin-bottom: 0;
+  margin-bottom: -0.2em;
   text-transform: uppercase;
   font-family: 'nexalight';
 }
@@ -113,4 +115,5 @@
   text-align: center;
   font-style: italic;
   font-weight: 300;
+  margin-bottom: -0.2em;
 }

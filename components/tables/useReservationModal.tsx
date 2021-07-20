@@ -1,6 +1,17 @@
-import {ExclamationCircleOutlined} from '@ant-design/icons';
+import {DownOutlined, ExclamationCircleOutlined} from '@ant-design/icons';
 import {gql} from '@apollo/client';
-import {Button, Modal, Rate, Form, Select, Spin, Tag, List} from 'antd';
+import {
+  Button,
+  Modal,
+  Rate,
+  Form,
+  Select,
+  Spin,
+  Tag,
+  List,
+  Dropdown,
+  Menu,
+} from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import {
   add,
@@ -19,6 +30,7 @@ import {
   ReservationModalQuery,
   useCancelReservationMutation,
   useReservationModalQuery,
+  useSwapReservationsMutation,
   useUpdateOtherPersonsMutation,
   useUpdateReservationMutation,
 } from '../../types/graphql';
@@ -46,7 +58,9 @@ gql`
       endTime
       otherPersons
       table {
+        id
         area {
+          id
           displayName
         }
       }
@@ -77,6 +91,15 @@ gql`
           startTime
           endTime
         }
+      }
+    }
+    swappableWith {
+      id
+      primaryPerson
+      status
+      table {
+        id
+        displayName
       }
     }
   }
@@ -113,6 +136,10 @@ gql`
     }
   }
 
+  mutation SwapReservations($a: Int!, $b: Int!) {
+    swapReservations(a: $a, b: $b)
+  }
+
   query ReservationModal($token: String!) {
     availableCapacity
     reservationForToken(token: $token) {
@@ -136,10 +163,11 @@ export default function useReservationModal(): [
       token,
     },
     skip: !token,
-    fetchPolicy: 'cache-and-network',
+    onError: console.error,
   });
   const [updateReservation] = useUpdateReservationMutation();
   const [updateOtherPersons] = useUpdateOtherPersonsMutation();
+  const [swapReservations] = useSwapReservationsMutation();
   const [cancelReservation, {loading}] = useCancelReservationMutation();
   const [note, setNote] = useState<string | undefined>();
 
@@ -407,31 +435,58 @@ export default function useReservationModal(): [
             &emsp;
           </>
         )}
-        <Button
-          onClick={async () => {
-            const {default: printJS} = await import('print-js');
-            printJS({
-              printable: [
-                {
-                  name: data.reservationForToken.primaryPerson,
-                  email: data.reservationForToken.primaryEmail,
-                  telefon: '',
-                },
-                ...data.reservationForToken.otherPersons.map((p) => ({
-                  name: p,
-                  email: '',
-                  telefon: '',
-                })),
-              ],
-              type: 'json',
-              properties: ['name', 'email', 'telefon'],
-              header: `<h1>Reservierung #${data.reservationForToken?.id}</h1>`,
-              style: 'td { padding: 10px }',
-            });
-          }}
-        >
-          Drucken
-        </Button>
+        {data.reservationForToken.swappableWith.length > 0 && (
+          <Dropdown
+            trigger={['click']}
+            overlay={
+              <Menu>
+                {data.reservationForToken.swappableWith.map((r) => (
+                  <Menu.Item
+                    key={r.id}
+                    onClick={() => {
+                      const isDanger =
+                        r.status === 'CheckedIn' ||
+                        data.reservationForToken.status === 'CheckedIn';
+
+                      confirm({
+                        title: 'Reservierungen tauschen',
+                        icon: isDanger ? <ExclamationCircleOutlined /> : null,
+                        content: `Sollen Reservierungen #${r.id}: ${
+                          r.primaryPerson
+                        } und #${data.reservationForToken.id}: ${
+                          data.reservationForToken.primaryPerson
+                        } getauscht werden${
+                          isDanger
+                            ? ', obwohl eine der Reservierungen schon eingechcekt ist'
+                            : ''
+                        }?`,
+                        okText: 'Tauschen',
+                        cancelText: 'Abbrechen',
+                        onOk: () =>
+                          swapReservations({
+                            variables: {
+                              a: r.id,
+                              b: data.reservationForToken.id,
+                            },
+                            refetchQueries: ['Slots'],
+                            awaitRefetchQueries: true,
+                          }).then(() => setToken(null)),
+                        onCancel() {},
+                      });
+                    }}
+                  >
+                    #{r.id}: {r.primaryPerson} ({r.table.displayName})
+                  </Menu.Item>
+                ))}
+              </Menu>
+            }
+          >
+            <Button onClick={(e) => e.preventDefault()}>
+              Tauschen
+              <DownOutlined />
+            </Button>
+          </Dropdown>
+        )}
         <Button
           danger
           onClick={onClear}
