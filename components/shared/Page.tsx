@@ -71,7 +71,7 @@ export default function Page({
               <Link href={`/products/lists`}>Preislisten</Link>
             </Menu.Item>
             <Menu.Item key="revenue">
-              <Link href={`/products/`}>Umsätze</Link>
+              <Link href={`/products/revenue`}>Umsätze</Link>
             </Menu.Item>
           </Menu.SubMenu>
           <Menu.Item key="/booking">

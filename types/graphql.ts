@@ -62,10 +62,32 @@ export type Band = {
   description?: Maybe<Scalars['String']>;
 };
 
+export type Billable = {
+  salesNumbers: SalesNumber;
+};
+
+export type BillableSalesNumbersArgs = {
+  after?: Maybe<Scalars['DateTime']>;
+  before?: Maybe<Scalars['DateTime']>;
+};
+
 export type Config = {
   __typename?: 'Config';
   reservationStart: Scalars['DateTime'];
   tokenValue: Scalars['Int'];
+};
+
+export type Device = Billable & {
+  __typename?: 'Device';
+  salesNumbers: SalesNumber;
+  id: Scalars['String'];
+  productList?: Maybe<ProductList>;
+  lastSeen?: Maybe<Scalars['DateTime']>;
+};
+
+export type DeviceSalesNumbersArgs = {
+  after?: Maybe<Scalars['DateTime']>;
+  before?: Maybe<Scalars['DateTime']>;
 };
 
 export type Mutation = {
@@ -205,12 +227,18 @@ export enum OrderPayment {
   FreeBand = 'FREE_BAND',
 }
 
-export type Product = {
+export type Product = Billable & {
   __typename?: 'Product';
+  salesNumbers: SalesNumber;
   id: Scalars['Int'];
   name: Scalars['String'];
   price: Scalars['Int'];
   requiresDeposit: Scalars['Boolean'];
+};
+
+export type ProductSalesNumbersArgs = {
+  after?: Maybe<Scalars['DateTime']>;
+  before?: Maybe<Scalars['DateTime']>;
 };
 
 export type ProductInput = {
@@ -219,12 +247,18 @@ export type ProductInput = {
   requiresDeposit?: Maybe<Scalars['Boolean']>;
 };
 
-export type ProductList = {
+export type ProductList = Billable & {
   __typename?: 'ProductList';
+  salesNumbers: SalesNumber;
   id: Scalars['Int'];
   name: Scalars['String'];
   emoji?: Maybe<Scalars['String']>;
   product: Array<Product>;
+};
+
+export type ProductListSalesNumbersArgs = {
+  after?: Maybe<Scalars['DateTime']>;
+  before?: Maybe<Scalars['DateTime']>;
 };
 
 export type ProductListProductArgs = {
@@ -250,11 +284,10 @@ export type Query = {
   viewer?: Maybe<Viewer>;
   node?: Maybe<Node>;
   productLists: Array<ProductList>;
-  orders: Array<Order>;
   config?: Maybe<Config>;
   availableCapacity: Scalars['Int'];
   reservationsByPerson: Array<ReservationByPerson>;
-  orderItems: Array<OrderItem>;
+  devices: Array<Device>;
 };
 
 export type QueryReservationForTokenArgs = {
@@ -267,12 +300,6 @@ export type QueryNodeArgs = {
 
 export type QueryAvailableCapacityArgs = {
   time?: Maybe<Scalars['DateTime']>;
-};
-
-export type QueryOrderItemsArgs = {
-  from?: Maybe<Scalars['DateTime']>;
-  until?: Maybe<Scalars['DateTime']>;
-  productListId?: Maybe<Scalars['Int']>;
 };
 
 export type Reservation = {
@@ -306,6 +333,12 @@ export enum ReservationStatus {
   Confirmed = 'Confirmed',
   CheckedIn = 'CheckedIn',
 }
+
+export type SalesNumber = {
+  __typename?: 'SalesNumber';
+  count: Scalars['Int'];
+  total: Scalars['Float'];
+};
 
 export enum SortOrder {
   Asc = 'asc',
@@ -625,6 +658,22 @@ export type ProductPrintQuery = {__typename?: 'Query'} & {
       }
   >;
   config?: Maybe<{__typename?: 'Config'} & Pick<Config, 'tokenValue'>>;
+};
+
+export type RevenueQueryVariables = Exact<{
+  after?: Maybe<Scalars['DateTime']>;
+  before?: Maybe<Scalars['DateTime']>;
+}>;
+
+export type RevenueQuery = {__typename?: 'Query'} & {
+  productLists: Array<
+    {__typename?: 'ProductList'} & Pick<ProductList, 'id' | 'name'> & {
+        salesNumbers: {__typename?: 'SalesNumber'} & Pick<
+          SalesNumber,
+          'count' | 'total'
+        >;
+      }
+  >;
 };
 
 export type OverlapQueryVariables = Exact<{[key: string]: never}>;
@@ -1628,6 +1677,63 @@ export type ProductPrintLazyQueryHookResult = ReturnType<
 export type ProductPrintQueryResult = Apollo.QueryResult<
   ProductPrintQuery,
   ProductPrintQueryVariables
+>;
+export const RevenueDocument = gql`
+  query Revenue($after: DateTime, $before: DateTime) {
+    productLists {
+      id
+      name
+      salesNumbers(after: $after, before: $before) {
+        count
+        total
+      }
+    }
+  }
+`;
+
+/**
+ * __useRevenueQuery__
+ *
+ * To run a query within a React component, call `useRevenueQuery` and pass it any options that fit your needs.
+ * When your component renders, `useRevenueQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useRevenueQuery({
+ *   variables: {
+ *      after: // value for 'after'
+ *      before: // value for 'before'
+ *   },
+ * });
+ */
+export function useRevenueQuery(
+  baseOptions?: Apollo.QueryHookOptions<RevenueQuery, RevenueQueryVariables>,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useQuery<RevenueQuery, RevenueQueryVariables>(
+    RevenueDocument,
+    options,
+  );
+}
+export function useRevenueLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    RevenueQuery,
+    RevenueQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useLazyQuery<RevenueQuery, RevenueQueryVariables>(
+    RevenueDocument,
+    options,
+  );
+}
+export type RevenueQueryHookResult = ReturnType<typeof useRevenueQuery>;
+export type RevenueLazyQueryHookResult = ReturnType<typeof useRevenueLazyQuery>;
+export type RevenueQueryResult = Apollo.QueryResult<
+  RevenueQuery,
+  RevenueQueryVariables
 >;
 export const OverlapDocument = gql`
   query Overlap {
