@@ -60,10 +60,18 @@ export default function Page({
               </Menu.Item>
             ))}
             <Menu.Item key="overlap">
-              <Link href={`/tables/overlap`}>Überlappungen</Link>
+              <Link href="/tables/overlap">Überlappungen</Link>
             </Menu.Item>
             <Menu.Item key="overview">
-              <Link href={`/tables/overview`}>Übersicht</Link>
+              <Link href="/tables/overview">Übersicht</Link>
+            </Menu.Item>
+            <Menu.Item key="juz">
+              <a
+                target="_blank"
+                href="https://docs.google.com/spreadsheets/d/1mIpkFrLwoXXwGFTokNd_YwmlnSMOjIdTtQv3ZHJXvEw/edit?usp=sharing"
+              >
+                JUZ
+              </a>
             </Menu.Item>
           </Menu.SubMenu>
           <Menu.SubMenu key="products" title="Verkauf">

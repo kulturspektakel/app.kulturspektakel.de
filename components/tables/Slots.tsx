@@ -2,14 +2,15 @@ import styles from './Slots.module.css';
 import React, {useState} from 'react';
 import {gql} from '@apollo/client';
 import {SlotsQuery, useSlotsQuery} from '../../types/graphql';
-import {add, min, max, isAfter, isBefore} from 'date-fns';
+import {add, min, max, isAfter, isBefore, isEqual, sub} from 'date-fns';
 import TableRow, {FirstTableCell} from './TableRow';
 import useReservationModal from './useReservationModal';
 import NowIndicator from './NowIndicator';
 import TableBodyRow from './TableBodyRow';
-import {Select} from 'antd';
+import {Select, Statistic, Tooltip} from 'antd';
 import {HEADER_HEIGHT} from '../shared/Page';
 import useCreateModal from './useCreateModal';
+import {LoginOutlined, LogoutOutlined} from '@ant-design/icons';
 
 export const SLOT_LENGTH_MIN = 30;
 export const SLOT_LENGTH_PX = 80;
@@ -115,11 +116,42 @@ export default function Slots({day}: {day: Date}) {
         )}
       <TableRow
         style={{bottom: 43, boxShadow: `0 -1px 0 #f0f0f0`}}
-        firstCell={<FirstTableCell>Eingecheckt</FirstTableCell>}
+        firstCell={<FirstTableCell>Personen</FirstTableCell>}
+        startTime={startTime}
+        endTime={endTime}
+        cellRenderer={(i) => {
+          return (
+            <>
+              <Tooltip title="Eingecheckt">
+                {checkedInPersons(
+                  add(startTime, {
+                    minutes: SLOT_LENGTH_MIN * i,
+                  }),
+                  data,
+                  areaFilter,
+                )}
+              </Tooltip>
+              /
+              <Tooltip title="Reserviert">
+                {getReservations(
+                  add(startTime, {
+                    minutes: SLOT_LENGTH_MIN * i,
+                  }),
+                  data,
+                  areaFilter,
+                ).reduce((acc, cv) => acc + cv.otherPersons.length + 1, 0)}
+              </Tooltip>
+            </>
+          );
+        }}
+      />
+      <TableRow
+        style={{bottom: 0}}
+        firstCell={<FirstTableCell>Tische</FirstTableCell>}
         startTime={startTime}
         endTime={endTime}
         cellRenderer={(i) =>
-          checkedInPersons(
+          getReservationInout(
             add(startTime, {
               minutes: SLOT_LENGTH_MIN * i,
             }),
@@ -128,22 +160,55 @@ export default function Slots({day}: {day: Date}) {
           )
         }
       />
-      <TableRow
-        style={{bottom: 0}}
-        firstCell={<FirstTableCell>Reserviert</FirstTableCell>}
-        startTime={startTime}
-        endTime={endTime}
-        cellRenderer={(i) =>
-          getReservations(
-            add(startTime, {
-              minutes: SLOT_LENGTH_MIN * i,
-            }),
-            data,
-            areaFilter,
-          ).reduce((acc, cv) => acc + cv.otherPersons.length + 1, 0)
-        }
-      />
     </div>
+  );
+}
+
+function getReservationInout(time: Date, data: SlotsQuery, areaFilter: string) {
+  const starting =
+    data?.areas
+      .flatMap((a) =>
+        a.table.flatMap((t) =>
+          t.reservations.map((r) => ({...r, areaId: a.id})),
+        ),
+      )
+      .filter(
+        (r) =>
+          (areaFilter === 'all' || r.areaId === areaFilter) &&
+          isEqual(r.startTime, time),
+      ) ?? [];
+
+  const ending =
+    data?.areas
+      .flatMap((a) =>
+        a.table.flatMap((t) =>
+          t.reservations.map((r) => ({...r, areaId: a.id})),
+        ),
+      )
+      .filter(
+        (r) =>
+          (areaFilter === 'all' || r.areaId === areaFilter) &&
+          isEqual(r.endTime, time),
+      ) ?? [];
+
+  return (
+    <>
+      <Tooltip title="Gehende Reservierungen">
+        <Statistic
+          value={ending.length}
+          valueStyle={{color: '#f5222d', fontSize: '1em'}}
+          prefix={<LogoutOutlined style={{marginRight: -3}} />}
+        />
+      </Tooltip>
+      &nbsp;&nbsp;
+      <Tooltip title="Kommende Reservierungen">
+        <Statistic
+          value={starting.length}
+          valueStyle={{color: '#52c41a', fontSize: '1em'}}
+          prefix={<LoginOutlined style={{marginRight: -3}} />}
+        />
+      </Tooltip>
+    </>
   );
 }
 
