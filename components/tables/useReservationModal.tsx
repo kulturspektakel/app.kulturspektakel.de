@@ -588,7 +588,7 @@ function TablePicker({
             .sort((a, b) => (a.id < b.id ? -1 : 1))
             .map((t) => (
               <Select.Option value={t.id} key={t.id}>
-                {t.displayName}
+                {t.area.displayName}: {t.displayName}
               </Select.Option>
             ))}
         </Select.OptGroup>
