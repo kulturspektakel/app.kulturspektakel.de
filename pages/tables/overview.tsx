@@ -131,8 +131,9 @@ export default function Overview() {
             align: 'right',
             render: (_, r) => {
               const currentReservation = r.reservations.find(
-                (r) => isAfter(r.startTime, now) && isBefore(r.endTime, now),
+                (r) => isBefore(r.startTime, now) && isAfter(r.endTime, now),
               );
+              console.log(now);
               if (!currentReservation) {
                 const nextReservation = r.reservations.find((r) =>
                   isAfter(r.startTime, now),
