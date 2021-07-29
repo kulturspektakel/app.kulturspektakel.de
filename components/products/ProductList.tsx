@@ -14,7 +14,6 @@ import {gql} from '@apollo/client';
 import {
   ProductListFragment,
   ProductRowFragment,
-  useDeleteProductListMutation,
   useUpsertProductListMutation,
 } from '../../types/graphql';
 import useLeavePageConfirm from '../../utils/useLeavePageConfirm';
@@ -52,19 +51,17 @@ gql`
     $emoji: String
     $name: String
     $products: [ProductInput!]
+    $active: Boolean
   ) {
     upsertProductList(
       id: $id
       emoji: $emoji
       name: $name
       products: $products
+      active: $active
     ) {
       ...ProductList
     }
-  }
-
-  mutation DeleteProductList($id: Int!) {
-    deleteProductList(id: $id)
   }
 `;
 
@@ -78,9 +75,6 @@ export default function ProductList({list}: {list: ProductListFragment}) {
   useLeavePageConfirm(dirty, 'Änderungen an Preislisten nicht gespeichert');
 
   const [mutate] = useUpsertProductListMutation({});
-  const [deleteList] = useDeleteProductListMutation({
-    refetchQueries: ['ProductList'],
-  });
 
   const onDragEnd = useCallback(
     (result) => {
@@ -157,7 +151,7 @@ export default function ProductList({list}: {list: ProductListFragment}) {
               cancelText: 'Abbrechen',
               content: `Soll die Preisliste ${list.name} wirklich gelöscht werden?`,
               onOk() {
-                return deleteList({variables: {id: list.id}});
+                return mutate({variables: {id: list.id, active: false}});
               },
             });
           }}

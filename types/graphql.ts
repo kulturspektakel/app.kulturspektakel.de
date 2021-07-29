@@ -90,6 +90,17 @@ export type DeviceSalesNumbersArgs = {
   before?: Maybe<Scalars['DateTime']>;
 };
 
+export type HistoricalProduct = Billable & {
+  __typename?: 'HistoricalProduct';
+  salesNumbers: SalesNumber;
+  name: Scalars['String'];
+};
+
+export type HistoricalProductSalesNumbersArgs = {
+  after?: Maybe<Scalars['DateTime']>;
+  before?: Maybe<Scalars['DateTime']>;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   updateReservationOtherPersons?: Maybe<Reservation>;
@@ -101,7 +112,6 @@ export type Mutation = {
   createOrder?: Maybe<Order>;
   createReservation?: Maybe<Reservation>;
   upsertProductList?: Maybe<ProductList>;
-  deleteProductList?: Maybe<Scalars['Boolean']>;
   swapReservations?: Maybe<Scalars['Boolean']>;
 };
 
@@ -165,11 +175,8 @@ export type MutationUpsertProductListArgs = {
   id?: Maybe<Scalars['Int']>;
   name?: Maybe<Scalars['String']>;
   emoji?: Maybe<Scalars['String']>;
+  active?: Maybe<Scalars['Boolean']>;
   products?: Maybe<Array<ProductInput>>;
-};
-
-export type MutationDeleteProductListArgs = {
-  id: Scalars['Int'];
 };
 
 export type MutationSwapReservationsArgs = {
@@ -254,6 +261,7 @@ export type ProductList = Billable & {
   name: Scalars['String'];
   emoji?: Maybe<Scalars['String']>;
   product: Array<Product>;
+  historicalProducts: Array<HistoricalProduct>;
 };
 
 export type ProductListSalesNumbersArgs = {
@@ -393,20 +401,12 @@ export type UpsertProductListMutationVariables = Exact<{
   emoji?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
   products?: Maybe<Array<ProductInput> | ProductInput>;
+  active?: Maybe<Scalars['Boolean']>;
 }>;
 
 export type UpsertProductListMutation = {__typename?: 'Mutation'} & {
   upsertProductList?: Maybe<{__typename?: 'ProductList'} & ProductListFragment>;
 };
-
-export type DeleteProductListMutationVariables = Exact<{
-  id: Scalars['Int'];
-}>;
-
-export type DeleteProductListMutation = {__typename?: 'Mutation'} & Pick<
-  Mutation,
-  'deleteProductList'
->;
 
 export type ProductRowFragment = {__typename?: 'Product'} & Pick<
   Product,
@@ -863,12 +863,14 @@ export const UpsertProductListDocument = gql`
     $emoji: String
     $name: String
     $products: [ProductInput!]
+    $active: Boolean
   ) {
     upsertProductList(
       id: $id
       emoji: $emoji
       name: $name
       products: $products
+      active: $active
     ) {
       ...ProductList
     }
@@ -897,6 +899,7 @@ export type UpsertProductListMutationFn = Apollo.MutationFunction<
  *      emoji: // value for 'emoji'
  *      name: // value for 'name'
  *      products: // value for 'products'
+ *      active: // value for 'active'
  *   },
  * });
  */
@@ -919,53 +922,6 @@ export type UpsertProductListMutationResult = Apollo.MutationResult<UpsertProduc
 export type UpsertProductListMutationOptions = Apollo.BaseMutationOptions<
   UpsertProductListMutation,
   UpsertProductListMutationVariables
->;
-export const DeleteProductListDocument = gql`
-  mutation DeleteProductList($id: Int!) {
-    deleteProductList(id: $id)
-  }
-`;
-export type DeleteProductListMutationFn = Apollo.MutationFunction<
-  DeleteProductListMutation,
-  DeleteProductListMutationVariables
->;
-
-/**
- * __useDeleteProductListMutation__
- *
- * To run a mutation, you first call `useDeleteProductListMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteProductListMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deleteProductListMutation, { data, loading, error }] = useDeleteProductListMutation({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useDeleteProductListMutation(
-  baseOptions?: Apollo.MutationHookOptions<
-    DeleteProductListMutation,
-    DeleteProductListMutationVariables
-  >,
-) {
-  const options = {...defaultOptions, ...baseOptions};
-  return Apollo.useMutation<
-    DeleteProductListMutation,
-    DeleteProductListMutationVariables
-  >(DeleteProductListDocument, options);
-}
-export type DeleteProductListMutationHookResult = ReturnType<
-  typeof useDeleteProductListMutation
->;
-export type DeleteProductListMutationResult = Apollo.MutationResult<DeleteProductListMutation>;
-export type DeleteProductListMutationOptions = Apollo.BaseMutationOptions<
-  DeleteProductListMutation,
-  DeleteProductListMutationVariables
 >;
 export const SlotsDocument = gql`
   query Slots($day: Date) {
