@@ -24,7 +24,6 @@ export type Scalars = {
 
 export type Area = Node & {
   __typename?: 'Area';
-  /** Unique identifier for the resource */
   id: Scalars['ID'];
   displayName: Scalars['String'];
   themeColor: Scalars['String'];
@@ -67,8 +66,8 @@ export type Billable = {
 };
 
 export type BillableSalesNumbersArgs = {
-  after?: Maybe<Scalars['DateTime']>;
-  before?: Maybe<Scalars['DateTime']>;
+  after: Scalars['DateTime'];
+  before: Scalars['DateTime'];
 };
 
 export type Config = {
@@ -80,25 +79,26 @@ export type Config = {
 export type Device = Billable & {
   __typename?: 'Device';
   salesNumbers: SalesNumber;
-  id: Scalars['String'];
+  id: Scalars['ID'];
   productList?: Maybe<ProductList>;
   lastSeen?: Maybe<Scalars['DateTime']>;
 };
 
 export type DeviceSalesNumbersArgs = {
-  after?: Maybe<Scalars['DateTime']>;
-  before?: Maybe<Scalars['DateTime']>;
+  after: Scalars['DateTime'];
+  before: Scalars['DateTime'];
 };
 
 export type HistoricalProduct = Billable & {
   __typename?: 'HistoricalProduct';
   salesNumbers: SalesNumber;
   name: Scalars['String'];
+  productListId: Scalars['Int'];
 };
 
 export type HistoricalProductSalesNumbersArgs = {
-  after?: Maybe<Scalars['DateTime']>;
-  before?: Maybe<Scalars['DateTime']>;
+  after: Scalars['DateTime'];
+  before: Scalars['DateTime'];
 };
 
 export type Mutation = {
@@ -213,7 +213,7 @@ export type OrderItem = {
   note?: Maybe<Scalars['String']>;
   amount: Scalars['Int'];
   name: Scalars['String'];
-  list?: Maybe<ProductList>;
+  productList?: Maybe<ProductList>;
   perUnitPrice: Scalars['Int'];
 };
 
@@ -221,7 +221,7 @@ export type OrderItemInput = {
   perUnitPrice: Scalars['Int'];
   name: Scalars['String'];
   amount: Scalars['Int'];
-  listId?: Maybe<Scalars['Int']>;
+  productListId?: Maybe<Scalars['Int']>;
   note?: Maybe<Scalars['String']>;
 };
 
@@ -241,11 +241,12 @@ export type Product = Billable & {
   name: Scalars['String'];
   price: Scalars['Int'];
   requiresDeposit: Scalars['Boolean'];
+  productListId: Scalars['Int'];
 };
 
 export type ProductSalesNumbersArgs = {
-  after?: Maybe<Scalars['DateTime']>;
-  before?: Maybe<Scalars['DateTime']>;
+  after: Scalars['DateTime'];
+  before: Scalars['DateTime'];
 };
 
 export type ProductInput = {
@@ -265,24 +266,8 @@ export type ProductList = Billable & {
 };
 
 export type ProductListSalesNumbersArgs = {
-  after?: Maybe<Scalars['DateTime']>;
-  before?: Maybe<Scalars['DateTime']>;
-};
-
-export type ProductListProductArgs = {
-  orderBy?: Maybe<Array<ProductListProductOrderByInput>>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  before?: Maybe<ProductWhereUniqueInput>;
-  after?: Maybe<ProductWhereUniqueInput>;
-};
-
-export type ProductListProductOrderByInput = {
-  order?: Maybe<SortOrder>;
-};
-
-export type ProductWhereUniqueInput = {
-  id?: Maybe<Scalars['Int']>;
+  after: Scalars['DateTime'];
+  before: Scalars['DateTime'];
 };
 
 export type Query = {
@@ -296,6 +281,7 @@ export type Query = {
   availableCapacity: Scalars['Int'];
   reservationsByPerson: Array<ReservationByPerson>;
   devices: Array<Device>;
+  productList?: Maybe<ProductList>;
 };
 
 export type QueryReservationForTokenArgs = {
@@ -310,12 +296,17 @@ export type QueryAvailableCapacityArgs = {
   time?: Maybe<Scalars['DateTime']>;
 };
 
+export type QueryProductListArgs = {
+  id: Scalars['Int'];
+};
+
 export type Reservation = {
   __typename?: 'Reservation';
   id: Scalars['Int'];
   status: ReservationStatus;
   token: Scalars['String'];
   table: Table;
+  tableId: Scalars['String'];
   startTime: Scalars['DateTime'];
   endTime: Scalars['DateTime'];
   primaryPerson: Scalars['String'];
@@ -346,16 +337,15 @@ export type SalesNumber = {
   __typename?: 'SalesNumber';
   count: Scalars['Int'];
   total: Scalars['Float'];
+  timeSeries: Array<TimeSeries>;
 };
 
-export enum SortOrder {
-  Asc = 'asc',
-  Desc = 'desc',
-}
+export type SalesNumberTimeSeriesArgs = {
+  grouping?: Maybe<TimeGrouping>;
+};
 
 export type Table = Node & {
   __typename?: 'Table';
-  /** Unique identifier for the resource */
   id: Scalars['ID'];
   displayName: Scalars['String'];
   maxCapacity: Scalars['Int'];
@@ -379,6 +369,17 @@ export enum TableType {
   Table = 'TABLE',
   Island = 'ISLAND',
 }
+
+export enum TimeGrouping {
+  Hour = 'Hour',
+  Day = 'Day',
+}
+
+export type TimeSeries = {
+  __typename?: 'TimeSeries';
+  time: Scalars['DateTime'];
+  value: Scalars['Int'];
+};
 
 export type Viewer = {
   __typename?: 'Viewer';
@@ -412,6 +413,36 @@ export type ProductRowFragment = {__typename?: 'Product'} & Pick<
   Product,
   'id' | 'name' | 'price' | 'requiresDeposit'
 >;
+
+export type RevenueDetailsQueryVariables = Exact<{
+  id: Scalars['Int'];
+  after: Scalars['DateTime'];
+  before: Scalars['DateTime'];
+  grouping: TimeGrouping;
+}>;
+
+export type RevenueDetailsQuery = {__typename?: 'Query'} & {
+  productList?: Maybe<
+    {__typename?: 'ProductList'} & Pick<ProductList, 'id' | 'name'> & {
+        salesNumbers: {__typename?: 'SalesNumber'} & {
+          timeSeries: Array<
+            {__typename?: 'TimeSeries'} & Pick<TimeSeries, 'time' | 'value'>
+          >;
+        };
+        historicalProducts: Array<
+          {__typename?: 'HistoricalProduct'} & Pick<
+            HistoricalProduct,
+            'name'
+          > & {
+              salesNumbers: {__typename?: 'SalesNumber'} & Pick<
+                SalesNumber,
+                'count' | 'total'
+              >;
+            }
+        >;
+      }
+  >;
+};
 
 export type SlotsQueryVariables = Exact<{
   day?: Maybe<Scalars['Date']>;
@@ -661,8 +692,8 @@ export type ProductPrintQuery = {__typename?: 'Query'} & {
 };
 
 export type RevenueQueryVariables = Exact<{
-  after?: Maybe<Scalars['DateTime']>;
-  before?: Maybe<Scalars['DateTime']>;
+  after: Scalars['DateTime'];
+  before: Scalars['DateTime'];
 }>;
 
 export type RevenueQuery = {__typename?: 'Query'} & {
@@ -922,6 +953,86 @@ export type UpsertProductListMutationResult = Apollo.MutationResult<UpsertProduc
 export type UpsertProductListMutationOptions = Apollo.BaseMutationOptions<
   UpsertProductListMutation,
   UpsertProductListMutationVariables
+>;
+export const RevenueDetailsDocument = gql`
+  query RevenueDetails(
+    $id: Int!
+    $after: DateTime!
+    $before: DateTime!
+    $grouping: TimeGrouping!
+  ) {
+    productList(id: $id) {
+      id
+      name
+      salesNumbers(after: $after, before: $before) {
+        timeSeries(grouping: $grouping) {
+          time
+          value
+        }
+      }
+      historicalProducts {
+        name
+        salesNumbers(after: $after, before: $before) {
+          count
+          total
+        }
+      }
+    }
+  }
+`;
+
+/**
+ * __useRevenueDetailsQuery__
+ *
+ * To run a query within a React component, call `useRevenueDetailsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useRevenueDetailsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useRevenueDetailsQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *      after: // value for 'after'
+ *      before: // value for 'before'
+ *      grouping: // value for 'grouping'
+ *   },
+ * });
+ */
+export function useRevenueDetailsQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    RevenueDetailsQuery,
+    RevenueDetailsQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useQuery<RevenueDetailsQuery, RevenueDetailsQueryVariables>(
+    RevenueDetailsDocument,
+    options,
+  );
+}
+export function useRevenueDetailsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    RevenueDetailsQuery,
+    RevenueDetailsQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useLazyQuery<RevenueDetailsQuery, RevenueDetailsQueryVariables>(
+    RevenueDetailsDocument,
+    options,
+  );
+}
+export type RevenueDetailsQueryHookResult = ReturnType<
+  typeof useRevenueDetailsQuery
+>;
+export type RevenueDetailsLazyQueryHookResult = ReturnType<
+  typeof useRevenueDetailsLazyQuery
+>;
+export type RevenueDetailsQueryResult = Apollo.QueryResult<
+  RevenueDetailsQuery,
+  RevenueDetailsQueryVariables
 >;
 export const SlotsDocument = gql`
   query Slots($day: Date) {
@@ -1635,7 +1746,7 @@ export type ProductPrintQueryResult = Apollo.QueryResult<
   ProductPrintQueryVariables
 >;
 export const RevenueDocument = gql`
-  query Revenue($after: DateTime, $before: DateTime) {
+  query Revenue($after: DateTime!, $before: DateTime!) {
     productLists {
       id
       name
@@ -1665,7 +1776,7 @@ export const RevenueDocument = gql`
  * });
  */
 export function useRevenueQuery(
-  baseOptions?: Apollo.QueryHookOptions<RevenueQuery, RevenueQueryVariables>,
+  baseOptions: Apollo.QueryHookOptions<RevenueQuery, RevenueQueryVariables>,
 ) {
   const options = {...defaultOptions, ...baseOptions};
   return Apollo.useQuery<RevenueQuery, RevenueQueryVariables>(

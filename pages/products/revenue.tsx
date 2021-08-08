@@ -1,9 +1,13 @@
-import {DatePicker, PageHeader, Table} from 'antd';
+import {ConfigProvider, DatePicker, PageHeader, Table} from 'antd';
 import React, {useState} from 'react';
 import Page from '../../components/shared/Page';
 import {gql} from '@apollo/client';
 import {useRevenueQuery} from '../../types/graphql';
 import moment from 'moment';
+import RevenueDetails from '../../components/products/RevenueDetails';
+import {useEffect} from 'react';
+import {useRouter} from 'next/router';
+import de_DE from 'antd/lib/locale-provider/de_DE';
 
 const {RangePicker} = DatePicker;
 
@@ -13,7 +17,7 @@ const formatter = new Intl.NumberFormat('de-DE', {
 });
 
 gql`
-  query Revenue($after: DateTime, $before: DateTime) {
+  query Revenue($after: DateTime!, $before: DateTime!) {
     productLists {
       id
       name
@@ -26,10 +30,28 @@ gql`
 `;
 
 export default function Revenue() {
+  const router = useRouter();
+
   const [range, setRange] = useState<[moment.Moment, moment.Moment]>([
-    moment().startOf('day'),
-    moment().endOf('day'),
+    moment(router.query.after),
+    moment(router.query.before),
   ]);
+
+  useEffect(() => {
+    const before = range[1].toISOString();
+    const after = range[0].toISOString();
+
+    if (before != router.query.before || after != router.query.after) {
+      router.replace({
+        pathname: router.pathname,
+        query: {
+          before: range[1].toISOString(),
+          after: range[0].toISOString(),
+        },
+      });
+    }
+  }, [range, router]);
+
   const {data, loading} = useRevenueQuery({
     variables: {
       after: range[0].toDate(),
@@ -42,13 +64,15 @@ export default function Revenue() {
       <PageHeader
         title="Umsätze"
         extra={
-          <RangePicker
-            format="DD.MM.YYYY HH:mm"
-            allowEmpty={[true, true]}
-            showTime
-            onChange={setRange}
-            value={range}
-          />
+          <ConfigProvider locale={de_DE}>
+            <RangePicker
+              format="DD.MM.YYYY HH:mm"
+              allowEmpty={[true, true]}
+              showTime
+              onChange={setRange}
+              value={range}
+            />
+          </ConfigProvider>
         }
       ></PageHeader>
       <Table
@@ -68,6 +92,16 @@ export default function Revenue() {
           },
         ]}
         dataSource={data?.productLists}
+        rowKey="id"
+        expandable={{
+          expandedRowRender: (record) => (
+            <RevenueDetails
+              productListId={record.id}
+              before={range[1].toDate()}
+              after={range[0].toDate()}
+            />
+          ),
+        }}
       />
     </Page>
   );

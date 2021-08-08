@@ -9,6 +9,7 @@
     "graphql": "graphql-codegen --config ./.graphqlrc.yml --watch"
   },
   "dependencies": {
+    "@ant-design/charts": "^1.2.5",
     "@ant-design/icons": "^4.6.2",
     "@apollo/client": "^3.3.13",
     "@apollo/react-ssr": "^4.0.0",
