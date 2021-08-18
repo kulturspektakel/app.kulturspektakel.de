@@ -61,6 +61,35 @@ export type Band = {
   description?: Maybe<Scalars['String']>;
 };
 
+export type BandApplication = Node & {
+  __typename?: 'BandApplication';
+  id: Scalars['ID'];
+  bandname: Scalars['String'];
+  genre?: Maybe<Scalars['String']>;
+  genreCategory: GenreCategory;
+  facebook?: Maybe<Scalars['String']>;
+  facebookLikes?: Maybe<Scalars['Int']>;
+  description?: Maybe<Scalars['String']>;
+  contactName: Scalars['String'];
+  contactPhone: Scalars['String'];
+  email: Scalars['String'];
+  city: Scalars['String'];
+  demo?: Maybe<Scalars['String']>;
+  instagram?: Maybe<Scalars['String']>;
+  instagramFollower?: Maybe<Scalars['Int']>;
+  distance?: Maybe<Scalars['Float']>;
+  heardAboutBookingFrom?: Maybe<HeardAboutBookingFrom>;
+  knowsKultFrom?: Maybe<Scalars['String']>;
+  bandApplicationRating: Array<BandApplicationRating>;
+  rating?: Maybe<Scalars['Float']>;
+};
+
+export type BandApplicationRating = {
+  __typename?: 'BandApplicationRating';
+  viewer: Viewer;
+  rating: Scalars['Int'];
+};
+
 export type Billable = {
   salesNumbers: SalesNumber;
 };
@@ -74,6 +103,26 @@ export type Config = {
   __typename?: 'Config';
   reservationStart: Scalars['DateTime'];
   tokenValue: Scalars['Int'];
+  bandApplicationDeadline: Scalars['DateTime'];
+};
+
+export type CreateBandApplicationInput = {
+  email: Scalars['String'];
+  bandname: Scalars['String'];
+  genreCategory: GenreCategory;
+  genre?: Maybe<Scalars['String']>;
+  city: Scalars['String'];
+  facebook?: Maybe<Scalars['String']>;
+  instagram?: Maybe<Scalars['String']>;
+  website?: Maybe<Scalars['String']>;
+  demo: Scalars['String'];
+  description: Scalars['String'];
+  numberOfArtists: Scalars['Int'];
+  numberOfNonMaleArtists: Scalars['Int'];
+  contactName: Scalars['String'];
+  contactPhone: Scalars['String'];
+  knowsKultFrom?: Maybe<Scalars['String']>;
+  heardAboutBookingFrom?: Maybe<HeardAboutBookingFrom>;
 };
 
 export type Device = Billable & {
@@ -88,6 +137,38 @@ export type DeviceSalesNumbersArgs = {
   after: Scalars['DateTime'];
   before: Scalars['DateTime'];
 };
+
+export type Event = Node & {
+  __typename?: 'Event';
+  /** Unique identifier for the resource */
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  start: Scalars['DateTime'];
+  end: Scalars['DateTime'];
+  bandApplicationStart?: Maybe<Scalars['DateTime']>;
+  bandApplicationEnd?: Maybe<Scalars['DateTime']>;
+  bandApplication: Array<BandApplication>;
+};
+
+export enum GenreCategory {
+  Rock = 'Rock',
+  Pop = 'Pop',
+  Indie = 'Indie',
+  ReggaeSka = 'Reggae_Ska',
+  BluesFunkJazzSoul = 'Blues_Funk_Jazz_Soul',
+  FolkSingerSongwriterCountry = 'Folk_SingerSongwriter_Country',
+  ElektroHipHop = 'Elektro_HipHop',
+  HardrockMetalPunk = 'Hardrock_Metal_Punk',
+  Other = 'Other',
+}
+
+export enum HeardAboutBookingFrom {
+  BYon = 'BYon',
+  Newspaper = 'Newspaper',
+  Friends = 'Friends',
+  Website = 'Website',
+  Facebook = 'Facebook',
+}
 
 export type HistoricalProduct = Billable & {
   __typename?: 'HistoricalProduct';
@@ -113,6 +194,8 @@ export type Mutation = {
   createReservation?: Maybe<Reservation>;
   upsertProductList?: Maybe<ProductList>;
   swapReservations?: Maybe<Scalars['Boolean']>;
+  createBandApplication?: Maybe<BandApplication>;
+  rateBandApplication?: Maybe<BandApplication>;
 };
 
 export type MutationUpdateReservationOtherPersonsArgs = {
@@ -182,6 +265,15 @@ export type MutationUpsertProductListArgs = {
 export type MutationSwapReservationsArgs = {
   a: Scalars['Int'];
   b: Scalars['Int'];
+};
+
+export type MutationCreateBandApplicationArgs = {
+  data: CreateBandApplicationInput;
+};
+
+export type MutationRateBandApplicationArgs = {
+  bandApplicationId: Scalars['ID'];
+  rating?: Maybe<Scalars['Int']>;
 };
 
 export type Node = {
@@ -282,6 +374,8 @@ export type Query = {
   reservationsByPerson: Array<ReservationByPerson>;
   devices: Array<Device>;
   productList?: Maybe<ProductList>;
+  distanceToKult?: Maybe<Scalars['Float']>;
+  events: Array<Event>;
 };
 
 export type QueryReservationForTokenArgs = {
@@ -298,6 +392,10 @@ export type QueryAvailableCapacityArgs = {
 
 export type QueryProductListArgs = {
   id: Scalars['Int'];
+};
+
+export type QueryDistanceToKultArgs = {
+  origin: Scalars['String'];
 };
 
 export type Reservation = {
@@ -381,11 +479,39 @@ export type TimeSeries = {
   value: Scalars['Int'];
 };
 
-export type Viewer = {
+export type Viewer = Node & {
   __typename?: 'Viewer';
+  id: Scalars['ID'];
   displayName: Scalars['String'];
   email: Scalars['String'];
   profilePicture?: Maybe<Scalars['String']>;
+};
+
+export type ApplicationDetailsQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+export type ApplicationDetailsQuery = {__typename?: 'Query'} & {
+  node?: Maybe<
+    | {__typename?: 'Area'}
+    | ({__typename?: 'BandApplication'} & Pick<
+        BandApplication,
+        | 'bandname'
+        | 'instagram'
+        | 'instagramFollower'
+        | 'facebook'
+        | 'facebookLikes'
+        | 'description'
+        | 'knowsKultFrom'
+        | 'heardAboutBookingFrom'
+        | 'contactName'
+        | 'contactPhone'
+        | 'email'
+      >)
+    | {__typename?: 'Event'}
+    | {__typename?: 'Table'}
+    | {__typename?: 'Viewer'}
+  >;
 };
 
 export type ProductListFragment = {__typename?: 'ProductList'} & Pick<
@@ -491,6 +617,8 @@ export type CreateModalQueryVariables = Exact<{
 export type CreateModalQuery = {__typename?: 'Query'} & {
   node?: Maybe<
     | {__typename?: 'Area'}
+    | {__typename?: 'BandApplication'}
+    | {__typename?: 'Event'}
     | ({__typename?: 'Table'} & Pick<
         Table,
         'id' | 'maxCapacity' | 'displayName'
@@ -510,6 +638,7 @@ export type CreateModalQuery = {__typename?: 'Query'} & {
             >
           >;
         })
+    | {__typename?: 'Viewer'}
   >;
 };
 
@@ -656,6 +785,47 @@ export type ViewerQuery = {__typename?: 'Query'} & {
   >;
 };
 
+export type BandApplcationsQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+export type BandApplcationsQuery = {__typename?: 'Query'} & {
+  node?: Maybe<
+    | {__typename?: 'Area'}
+    | {__typename?: 'BandApplication'}
+    | ({__typename?: 'Event'} & {
+        bandApplication: Array<
+          {__typename?: 'BandApplication'} & Pick<
+            BandApplication,
+            | 'id'
+            | 'bandname'
+            | 'rating'
+            | 'city'
+            | 'genre'
+            | 'genreCategory'
+            | 'distance'
+            | 'facebookLikes'
+            | 'instagramFollower'
+          > & {
+              bandApplicationRating: Array<
+                {__typename?: 'BandApplicationRating'} & Pick<
+                  BandApplicationRating,
+                  'rating'
+                > & {
+                    viewer: {__typename?: 'Viewer'} & Pick<
+                      Viewer,
+                      'id' | 'displayName' | 'profilePicture'
+                    >;
+                  }
+              >;
+            }
+        >;
+      })
+    | {__typename?: 'Table'}
+    | {__typename?: 'Viewer'}
+  >;
+};
+
 export type ProductListQueryVariables = Exact<{[key: string]: never}>;
 
 export type ProductListQuery = {__typename?: 'Query'} & {
@@ -777,7 +947,10 @@ export type OverviewQuery = {__typename?: 'Query'} & {
             }
         >;
       })
+    | {__typename?: 'BandApplication'}
+    | {__typename?: 'Event'}
     | {__typename?: 'Table'}
+    | {__typename?: 'Viewer'}
   >;
 };
 
@@ -888,6 +1061,76 @@ export const OverviewReservationFragmentDoc = gql`
     checkedInPersons
   }
 `;
+export const ApplicationDetailsDocument = gql`
+  query ApplicationDetails($id: ID!) {
+    node(id: $id) {
+      ... on BandApplication {
+        bandname
+        instagram
+        instagramFollower
+        facebook
+        facebookLikes
+        description
+        knowsKultFrom
+        heardAboutBookingFrom
+        contactName
+        contactPhone
+        email
+      }
+    }
+  }
+`;
+
+/**
+ * __useApplicationDetailsQuery__
+ *
+ * To run a query within a React component, call `useApplicationDetailsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useApplicationDetailsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useApplicationDetailsQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useApplicationDetailsQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    ApplicationDetailsQuery,
+    ApplicationDetailsQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useQuery<
+    ApplicationDetailsQuery,
+    ApplicationDetailsQueryVariables
+  >(ApplicationDetailsDocument, options);
+}
+export function useApplicationDetailsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    ApplicationDetailsQuery,
+    ApplicationDetailsQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useLazyQuery<
+    ApplicationDetailsQuery,
+    ApplicationDetailsQueryVariables
+  >(ApplicationDetailsDocument, options);
+}
+export type ApplicationDetailsQueryHookResult = ReturnType<
+  typeof useApplicationDetailsQuery
+>;
+export type ApplicationDetailsLazyQueryHookResult = ReturnType<
+  typeof useApplicationDetailsLazyQuery
+>;
+export type ApplicationDetailsQueryResult = Apollo.QueryResult<
+  ApplicationDetailsQuery,
+  ApplicationDetailsQueryVariables
+>;
 export const UpsertProductListDocument = gql`
   mutation UpsertProductList(
     $id: Int
@@ -1569,6 +1812,84 @@ export type ViewerLazyQueryHookResult = ReturnType<typeof useViewerLazyQuery>;
 export type ViewerQueryResult = Apollo.QueryResult<
   ViewerQuery,
   ViewerQueryVariables
+>;
+export const BandApplcationsDocument = gql`
+  query BandApplcations($id: ID!) {
+    node(id: $id) {
+      ... on Event {
+        bandApplication {
+          id
+          bandname
+          rating
+          city
+          genre
+          genreCategory
+          distance
+          facebookLikes
+          instagramFollower
+          bandApplicationRating {
+            viewer {
+              id
+              displayName
+              profilePicture
+            }
+            rating
+          }
+        }
+      }
+    }
+  }
+`;
+
+/**
+ * __useBandApplcationsQuery__
+ *
+ * To run a query within a React component, call `useBandApplcationsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useBandApplcationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useBandApplcationsQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useBandApplcationsQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    BandApplcationsQuery,
+    BandApplcationsQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useQuery<BandApplcationsQuery, BandApplcationsQueryVariables>(
+    BandApplcationsDocument,
+    options,
+  );
+}
+export function useBandApplcationsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    BandApplcationsQuery,
+    BandApplcationsQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useLazyQuery<
+    BandApplcationsQuery,
+    BandApplcationsQueryVariables
+  >(BandApplcationsDocument, options);
+}
+export type BandApplcationsQueryHookResult = ReturnType<
+  typeof useBandApplcationsQuery
+>;
+export type BandApplcationsLazyQueryHookResult = ReturnType<
+  typeof useBandApplcationsLazyQuery
+>;
+export type BandApplcationsQueryResult = Apollo.QueryResult<
+  BandApplcationsQuery,
+  BandApplcationsQueryVariables
 >;
 export const ProductListDocument = gql`
   query ProductList {
