@@ -82,7 +82,7 @@ export default function Page({
               <Link href={`/products/revenue`}>Umsätze</Link>
             </Menu.Item>
           </Menu.SubMenu>
-          <Menu.Item key="/booking">
+          <Menu.Item key="booking">
             <Link href="/booking">Booking</Link>
           </Menu.Item>
         </Menu>

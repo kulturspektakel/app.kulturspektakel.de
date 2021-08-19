@@ -1,13 +1,11 @@
 import {gql} from '@apollo/client';
-import {Drawer, Input, Rate} from 'antd';
+import {Col, Drawer, Popconfirm, Row, Statistic} from 'antd';
 import React, {useState} from 'react';
-import {useEffect} from 'react';
-import {useCallback} from 'react';
 import {
   useApplicationDetailsQuery,
   ApplicationDetailsQuery,
 } from '../../types/graphql';
-import styles from './GuestInput.module.css';
+import Demo from './Demo';
 
 gql`
   query ApplicationDetails($id: ID!) {
@@ -24,9 +22,14 @@ gql`
         contactName
         contactPhone
         email
+        demo
       }
     }
   }
+
+  # mutation MarkAsContexted($id: ID!) {
+
+  # }
 `;
 
 export default function BandApplicationDetails({
@@ -65,5 +68,71 @@ function DrawerContent(
     {__typename?: 'BandApplication'}
   >,
 ) {
-  return <>{props.description}</>;
+  return (
+    <>
+      <Demo demo={props.demo} />
+      <Row>
+        <Col span={12}>
+          {props.facebook && (
+            <a href={props.facebook} target="_blank">
+              <Statistic value={props.facebookLikes ?? '?'} title="Facebook" />
+            </a>
+          )}
+        </Col>
+        <Col span={12}>
+          {props.instagram && (
+            <a href={`https://instagram.com/${props.instagram}`}>
+              <Statistic
+                value={props.instagramFollower ?? '?'}
+                title="Instagram"
+              />
+            </a>
+          )}
+        </Col>
+      </Row>
+      <br />
+      {props.knowsKultFrom && (
+        <>
+          <h4>Woher kennt ihr das Kult?</h4>
+          <EllipsisText>{props.knowsKultFrom}</EllipsisText>
+        </>
+      )}
+
+      {props.description && (
+        <>
+          <h4>Bandbeschreibung</h4>
+          <EllipsisText>{props.description}</EllipsisText>
+        </>
+      )}
+      <h4>Kontakt</h4>
+      <p>
+        {props.contactName}
+        <br />
+        {props.contactPhone}
+        <br />
+        <Popconfirm
+          title="Band als kontaktiert markieren?"
+          onConfirm={() => {}}
+          okText="Ja"
+          cancelText="Nein"
+        >
+          <a href={`mailto:${props.email}`}>{props.email}</a>
+        </Popconfirm>
+      </p>
+    </>
+  );
+}
+
+function EllipsisText(props: {children?: string}) {
+  const [expanded, setExpanded] = useState(false);
+  const words = props.children.split(' ');
+
+  return expanded || words.length < 60 ? (
+    <p>{props.children}</p>
+  ) : (
+    <p>
+      {words.slice(0, 50).join(' ')}
+      &nbsp;<a onClick={() => setExpanded(true)}>mehr…</a>
+    </p>
+  );
 }
