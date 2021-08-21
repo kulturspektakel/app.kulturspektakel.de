@@ -1,16 +1,19 @@
 import {gql} from '@apollo/client';
-import {Col, Drawer, Popconfirm, Row, Statistic} from 'antd';
+import {Col, Drawer, message, Popconfirm, Row, Statistic} from 'antd';
 import React, {useState} from 'react';
 import {
   useApplicationDetailsQuery,
   ApplicationDetailsQuery,
+  useMarkAsContextedMutation,
 } from '../../types/graphql';
+import useViewerContext from '../../utils/useViewerContext';
 import Demo from './Demo';
 
 gql`
   query ApplicationDetails($id: ID!) {
     node(id: $id) {
       ... on BandApplication {
+        id
         bandname
         instagram
         instagramFollower
@@ -23,13 +26,27 @@ gql`
         contactPhone
         email
         demo
+        ...Rating
       }
     }
   }
 
-  # mutation MarkAsContexted($id: ID!) {
+  fragment ContactedBy on BandApplication {
+    contactedByViewer {
+      id
+      displayName
+    }
+  }
 
-  # }
+  mutation MarkAsContexted($id: ID!, $contacted: Boolean!) {
+    markBandApplicationContacted(
+      bandApplicationId: $id
+      contacted: $contacted
+    ) {
+      id
+      ...ContactedBy
+    }
+  }
 `;
 
 export default function BandApplicationDetails({
@@ -44,6 +61,7 @@ export default function BandApplicationDetails({
       id: `BandApplication:${bandApplicationId}`,
     },
   });
+
   return (
     <Drawer
       title={
@@ -68,6 +86,9 @@ function DrawerContent(
     {__typename?: 'BandApplication'}
   >,
 ) {
+  const [contacted] = useMarkAsContextedMutation();
+  const viewer = useViewerContext();
+
   return (
     <>
       <Demo demo={props.demo} />
@@ -112,11 +133,41 @@ function DrawerContent(
         <br />
         <Popconfirm
           title="Band als kontaktiert markieren?"
-          onConfirm={() => {}}
+          onConfirm={() =>
+            contacted({
+              variables: {
+                contacted: true,
+                id: props.id,
+              },
+              optimisticResponse: {
+                markBandApplicationContacted: {
+                  __typename: 'BandApplication',
+                  id: props.id,
+                  contactedByViewer: viewer,
+                },
+              },
+            })
+          }
+          onCancel={() =>
+            contacted({
+              variables: {
+                contacted: false,
+                id: props.id,
+              },
+            })
+          }
           okText="Ja"
           cancelText="Nein"
         >
-          <a href={`mailto:${props.email}`}>{props.email}</a>
+          <a
+            href={`mailto:${props.email}`}
+            onClick={() => {
+              message.info(`${props.email} in Zwischenablage kopiert`);
+              navigator.clipboard.writeText(props.email);
+            }}
+          >
+            {props.email}
+          </a>
         </Popconfirm>
       </p>
     </>

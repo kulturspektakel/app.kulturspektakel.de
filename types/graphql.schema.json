@@ -490,6 +490,14 @@
             "deprecationReason": null
           },
           {
+            "name": "contactedByViewer",
+            "description": null,
+            "args": [],
+            "type": {"kind": "OBJECT", "name": "Viewer", "ofType": null},
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "bandApplicationRating",
             "description": null,
             "args": [],
@@ -1907,6 +1915,47 @@
             "deprecationReason": null
           },
           {
+            "name": "markBandApplicationContacted",
+            "description": null,
+            "args": [
+              {
+                "name": "bandApplicationId",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {"kind": "SCALAR", "name": "ID", "ofType": null}
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "contacted",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
+            "type": {
+              "kind": "OBJECT",
+              "name": "BandApplication",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "rateBandApplication",
             "description": null,
             "args": [
@@ -1980,8 +2029,7 @@
           {"kind": "OBJECT", "name": "Area", "ofType": null},
           {"kind": "OBJECT", "name": "BandApplication", "ofType": null},
           {"kind": "OBJECT", "name": "Event", "ofType": null},
-          {"kind": "OBJECT", "name": "Table", "ofType": null},
-          {"kind": "OBJECT", "name": "Viewer", "ofType": null}
+          {"kind": "OBJECT", "name": "Table", "ofType": null}
         ]
       },
       {
@@ -3540,7 +3588,7 @@
           }
         ],
         "inputFields": null,
-        "interfaces": [{"kind": "INTERFACE", "name": "Node", "ofType": null}],
+        "interfaces": [],
         "enumValues": null,
         "possibleTypes": null
       },

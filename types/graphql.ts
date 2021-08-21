@@ -80,6 +80,7 @@ export type BandApplication = Node & {
   distance?: Maybe<Scalars['Float']>;
   heardAboutBookingFrom?: Maybe<HeardAboutBookingFrom>;
   knowsKultFrom?: Maybe<Scalars['String']>;
+  contactedByViewer?: Maybe<Viewer>;
   bandApplicationRating: Array<BandApplicationRating>;
   rating?: Maybe<Scalars['Float']>;
 };
@@ -195,6 +196,7 @@ export type Mutation = {
   upsertProductList?: Maybe<ProductList>;
   swapReservations?: Maybe<Scalars['Boolean']>;
   createBandApplication?: Maybe<BandApplication>;
+  markBandApplicationContacted?: Maybe<BandApplication>;
   rateBandApplication?: Maybe<BandApplication>;
 };
 
@@ -269,6 +271,11 @@ export type MutationSwapReservationsArgs = {
 
 export type MutationCreateBandApplicationArgs = {
   data: CreateBandApplicationInput;
+};
+
+export type MutationMarkBandApplicationContactedArgs = {
+  bandApplicationId: Scalars['ID'];
+  contacted: Scalars['Boolean'];
 };
 
 export type MutationRateBandApplicationArgs = {
@@ -479,7 +486,7 @@ export type TimeSeries = {
   value: Scalars['Int'];
 };
 
-export type Viewer = Node & {
+export type Viewer = {
   __typename?: 'Viewer';
   id: Scalars['ID'];
   displayName: Scalars['String'];
@@ -496,6 +503,7 @@ export type ApplicationDetailsQuery = {__typename?: 'Query'} & {
     | {__typename?: 'Area'}
     | ({__typename?: 'BandApplication'} & Pick<
         BandApplication,
+        | 'id'
         | 'bandname'
         | 'instagram'
         | 'instagramFollower'
@@ -508,10 +516,40 @@ export type ApplicationDetailsQuery = {__typename?: 'Query'} & {
         | 'contactPhone'
         | 'email'
         | 'demo'
-      >)
+      > &
+        RatingFragment)
     | {__typename?: 'Event'}
     | {__typename?: 'Table'}
-    | {__typename?: 'Viewer'}
+  >;
+};
+
+export type ContactedByFragment = {__typename?: 'BandApplication'} & {
+  contactedByViewer?: Maybe<
+    {__typename?: 'Viewer'} & Pick<Viewer, 'id' | 'displayName'>
+  >;
+};
+
+export type MarkAsContextedMutationVariables = Exact<{
+  id: Scalars['ID'];
+  contacted: Scalars['Boolean'];
+}>;
+
+export type MarkAsContextedMutation = {__typename?: 'Mutation'} & {
+  markBandApplicationContacted?: Maybe<
+    {__typename?: 'BandApplication'} & Pick<BandApplication, 'id'> &
+      ContactedByFragment
+  >;
+};
+
+export type BandApplicationRatingMutationVariables = Exact<{
+  id: Scalars['ID'];
+  rating?: Maybe<Scalars['Int']>;
+}>;
+
+export type BandApplicationRatingMutation = {__typename?: 'Mutation'} & {
+  rateBandApplication?: Maybe<
+    {__typename?: 'BandApplication'} & Pick<BandApplication, 'id'> &
+      RatingFragment
   >;
 };
 
@@ -639,7 +677,6 @@ export type CreateModalQuery = {__typename?: 'Query'} & {
             >
           >;
         })
-    | {__typename?: 'Viewer'}
   >;
 };
 
@@ -778,19 +815,29 @@ export type ReservationModalQuery = {__typename?: 'Query'} & Pick<
     areas: Array<{__typename?: 'Area'} & Pick<Area, 'id' | 'displayName'>>;
   };
 
-export type ViewerQueryVariables = Exact<{[key: string]: never}>;
-
-export type ViewerQuery = {__typename?: 'Query'} & {
-  viewer?: Maybe<
-    {__typename?: 'Viewer'} & Pick<Viewer, 'profilePicture' | 'displayName'>
-  >;
-};
+export type RatingFragment = {__typename?: 'BandApplication'} & Pick<
+  BandApplication,
+  'rating'
+> & {
+    bandApplicationRating: Array<
+      {__typename?: 'BandApplicationRating'} & Pick<
+        BandApplicationRating,
+        'rating'
+      > & {
+          viewer: {__typename?: 'Viewer'} & Pick<
+            Viewer,
+            'id' | 'displayName' | 'profilePicture'
+          >;
+        }
+    >;
+  };
 
 export type BandApplcationsQueryVariables = Exact<{
   id: Scalars['ID'];
 }>;
 
 export type BandApplcationsQuery = {__typename?: 'Query'} & {
+  viewer?: Maybe<{__typename?: 'Viewer'} & Pick<Viewer, 'id'>>;
   node?: Maybe<
     | {__typename?: 'Area'}
     | {__typename?: 'BandApplication'}
@@ -807,23 +854,12 @@ export type BandApplcationsQuery = {__typename?: 'Query'} & {
             | 'distance'
             | 'facebookLikes'
             | 'instagramFollower'
-          > & {
-              bandApplicationRating: Array<
-                {__typename?: 'BandApplicationRating'} & Pick<
-                  BandApplicationRating,
-                  'rating'
-                > & {
-                    viewer: {__typename?: 'Viewer'} & Pick<
-                      Viewer,
-                      'id' | 'displayName' | 'profilePicture'
-                    >;
-                  }
-              >;
-            }
+          > &
+            ContactedByFragment &
+            RatingFragment
         >;
       })
     | {__typename?: 'Table'}
-    | {__typename?: 'Viewer'}
   >;
 };
 
@@ -957,10 +993,28 @@ export type OverviewQuery = {__typename?: 'Query'} & {
     | {__typename?: 'BandApplication'}
     | {__typename?: 'Event'}
     | {__typename?: 'Table'}
-    | {__typename?: 'Viewer'}
   >;
 };
 
+export type ViewerContextProviderQueryVariables = Exact<{[key: string]: never}>;
+
+export type ViewerContextProviderQuery = {__typename?: 'Query'} & {
+  viewer?: Maybe<
+    {__typename?: 'Viewer'} & Pick<
+      Viewer,
+      'id' | 'profilePicture' | 'displayName'
+    >
+  >;
+};
+
+export const ContactedByFragmentDoc = gql`
+  fragment ContactedBy on BandApplication {
+    contactedByViewer {
+      id
+      displayName
+    }
+  }
+`;
 export const ProductRowFragmentDoc = gql`
   fragment ProductRow on Product {
     id
@@ -1057,6 +1111,19 @@ export const ReservationFragmentFragmentDoc = gql`
     }
   }
 `;
+export const RatingFragmentDoc = gql`
+  fragment Rating on BandApplication {
+    bandApplicationRating {
+      viewer {
+        id
+        displayName
+        profilePicture
+      }
+      rating
+    }
+    rating
+  }
+`;
 export const OverviewReservationFragmentDoc = gql`
   fragment OverviewReservation on Reservation {
     id
@@ -1072,6 +1139,7 @@ export const ApplicationDetailsDocument = gql`
   query ApplicationDetails($id: ID!) {
     node(id: $id) {
       ... on BandApplication {
+        id
         bandname
         instagram
         instagramFollower
@@ -1084,9 +1152,11 @@ export const ApplicationDetailsDocument = gql`
         contactPhone
         email
         demo
+        ...Rating
       }
     }
   }
+  ${RatingFragmentDoc}
 `;
 
 /**
@@ -1138,6 +1208,113 @@ export type ApplicationDetailsLazyQueryHookResult = ReturnType<
 export type ApplicationDetailsQueryResult = Apollo.QueryResult<
   ApplicationDetailsQuery,
   ApplicationDetailsQueryVariables
+>;
+export const MarkAsContextedDocument = gql`
+  mutation MarkAsContexted($id: ID!, $contacted: Boolean!) {
+    markBandApplicationContacted(
+      bandApplicationId: $id
+      contacted: $contacted
+    ) {
+      id
+      ...ContactedBy
+    }
+  }
+  ${ContactedByFragmentDoc}
+`;
+export type MarkAsContextedMutationFn = Apollo.MutationFunction<
+  MarkAsContextedMutation,
+  MarkAsContextedMutationVariables
+>;
+
+/**
+ * __useMarkAsContextedMutation__
+ *
+ * To run a mutation, you first call `useMarkAsContextedMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useMarkAsContextedMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [markAsContextedMutation, { data, loading, error }] = useMarkAsContextedMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      contacted: // value for 'contacted'
+ *   },
+ * });
+ */
+export function useMarkAsContextedMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    MarkAsContextedMutation,
+    MarkAsContextedMutationVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useMutation<
+    MarkAsContextedMutation,
+    MarkAsContextedMutationVariables
+  >(MarkAsContextedDocument, options);
+}
+export type MarkAsContextedMutationHookResult = ReturnType<
+  typeof useMarkAsContextedMutation
+>;
+export type MarkAsContextedMutationResult = Apollo.MutationResult<MarkAsContextedMutation>;
+export type MarkAsContextedMutationOptions = Apollo.BaseMutationOptions<
+  MarkAsContextedMutation,
+  MarkAsContextedMutationVariables
+>;
+export const BandApplicationRatingDocument = gql`
+  mutation BandApplicationRating($id: ID!, $rating: Int) {
+    rateBandApplication(bandApplicationId: $id, rating: $rating) {
+      id
+      ...Rating
+    }
+  }
+  ${RatingFragmentDoc}
+`;
+export type BandApplicationRatingMutationFn = Apollo.MutationFunction<
+  BandApplicationRatingMutation,
+  BandApplicationRatingMutationVariables
+>;
+
+/**
+ * __useBandApplicationRatingMutation__
+ *
+ * To run a mutation, you first call `useBandApplicationRatingMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useBandApplicationRatingMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [bandApplicationRatingMutation, { data, loading, error }] = useBandApplicationRatingMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      rating: // value for 'rating'
+ *   },
+ * });
+ */
+export function useBandApplicationRatingMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    BandApplicationRatingMutation,
+    BandApplicationRatingMutationVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useMutation<
+    BandApplicationRatingMutation,
+    BandApplicationRatingMutationVariables
+  >(BandApplicationRatingDocument, options);
+}
+export type BandApplicationRatingMutationHookResult = ReturnType<
+  typeof useBandApplicationRatingMutation
+>;
+export type BandApplicationRatingMutationResult = Apollo.MutationResult<BandApplicationRatingMutation>;
+export type BandApplicationRatingMutationOptions = Apollo.BaseMutationOptions<
+  BandApplicationRatingMutation,
+  BandApplicationRatingMutationVariables
 >;
 export const UpsertProductListDocument = gql`
   mutation UpsertProductList(
@@ -1773,56 +1950,11 @@ export type ReservationModalQueryResult = Apollo.QueryResult<
   ReservationModalQuery,
   ReservationModalQueryVariables
 >;
-export const ViewerDocument = gql`
-  query Viewer {
-    viewer {
-      profilePicture
-      displayName
-    }
-  }
-`;
-
-/**
- * __useViewerQuery__
- *
- * To run a query within a React component, call `useViewerQuery` and pass it any options that fit your needs.
- * When your component renders, `useViewerQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useViewerQuery({
- *   variables: {
- *   },
- * });
- */
-export function useViewerQuery(
-  baseOptions?: Apollo.QueryHookOptions<ViewerQuery, ViewerQueryVariables>,
-) {
-  const options = {...defaultOptions, ...baseOptions};
-  return Apollo.useQuery<ViewerQuery, ViewerQueryVariables>(
-    ViewerDocument,
-    options,
-  );
-}
-export function useViewerLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<ViewerQuery, ViewerQueryVariables>,
-) {
-  const options = {...defaultOptions, ...baseOptions};
-  return Apollo.useLazyQuery<ViewerQuery, ViewerQueryVariables>(
-    ViewerDocument,
-    options,
-  );
-}
-export type ViewerQueryHookResult = ReturnType<typeof useViewerQuery>;
-export type ViewerLazyQueryHookResult = ReturnType<typeof useViewerLazyQuery>;
-export type ViewerQueryResult = Apollo.QueryResult<
-  ViewerQuery,
-  ViewerQueryVariables
->;
 export const BandApplcationsDocument = gql`
   query BandApplcations($id: ID!) {
+    viewer {
+      id
+    }
     node(id: $id) {
       ... on Event {
         bandApplication {
@@ -1835,18 +1967,14 @@ export const BandApplcationsDocument = gql`
           distance
           facebookLikes
           instagramFollower
-          bandApplicationRating {
-            viewer {
-              id
-              displayName
-              profilePicture
-            }
-            rating
-          }
+          ...ContactedBy
+          ...Rating
         }
       }
     }
   }
+  ${ContactedByFragmentDoc}
+  ${RatingFragmentDoc}
 `;
 
 /**
@@ -2367,4 +2495,63 @@ export type OverviewLazyQueryHookResult = ReturnType<
 export type OverviewQueryResult = Apollo.QueryResult<
   OverviewQuery,
   OverviewQueryVariables
+>;
+export const ViewerContextProviderDocument = gql`
+  query ViewerContextProvider {
+    viewer {
+      id
+      profilePicture
+      displayName
+    }
+  }
+`;
+
+/**
+ * __useViewerContextProviderQuery__
+ *
+ * To run a query within a React component, call `useViewerContextProviderQuery` and pass it any options that fit your needs.
+ * When your component renders, `useViewerContextProviderQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useViewerContextProviderQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useViewerContextProviderQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    ViewerContextProviderQuery,
+    ViewerContextProviderQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useQuery<
+    ViewerContextProviderQuery,
+    ViewerContextProviderQueryVariables
+  >(ViewerContextProviderDocument, options);
+}
+export function useViewerContextProviderLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    ViewerContextProviderQuery,
+    ViewerContextProviderQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useLazyQuery<
+    ViewerContextProviderQuery,
+    ViewerContextProviderQueryVariables
+  >(ViewerContextProviderDocument, options);
+}
+export type ViewerContextProviderQueryHookResult = ReturnType<
+  typeof useViewerContextProviderQuery
+>;
+export type ViewerContextProviderLazyQueryHookResult = ReturnType<
+  typeof useViewerContextProviderLazyQuery
+>;
+export type ViewerContextProviderQueryResult = Apollo.QueryResult<
+  ViewerContextProviderQuery,
+  ViewerContextProviderQueryVariables
 >;

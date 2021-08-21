@@ -1,12 +1,12 @@
 import Head from 'next/head';
 import styles from './Page.module.css';
-import {useViewerQuery} from '../../types/graphql';
 import {Avatar, Dropdown, Layout, Menu} from 'antd';
 import React from 'react';
 const {Header} = Layout;
 import Link from 'next/link';
 import {useRouter} from 'next/dist/client/router';
 import {DAYS} from '../../pages/tables/[...day]';
+import useViewerContext from '../../utils/useViewerContext';
 
 export const HEADER_HEIGHT = 64;
 
@@ -17,21 +17,8 @@ export default function Page({
   children: any;
   title?: string;
 }) {
-  const {data, refetch, error} = useViewerQuery();
   const {asPath} = useRouter();
-
-  if (data?.viewer == null) {
-    if (typeof window !== 'undefined') {
-      if (error?.message === 'Not authorized') {
-        // redirect to login
-        window.location.assign('https://api.kulturspektakel.de/auth');
-      } else {
-        // fetch data client side
-        refetch();
-      }
-    }
-    return null;
-  }
+  const viewer = useViewerContext();
 
   return (
     <Layout className={styles.layout} style={{paddingTop: HEADER_HEIGHT}}>
@@ -99,8 +86,8 @@ export default function Page({
             </Menu>
           }
         >
-          <Avatar src={data.viewer.profilePicture}>
-            {data.viewer.displayName
+          <Avatar src={viewer.profilePicture}>
+            {viewer.displayName
               .split(' ')
               .map((n) => n.substr(0, 1).toLocaleUpperCase())
               .join('')}
