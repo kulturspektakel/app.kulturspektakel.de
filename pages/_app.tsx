@@ -11,7 +11,6 @@ import {
   useViewerContextProviderQuery,
   ViewerContextProviderQuery,
 } from '../types/graphql';
-import {useEffect} from 'react';
 import {useRouter} from 'next/router';
 import absoluteUrl from 'next-absolute-url';
 
@@ -61,25 +60,24 @@ App.getInitialProps = async (
 
 function LoginProvider({children}) {
   const {data} = useViewerContextProviderQuery();
-
   const router = useRouter();
-  useEffect(() => {
-    if (data && data.viewer == null) {
-      const authUrl = new URL('https://api.kulturspektakel.de/auth');
-      authUrl.searchParams.append('state', absoluteUrl().origin);
-      router.push(authUrl.toString());
-    }
-  }, [data]);
-
-  if (!data?.viewer) {
+  if (data == null) {
+    // haven't loaded data yet
     return null;
+  } else if (data?.viewer == null) {
+    // loaded, but no viewer
+    const authUrl = new URL('https://api.kulturspektakel.de/auth');
+    authUrl.searchParams.append('state', absoluteUrl().origin);
+    router.push(authUrl.toString());
+    return null;
+  } else {
+    // we have viewer
+    return (
+      <ViewerContext.Provider value={data.viewer}>
+        {children}
+      </ViewerContext.Provider>
+    );
   }
-
-  return (
-    <ViewerContext.Provider value={data.viewer}>
-      {children}
-    </ViewerContext.Provider>
-  );
 }
 
 export default App;
