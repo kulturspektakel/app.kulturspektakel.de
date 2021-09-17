@@ -2029,8 +2029,7 @@
           {"kind": "OBJECT", "name": "Area", "ofType": null},
           {"kind": "OBJECT", "name": "BandApplication", "ofType": null},
           {"kind": "OBJECT", "name": "Event", "ofType": null},
-          {"kind": "OBJECT", "name": "Table", "ofType": null},
-          {"kind": "OBJECT", "name": "Viewer", "ofType": null}
+          {"kind": "OBJECT", "name": "Table", "ofType": null}
         ]
       },
       {
@@ -3589,7 +3588,7 @@
           }
         ],
         "inputFields": null,
-        "interfaces": [{"kind": "INTERFACE", "name": "Node", "ofType": null}],
+        "interfaces": [],
         "enumValues": null,
         "possibleTypes": null
       },

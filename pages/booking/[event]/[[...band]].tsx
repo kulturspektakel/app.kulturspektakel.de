@@ -1,4 +1,4 @@
-import {Avatar, Statistic, Table, Tooltip} from 'antd';
+import {Avatar, Checkbox, Statistic, Table, Tooltip} from 'antd';
 import React, {useState} from 'react';
 import Page from '../../../components/shared/Page';
 import {gql} from '@apollo/client';
@@ -6,15 +6,31 @@ import {
   BandApplcationsQuery,
   GenreCategory,
   useBandApplcationsQuery,
+  useMarkAsContextedMutation,
 } from '../../../types/graphql';
 import Rater from '../../../components/booking/Rater';
 import BandApplicationDetails from '../../../components/booking/BandApplicationDetails';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import {useRouter} from 'next/router';
 import {useEffect} from 'react';
+import useViewerContext from '../../../utils/useViewerContext';
 
 gql`
+  fragment Rating on BandApplication {
+    bandApplicationRating {
+      viewer {
+        id
+        displayName
+        profilePicture
+      }
+      rating
+    }
+    rating
+  }
   query BandApplcations($id: ID!) {
+    viewer {
+      id
+    }
     node(id: $id) {
       ... on Event {
         bandApplication {
@@ -27,14 +43,8 @@ gql`
           distance
           facebookLikes
           instagramFollower
-          bandApplicationRating {
-            viewer {
-              id
-              displayName
-              profilePicture
-            }
-            rating
-          }
+          ...ContactedBy
+          ...Rating
         }
       }
     }
@@ -92,19 +102,26 @@ export default function Booking() {
 
   return (
     <Page>
-      <MemoizedTable
-        loading={loading}
-        dataSource={
-          data?.node.__typename === 'Event' ? data.node.bandApplication : null
-        }
-        setSelected={setSelected}
-        height={1000}
-      />
+      <AutoSizer>
+        {({height, width}) => (
+          <div style={{height, width}}>
+            <MemoizedTable
+              loading={loading}
+              dataSource={
+                data?.node.__typename === 'Event'
+                  ? data.node.bandApplication
+                  : null
+              }
+              setSelected={setSelected}
+              height={height - 40}
+            />
+          </div>
+        )}
+      </AutoSizer>
       <BandApplicationDetails
         bandApplicationId={selected}
         onClose={() => setSelected(null)}
       />
-      <div style={{flexGrow: 1, width: '100%', height: '100%'}}></div>
     </Page>
   );
 }
@@ -120,135 +137,192 @@ const MemoizedTable = React.memo(
     loading: boolean;
     setSelected: (id: string) => void;
     height: number;
-  }) => (
-    <Table<RecordType>
-      loading={loading}
-      pagination={false}
-      scroll={{y: height}}
-      onRow={(r) => ({
-        onClick: () => setSelected(r.id),
-      })}
-      size="small"
-      columns={[
-        {
-          key: 'index',
-          title: '',
-          dataIndex: 'id',
-          align: 'center',
-          width: 50,
-          render: (_, __, index) => index + 1,
-        },
-        {
-          key: 'genreCategory',
-          title: '',
-          width: 50,
-          dataIndex: 'genreCategory',
-          render: (_, {genreCategory}) => (
-            <Tooltip
-              title={GENRE_CATEGORIES.get(genreCategory)}
-              placement="topRight"
-            >
-              <img
-                src={`/genre/${GENRE_ICONS.get(genreCategory)}`}
-                width="30px"
-              />
-            </Tooltip>
-          ),
-        },
-        {
-          key: 'bandname',
-          title: 'Name',
-          dataIndex: 'bandname',
-          render: (_, {bandname, genre}) => (
-            <>
-              <strong>{bandname}</strong>
-              {genre && (
-                <>
-                  <br />
-                  {genre}
-                </>
-              )}
-            </>
-          ),
-        },
-        {
-          key: 'city',
-          title: 'Ort',
-          width: 300,
-          dataIndex: 'city',
-          sorter: (a, b) => a.distance - b.distance,
-          render: (_, {city, distance}) => (
-            <>
-              {city}
-              {distance && (
-                <>
-                  <br />
-                  <span style={{opacity: 0.5}}>
-                    {distance.toFixed()}&thinsp;km
-                  </span>
-                </>
-              )}
-            </>
-          ),
-        },
-        {
-          key: 'rating',
-          title: 'Bewertung',
-          width: 150,
-          dataIndex: 'rating',
-          sorter: (a, b) => a.rating - b.rating,
-          align: 'right',
-          render: (_, {rating, bandApplicationRating}) =>
-            rating ? (
+  }) => {
+    const viewer = useViewerContext();
+    const [markContacted] = useMarkAsContextedMutation();
+    return (
+      <Table<RecordType>
+        loading={loading}
+        pagination={false}
+        scroll={{y: height, x: 500}}
+        onRow={(r) => ({
+          onClick: (e) =>
+            !new Set(['path', 'input']).has(
+              (e.target as any).tagName.toLowerCase(),
+            ) && setSelected(r.id),
+        })}
+        size="small"
+        columns={[
+          {
+            key: 'index',
+            title: '',
+            dataIndex: 'id',
+            align: 'center',
+            width: 50,
+            render: (_, __, index) => index + 1,
+          },
+          {
+            key: 'genreCategory',
+            title: '',
+            width: 50,
+            dataIndex: 'genreCategory',
+            filterMultiple: true,
+            filters: Array.from(
+              GENRE_CATEGORIES.entries(),
+            ).map(([value, text]) => ({text, value})),
+            onFilter: (value, {genreCategory}) => value === genreCategory,
+            render: (_, {genreCategory}) => (
               <Tooltip
-                title={bandApplicationRating.map((r) => (
-                  <div>
-                    {Array.apply(null, Array(4)).map((_, i) =>
-                      r.rating > i ? '★' : '☆',
-                    )}
-                    &nbsp;
-                    {r.viewer.displayName}
-                  </div>
-                ))}
+                title={GENRE_CATEGORIES.get(genreCategory)}
                 placement="topRight"
               >
-                <Statistic
-                  valueStyle={{color: '#1890ff', fontSize: '1.5em'}}
-                  precision={2}
-                  value={rating}
+                <img
+                  src={`/genre/${GENRE_ICONS.get(genreCategory)}`}
+                  width="30px"
                 />
               </Tooltip>
-            ) : null,
-        },
-        {
-          key: 'rater',
-          title: '',
-          dataIndex: 'rating',
-          width: 150,
-          render: (_, {id}) => <Rater bandApplicationId={id} />,
-        },
-        {
-          key: 'avatars',
-          title: '',
-          dataIndex: 'rating',
-          width: 150,
-          render: (_, {id, bandApplicationRating}) => (
-            <Avatar.Group>
-              {bandApplicationRating.map((r) => (
+            ),
+          },
+          {
+            key: 'bandname',
+            title: 'Name',
+            dataIndex: 'bandname',
+            render: (_, {bandname, genre}) => (
+              <>
+                <strong>{bandname}</strong>
+                {genre && (
+                  <>
+                    <br />
+                    {genre}
+                  </>
+                )}
+              </>
+            ),
+          },
+          {
+            key: 'city',
+            title: 'Ort',
+            width: 300,
+            dataIndex: 'city',
+            sorter: (a, b) => a.distance - b.distance,
+            render: (_, {city, distance}) => (
+              <>
+                {city}
+                {distance && (
+                  <>
+                    <br />
+                    <span style={{opacity: 0.5}}>
+                      {distance.toFixed()}&thinsp;km
+                    </span>
+                  </>
+                )}
+              </>
+            ),
+          },
+          {
+            key: 'rating',
+            title: 'Bewertung',
+            width: 150,
+            dataIndex: 'rating',
+            sorter: (a, b) => a.rating - b.rating,
+            align: 'right',
+            render: (_, {rating, bandApplicationRating}) =>
+              rating ? (
                 <Tooltip
-                  key={r.viewer.id}
-                  title={r.viewer.displayName}
-                  placement="topLeft"
+                  title={bandApplicationRating.map((r) => (
+                    <div>
+                      {Array.apply(null, Array(4)).map((_, i) =>
+                        r.rating > i ? '★' : '☆',
+                      )}
+                      &nbsp;
+                      {r.viewer.displayName}
+                    </div>
+                  ))}
+                  placement="topRight"
                 >
-                  <Avatar src={r.viewer.profilePicture} size="small" />
+                  <Statistic
+                    valueStyle={{color: '#1890ff', fontSize: '1.5em'}}
+                    precision={2}
+                    value={rating}
+                  />
                 </Tooltip>
-              ))}
-            </Avatar.Group>
-          ),
-        },
-      ]}
-      dataSource={dataSource}
-      rowKey="id"
-    />
-  ),
+              ) : null,
+          },
+          {
+            key: 'rater',
+            title: '',
+            dataIndex: 'rating',
+            width: 150,
+            render: (_, {id, bandApplicationRating}) => (
+              <Rater
+                bandApplicationId={id}
+                defaultValue={
+                  bandApplicationRating.find(
+                    ({viewer: {id}}) => id === viewer.id,
+                  )?.rating
+                }
+              />
+            ),
+          },
+          {
+            key: 'avatars',
+            title: '',
+            dataIndex: 'rating',
+            width: 150,
+            render: (_, {id, bandApplicationRating}) => (
+              <Avatar.Group>
+                {bandApplicationRating.map((r) => (
+                  <Tooltip
+                    key={r.viewer.id}
+                    title={r.viewer.displayName}
+                    placement="topLeft"
+                  >
+                    <Avatar src={r.viewer.profilePicture} size="small" />
+                  </Tooltip>
+                ))}
+              </Avatar.Group>
+            ),
+          },
+          {
+            key: 'contactedByViewer',
+            title: 'Kontakt',
+            dataIndex: 'contactedByViewer',
+            width: 80,
+            align: 'center',
+            render: (_, {contactedByViewer, id}) => (
+              <Tooltip
+                title={
+                  contactedByViewer
+                    ? `Kontaktiert von ${contactedByViewer.displayName}`
+                    : 'als kontaktiert markieren'
+                }
+                placement="topLeft"
+              >
+                <Checkbox
+                  checked={Boolean(contactedByViewer)}
+                  onChange={(e) =>
+                    markContacted({
+                      variables: {
+                        contacted: e.target.checked,
+                        id,
+                      },
+                      optimisticResponse: {
+                        markBandApplicationContacted: {
+                          __typename: 'BandApplication',
+                          id,
+                          contactedByViewer: e.target.checked ? viewer : null,
+                        },
+                      },
+                    })
+                  }
+                />
+              </Tooltip>
+            ),
+          },
+        ]}
+        dataSource={dataSource}
+        rowKey="id"
+      />
+    );
+  },
 );
