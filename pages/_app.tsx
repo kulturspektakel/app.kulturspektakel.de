@@ -59,8 +59,9 @@ App.getInitialProps = async (
 };
 
 function LoginProvider({children}) {
-  const {data} = useViewerContextProviderQuery();
+  const {data, ...args} = useViewerContextProviderQuery();
   const router = useRouter();
+  console.log(data, args);
   if (data == null) {
     // haven't loaded data yet
     return null;
