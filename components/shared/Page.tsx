@@ -22,6 +22,7 @@ export default function Page({
 
   if (data?.viewer == null) {
     if (typeof window !== 'undefined') {
+      console.log(error);
       if (error?.message === 'Not authorized') {
         // redirect to login
         window.location.assign('https://api.kulturspektakel.de/auth');
@@ -30,7 +31,7 @@ export default function Page({
         refetch();
       }
     }
-    return null;
+    return 'null';
   }
 
   return (

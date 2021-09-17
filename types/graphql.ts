@@ -80,6 +80,7 @@ export type BandApplication = Node & {
   distance?: Maybe<Scalars['Float']>;
   heardAboutBookingFrom?: Maybe<HeardAboutBookingFrom>;
   knowsKultFrom?: Maybe<Scalars['String']>;
+  contactedByViewer?: Maybe<Viewer>;
   bandApplicationRating: Array<BandApplicationRating>;
   rating?: Maybe<Scalars['Float']>;
 };
@@ -195,6 +196,7 @@ export type Mutation = {
   upsertProductList?: Maybe<ProductList>;
   swapReservations?: Maybe<Scalars['Boolean']>;
   createBandApplication?: Maybe<BandApplication>;
+  markBandApplicationContacted?: Maybe<BandApplication>;
   rateBandApplication?: Maybe<BandApplication>;
 };
 
@@ -269,6 +271,11 @@ export type MutationSwapReservationsArgs = {
 
 export type MutationCreateBandApplicationArgs = {
   data: CreateBandApplicationInput;
+};
+
+export type MutationMarkBandApplicationContactedArgs = {
+  bandApplicationId: Scalars['ID'];
+  contacted: Scalars['Boolean'];
 };
 
 export type MutationRateBandApplicationArgs = {

@@ -490,6 +490,14 @@
             "deprecationReason": null
           },
           {
+            "name": "contactedByViewer",
+            "description": null,
+            "args": [],
+            "type": {"kind": "OBJECT", "name": "Viewer", "ofType": null},
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "bandApplicationRating",
             "description": null,
             "args": [],
@@ -1890,6 +1898,47 @@
                   "ofType": {
                     "kind": "INPUT_OBJECT",
                     "name": "CreateBandApplicationInput",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
+            "type": {
+              "kind": "OBJECT",
+              "name": "BandApplication",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "markBandApplicationContacted",
+            "description": null,
+            "args": [
+              {
+                "name": "bandApplicationId",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {"kind": "SCALAR", "name": "ID", "ofType": null}
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "contacted",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
                     "ofType": null
                   }
                 },
