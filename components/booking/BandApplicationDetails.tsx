@@ -1,5 +1,5 @@
 import {gql} from '@apollo/client';
-import {Col, Drawer, message, Popconfirm, Row, Statistic} from 'antd';
+import {Col, Drawer, message, Popconfirm, Row, Statistic, Tooltip} from 'antd';
 import React, {useState} from 'react';
 import {
   useApplicationDetailsQuery,
@@ -8,6 +8,8 @@ import {
 } from '../../types/graphql';
 import useViewerContext from '../../utils/useViewerContext';
 import Demo from './Demo';
+import Rater from './Rater';
+import Rating from './Rating';
 
 gql`
   query ApplicationDetails($id: ID!) {
@@ -26,6 +28,8 @@ gql`
         contactPhone
         email
         demo
+        numberOfArtists
+        numberOfNonMaleArtists
         ...Rating
       }
     }
@@ -93,25 +97,62 @@ function DrawerContent(
     <>
       <Demo demo={props.demo} />
       <Row>
-        <Col span={12}>
-          {props.facebook && (
+        <Col span={8}>
+          <Tooltip
+            placement="bottomLeft"
+            title={
+              <>
+                {props.numberOfNonMaleArtists} nicht männlich
+                <br />
+                {props.numberOfArtists - props.numberOfNonMaleArtists} männlich
+              </>
+            }
+          >
+            <Statistic value={props.numberOfArtists} title="Personen" />
+          </Tooltip>
+        </Col>
+        {props.facebook && (
+          <Col span={8}>
             <a href={props.facebook} target="_blank">
               <Statistic value={props.facebookLikes ?? '?'} title="Facebook" />
             </a>
-          )}
-        </Col>
-        <Col span={12}>
-          {props.instagram && (
+          </Col>
+        )}
+        {props.instagram && (
+          <Col span={8}>
             <a href={`https://instagram.com/${props.instagram}`}>
               <Statistic
                 value={props.instagramFollower ?? '?'}
                 title="Instagram"
               />
             </a>
+          </Col>
+        )}
+      </Row>
+      <br />
+      <h4>Bewertung</h4>
+      <Row>
+        <Col span={8}>
+          <Rater
+            bandApplicationId={props.id}
+            defaultValue={
+              props.bandApplicationRating.find(
+                ({viewer: {id}}) => id === viewer.id,
+              )?.rating
+            }
+          />
+        </Col>
+        <Col span={8}>
+          {props.rating && (
+            <Rating
+              rating={props.rating}
+              bandApplicationRating={props.bandApplicationRating}
+            />
           )}
         </Col>
       </Row>
       <br />
+
       {props.knowsKultFrom && (
         <>
           <h4>Woher kennt ihr das Kult?</h4>

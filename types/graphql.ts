@@ -80,6 +80,8 @@ export type BandApplication = Node & {
   distance?: Maybe<Scalars['Float']>;
   heardAboutBookingFrom?: Maybe<HeardAboutBookingFrom>;
   knowsKultFrom?: Maybe<Scalars['String']>;
+  numberOfArtists?: Maybe<Scalars['Int']>;
+  numberOfNonMaleArtists?: Maybe<Scalars['Int']>;
   contactedByViewer?: Maybe<Viewer>;
   bandApplicationRating: Array<BandApplicationRating>;
   rating?: Maybe<Scalars['Float']>;
@@ -141,7 +143,6 @@ export type DeviceSalesNumbersArgs = {
 
 export type Event = Node & {
   __typename?: 'Event';
-  /** Unique identifier for the resource */
   id: Scalars['ID'];
   name: Scalars['String'];
   start: Scalars['DateTime'];
@@ -169,6 +170,7 @@ export enum HeardAboutBookingFrom {
   Friends = 'Friends',
   Website = 'Website',
   Facebook = 'Facebook',
+  Instagram = 'Instagram',
 }
 
 export type HistoricalProduct = Billable & {
@@ -516,6 +518,8 @@ export type ApplicationDetailsQuery = {__typename?: 'Query'} & {
         | 'contactPhone'
         | 'email'
         | 'demo'
+        | 'numberOfArtists'
+        | 'numberOfNonMaleArtists'
       > &
         RatingFragment)
     | {__typename?: 'Event'}
@@ -1156,6 +1160,8 @@ export const ApplicationDetailsDocument = gql`
         contactPhone
         email
         demo
+        numberOfArtists
+        numberOfNonMaleArtists
         ...Rating
       }
     }

@@ -490,6 +490,22 @@
             "deprecationReason": null
           },
           {
+            "name": "numberOfArtists",
+            "description": null,
+            "args": [],
+            "type": {"kind": "SCALAR", "name": "Int", "ofType": null},
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "numberOfNonMaleArtists",
+            "description": null,
+            "args": [],
+            "type": {"kind": "SCALAR", "name": "Int", "ofType": null},
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "contactedByViewer",
             "description": null,
             "args": [],
@@ -996,7 +1012,7 @@
         "fields": [
           {
             "name": "id",
-            "description": "Unique identifier for the resource",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -1187,6 +1203,12 @@
           },
           {
             "name": "Facebook",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "Instagram",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null

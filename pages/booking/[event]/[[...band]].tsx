@@ -14,6 +14,7 @@ import AutoSizer from 'react-virtualized-auto-sizer';
 import {useRouter} from 'next/router';
 import {useEffect} from 'react';
 import useViewerContext from '../../../utils/useViewerContext';
+import Rating from '../../../components/booking/Rating';
 
 gql`
   fragment Rating on BandApplication {
@@ -228,24 +229,10 @@ const MemoizedTable = React.memo(
             align: 'right',
             render: (_, {rating, bandApplicationRating}) =>
               rating ? (
-                <Tooltip
-                  title={bandApplicationRating.map((r) => (
-                    <div>
-                      {Array.apply(null, Array(4)).map((_, i) =>
-                        r.rating > i ? '★' : '☆',
-                      )}
-                      &nbsp;
-                      {r.viewer.displayName}
-                    </div>
-                  ))}
-                  placement="topRight"
-                >
-                  <Statistic
-                    valueStyle={{color: '#1890ff', fontSize: '1.5em'}}
-                    precision={2}
-                    value={rating}
-                  />
-                </Tooltip>
+                <Rating
+                  rating={rating}
+                  bandApplicationRating={bandApplicationRating}
+                />
               ) : null,
           },
           {

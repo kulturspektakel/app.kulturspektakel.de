@@ -8,7 +8,7 @@ export default function Demo({demo}: {demo: string}) {
   let height = null;
   switch (domain) {
     case 'youtube.com':
-      height = 200;
+      height = 225;
       switch (path[1]) {
         case 'watch':
           embed = `https://www.youtube.com/embed/${url.searchParams.get(
@@ -32,7 +32,7 @@ export default function Demo({demo}: {demo: string}) {
 
       break;
     case 'youtu.be':
-      height = 200;
+      height = 225;
       embed = `https://www.youtube.com/embed/${path[1]}?autoplay=0&fs=0&iv_load_policy=3&showinfo=0&rel=0&cc_load_policy=0&start=0&end=0`;
       break;
     case 'bandcamp.com':
@@ -48,15 +48,25 @@ export default function Demo({demo}: {demo: string}) {
       height = 400;
       break;
     case 'spotify.com':
+      embed = `https://open.spotify.com/embed${url.pathname}`;
+      height = 300;
+
       break;
   }
 
   return (
     <>
       {embed && (
-        <iframe src={embed} width="355" height={height} frameBorder="0" />
+        <iframe
+          src={embed}
+          width="400"
+          height={height}
+          frameBorder="0"
+          style={{margin: -24, marginBottom: 10}}
+        />
       )}
       <p>
+        {!embed && <h4>Demo</h4>}
         <a href={demo} target="_blank">
           {demo}
         </a>
