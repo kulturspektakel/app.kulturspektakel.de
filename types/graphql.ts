@@ -1270,6 +1270,13 @@ export type RevenueQueryVariables = Exact<{
 
 export type RevenueQuery = {
   __typename?: 'Query';
+  events: Array<{
+    __typename?: 'Event';
+    id: string;
+    name: string;
+    start: Date;
+    end: Date;
+  }>;
   productLists: Array<{
     __typename?: 'ProductList';
     id: number;
@@ -2628,6 +2635,12 @@ export type ProductPrintQueryResult = Apollo.QueryResult<
 >;
 export const RevenueDocument = gql`
   query Revenue($after: DateTime!, $before: DateTime!) {
+    events {
+      id
+      name
+      start
+      end
+    }
     productLists {
       id
       name

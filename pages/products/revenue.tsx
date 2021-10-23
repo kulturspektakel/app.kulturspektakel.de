@@ -1,4 +1,4 @@
-import {ConfigProvider, DatePicker, PageHeader, Table} from 'antd';
+import {ConfigProvider, DatePicker, PageHeader, Select, Table} from 'antd';
 import React, {useState} from 'react';
 import Page from '../../components/shared/Page';
 import {gql} from '@apollo/client';
@@ -8,6 +8,7 @@ import RevenueDetails from '../../components/products/RevenueDetails';
 import {useEffect} from 'react';
 import {useRouter} from 'next/router';
 import de_DE from 'antd/lib/locale-provider/de_DE';
+import {isEqual} from 'date-fns';
 
 const {RangePicker} = DatePicker;
 
@@ -18,6 +19,12 @@ const formatter = new Intl.NumberFormat('de-DE', {
 
 gql`
   query Revenue($after: DateTime!, $before: DateTime!) {
+    events {
+      id
+      name
+      start
+      end
+    }
     productLists {
       id
       name
@@ -31,7 +38,6 @@ gql`
 
 export default function Revenue() {
   const router = useRouter();
-
   const [range, setRange] = useState<[moment.Moment, moment.Moment]>([
     moment(router.query.after),
     moment(router.query.before),
@@ -59,12 +65,30 @@ export default function Revenue() {
     },
   });
 
+  const eventPickerValue = data?.events.find(
+    (e) =>
+      isEqual(e.start, range[0].toDate()) && isEqual(e.end, range[1].toDate()),
+  );
+
   return (
     <Page>
       <PageHeader
         title="Umsätze"
         extra={
           <ConfigProvider locale={de_DE}>
+            <Select
+              onChange={(id) => {
+                const event = data?.events.find((e) => e.id === id);
+                if (event) {
+                  setRange([moment(event.start), moment(event.end)]);
+                }
+              }}
+              value={eventPickerValue?.id ?? 'Veranstaltung auswählen'}
+            >
+              {data?.events.map((e) => (
+                <Select.Option value={e.id}>{e.name}</Select.Option>
+              ))}
+            </Select>
             <RangePicker
               format="DD.MM.YYYY HH:mm"
               allowEmpty={[true, true]}
