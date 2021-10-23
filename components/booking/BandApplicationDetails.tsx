@@ -5,6 +5,7 @@ import {
   useApplicationDetailsQuery,
   ApplicationDetailsQuery,
   useMarkAsContextedMutation,
+  PreviouslyPlayed,
 } from '../../types/graphql';
 import useViewerContext from '../../utils/useViewerContext';
 import Demo from './Demo';
@@ -30,6 +31,7 @@ gql`
         demo
         numberOfArtists
         numberOfNonMaleArtists
+        hasPreviouslyPlayed
         ...Rating
       }
     }
@@ -97,29 +99,15 @@ function DrawerContent(
     <>
       <Demo demo={props.demo} />
       <Row>
-        <Col span={8}>
-          <Tooltip
-            placement="bottomLeft"
-            title={
-              <>
-                {props.numberOfNonMaleArtists} nicht männlich
-                <br />
-                {props.numberOfArtists - props.numberOfNonMaleArtists} männlich
-              </>
-            }
-          >
-            <Statistic value={props.numberOfArtists} title="Personen" />
-          </Tooltip>
-        </Col>
         {props.facebook && (
-          <Col span={8}>
+          <Col span={12}>
             <a href={props.facebook} target="_blank">
               <Statistic value={props.facebookLikes ?? '?'} title="Facebook" />
             </a>
           </Col>
         )}
         {props.instagram && (
-          <Col span={8}>
+          <Col span={12}>
             <a href={`https://instagram.com/${props.instagram}`}>
               <Statistic
                 value={props.instagramFollower ?? '?'}
@@ -152,6 +140,24 @@ function DrawerContent(
         </Col>
       </Row>
       <br />
+
+      {props.hasPreviouslyPlayed && (
+        <div style={{display: 'flex'}}>
+          <h4>Schonmal gespielt:</h4>&nbsp;
+          {PreviouslyPlayedText(props.hasPreviouslyPlayed)}
+        </div>
+      )}
+      <div style={{display: 'flex'}}>
+        <h4>Bandgröße:</h4>&nbsp;{props.numberOfArtists} Personen (
+        {(props.numberOfNonMaleArtists / props.numberOfArtists).toLocaleString(
+          undefined,
+          {
+            style: 'percent',
+            maximumFractionDigits: 1,
+          },
+        )}
+        &nbsp;männlich)
+      </div>
 
       {props.knowsKultFrom && (
         <>
@@ -227,4 +233,15 @@ function EllipsisText(props: {children?: string}) {
       &nbsp;<a onClick={() => setExpanded(true)}>mehr…</a>
     </p>
   );
+}
+
+function PreviouslyPlayedText(text: PreviouslyPlayed): string {
+  switch (text) {
+    case PreviouslyPlayed.Yes:
+      return 'Ja';
+    case PreviouslyPlayed.OtherFormation:
+      return 'In einer anderen Band';
+    case PreviouslyPlayed.No:
+      return 'Nein';
+  }
 }

@@ -24,6 +24,7 @@ export default function Page({
     <Layout className={styles.layout} style={{paddingTop: HEADER_HEIGHT}}>
       <Head>
         <title>{title ?? 'Crew'} · Kulturspektakel Gauting</title>
+        <meta name="theme-color" content="#001529" />
       </Head>
       <Header className={styles.header} style={{height: HEADER_HEIGHT}}>
         <Link href="/">

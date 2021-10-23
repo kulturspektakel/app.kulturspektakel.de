@@ -2,10 +2,12 @@ import {gql} from '@apollo/client';
 import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
 export type Exact<T extends {[key: string]: unknown}> = {[K in keyof T]: T[K]};
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> &
-  {[SubKey in K]?: Maybe<T[SubKey]>};
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> &
-  {[SubKey in K]: Maybe<T[SubKey]>};
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
+  [SubKey in K]?: Maybe<T[SubKey]>;
+};
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
+  [SubKey in K]: Maybe<T[SubKey]>;
+};
 const defaultOptions = {};
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
@@ -24,73 +26,74 @@ export type Scalars = {
 
 export type Area = Node & {
   __typename?: 'Area';
-  id: Scalars['ID'];
-  displayName: Scalars['String'];
-  themeColor: Scalars['String'];
-  table: Array<Table>;
-  openingHour: Array<OpeningHour>;
-  availableTables: Scalars['Int'];
   availability: Array<TableAvailability>;
+  availableTables: Scalars['Int'];
   bandsPlaying: Array<Band>;
+  displayName: Scalars['String'];
+  id: Scalars['ID'];
+  openingHour: Array<OpeningHour>;
+  table: Array<Table>;
+  themeColor: Scalars['String'];
 };
 
-export type AreaOpeningHourArgs = {
-  day?: Maybe<Scalars['Date']>;
+export type AreaAvailabilityArgs = {
+  day: Scalars['Date'];
+  partySize: Scalars['Int'];
 };
 
 export type AreaAvailableTablesArgs = {
   time?: Maybe<Scalars['DateTime']>;
 };
 
-export type AreaAvailabilityArgs = {
-  partySize: Scalars['Int'];
-  day: Scalars['Date'];
-};
-
 export type AreaBandsPlayingArgs = {
   day: Scalars['Date'];
 };
 
+export type AreaOpeningHourArgs = {
+  day?: Maybe<Scalars['Date']>;
+};
+
 export type Band = {
   __typename?: 'Band';
+  description?: Maybe<Scalars['String']>;
+  endTime: Scalars['DateTime'];
+  genre?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
   name: Scalars['String'];
-  genre?: Maybe<Scalars['String']>;
   startTime: Scalars['DateTime'];
-  endTime: Scalars['DateTime'];
-  description?: Maybe<Scalars['String']>;
 };
 
 export type BandApplication = Node & {
   __typename?: 'BandApplication';
-  id: Scalars['ID'];
+  bandApplicationRating: Array<BandApplicationRating>;
   bandname: Scalars['String'];
-  genre?: Maybe<Scalars['String']>;
-  genreCategory: GenreCategory;
-  facebook?: Maybe<Scalars['String']>;
-  facebookLikes?: Maybe<Scalars['Int']>;
-  description?: Maybe<Scalars['String']>;
+  city: Scalars['String'];
   contactName: Scalars['String'];
   contactPhone: Scalars['String'];
-  email: Scalars['String'];
-  city: Scalars['String'];
+  contactedByViewer?: Maybe<Viewer>;
   demo?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  distance?: Maybe<Scalars['Float']>;
+  email: Scalars['String'];
+  facebook?: Maybe<Scalars['String']>;
+  facebookLikes?: Maybe<Scalars['Int']>;
+  genre?: Maybe<Scalars['String']>;
+  genreCategory: GenreCategory;
+  hasPreviouslyPlayed?: Maybe<PreviouslyPlayed>;
+  heardAboutBookingFrom?: Maybe<HeardAboutBookingFrom>;
+  id: Scalars['ID'];
   instagram?: Maybe<Scalars['String']>;
   instagramFollower?: Maybe<Scalars['Int']>;
-  distance?: Maybe<Scalars['Float']>;
-  heardAboutBookingFrom?: Maybe<HeardAboutBookingFrom>;
   knowsKultFrom?: Maybe<Scalars['String']>;
   numberOfArtists?: Maybe<Scalars['Int']>;
   numberOfNonMaleArtists?: Maybe<Scalars['Int']>;
-  contactedByViewer?: Maybe<Viewer>;
-  bandApplicationRating: Array<BandApplicationRating>;
   rating?: Maybe<Scalars['Float']>;
 };
 
 export type BandApplicationRating = {
   __typename?: 'BandApplicationRating';
-  viewer: Viewer;
   rating: Scalars['Int'];
+  viewer: Viewer;
 };
 
 export type Billable = {
@@ -104,36 +107,37 @@ export type BillableSalesNumbersArgs = {
 
 export type Config = {
   __typename?: 'Config';
+  bandApplicationDeadline: Scalars['DateTime'];
   reservationStart: Scalars['DateTime'];
   tokenValue: Scalars['Int'];
-  bandApplicationDeadline: Scalars['DateTime'];
 };
 
 export type CreateBandApplicationInput = {
-  email: Scalars['String'];
   bandname: Scalars['String'];
-  genreCategory: GenreCategory;
-  genre?: Maybe<Scalars['String']>;
   city: Scalars['String'];
-  facebook?: Maybe<Scalars['String']>;
-  instagram?: Maybe<Scalars['String']>;
-  website?: Maybe<Scalars['String']>;
-  demo: Scalars['String'];
-  description: Scalars['String'];
-  numberOfArtists: Scalars['Int'];
-  numberOfNonMaleArtists: Scalars['Int'];
   contactName: Scalars['String'];
   contactPhone: Scalars['String'];
-  knowsKultFrom?: Maybe<Scalars['String']>;
+  demo: Scalars['String'];
+  description: Scalars['String'];
+  email: Scalars['String'];
+  facebook?: Maybe<Scalars['String']>;
+  genre?: Maybe<Scalars['String']>;
+  genreCategory: GenreCategory;
+  hasPreviouslyPlayed?: Maybe<PreviouslyPlayed>;
   heardAboutBookingFrom?: Maybe<HeardAboutBookingFrom>;
+  instagram?: Maybe<Scalars['String']>;
+  knowsKultFrom?: Maybe<Scalars['String']>;
+  numberOfArtists: Scalars['Int'];
+  numberOfNonMaleArtists: Scalars['Int'];
+  website?: Maybe<Scalars['String']>;
 };
 
 export type Device = Billable & {
   __typename?: 'Device';
-  salesNumbers: SalesNumber;
   id: Scalars['ID'];
-  productList?: Maybe<ProductList>;
   lastSeen?: Maybe<Scalars['DateTime']>;
+  productList?: Maybe<ProductList>;
+  salesNumbers: SalesNumber;
 };
 
 export type DeviceSalesNumbersArgs = {
@@ -143,41 +147,41 @@ export type DeviceSalesNumbersArgs = {
 
 export type Event = Node & {
   __typename?: 'Event';
+  bandApplication: Array<BandApplication>;
+  bandApplicationEnd?: Maybe<Scalars['DateTime']>;
+  bandApplicationStart?: Maybe<Scalars['DateTime']>;
+  end: Scalars['DateTime'];
   id: Scalars['ID'];
   name: Scalars['String'];
   start: Scalars['DateTime'];
-  end: Scalars['DateTime'];
-  bandApplicationStart?: Maybe<Scalars['DateTime']>;
-  bandApplicationEnd?: Maybe<Scalars['DateTime']>;
-  bandApplication: Array<BandApplication>;
 };
 
 export enum GenreCategory {
-  Rock = 'Rock',
-  Pop = 'Pop',
-  Indie = 'Indie',
-  ReggaeSka = 'Reggae_Ska',
   BluesFunkJazzSoul = 'Blues_Funk_Jazz_Soul',
-  FolkSingerSongwriterCountry = 'Folk_SingerSongwriter_Country',
   ElektroHipHop = 'Elektro_HipHop',
+  FolkSingerSongwriterCountry = 'Folk_SingerSongwriter_Country',
   HardrockMetalPunk = 'Hardrock_Metal_Punk',
+  Indie = 'Indie',
   Other = 'Other',
+  Pop = 'Pop',
+  ReggaeSka = 'Reggae_Ska',
+  Rock = 'Rock',
 }
 
 export enum HeardAboutBookingFrom {
   BYon = 'BYon',
-  Newspaper = 'Newspaper',
-  Friends = 'Friends',
-  Website = 'Website',
   Facebook = 'Facebook',
+  Friends = 'Friends',
   Instagram = 'Instagram',
+  Newspaper = 'Newspaper',
+  Website = 'Website',
 }
 
 export type HistoricalProduct = Billable & {
   __typename?: 'HistoricalProduct';
-  salesNumbers: SalesNumber;
   name: Scalars['String'];
   productListId: Scalars['Int'];
+  salesNumbers: SalesNumber;
 };
 
 export type HistoricalProductSalesNumbersArgs = {
@@ -187,92 +191,53 @@ export type HistoricalProductSalesNumbersArgs = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  updateReservationOtherPersons?: Maybe<Reservation>;
   cancelReservation?: Maybe<Scalars['Boolean']>;
-  confirmReservation?: Maybe<Reservation>;
-  requestReservation: Scalars['Boolean'];
-  updateReservation?: Maybe<Reservation>;
   checkInReservation?: Maybe<Reservation>;
+  confirmReservation?: Maybe<Reservation>;
+  createBandApplication?: Maybe<BandApplication>;
   createOrder?: Maybe<Order>;
   createReservation?: Maybe<Reservation>;
-  upsertProductList?: Maybe<ProductList>;
-  swapReservations?: Maybe<Scalars['Boolean']>;
-  createBandApplication?: Maybe<BandApplication>;
   markBandApplicationContacted?: Maybe<BandApplication>;
   rateBandApplication?: Maybe<BandApplication>;
-};
-
-export type MutationUpdateReservationOtherPersonsArgs = {
-  token: Scalars['String'];
-  otherPersons: Array<Scalars['String']>;
+  requestReservation: Scalars['Boolean'];
+  swapReservations?: Maybe<Scalars['Boolean']>;
+  updateReservation?: Maybe<Reservation>;
+  updateReservationOtherPersons?: Maybe<Reservation>;
+  upsertProductList?: Maybe<ProductList>;
 };
 
 export type MutationCancelReservationArgs = {
   token: Scalars['String'];
 };
 
+export type MutationCheckInReservationArgs = {
+  checkedInPersons: Scalars['Int'];
+  id: Scalars['Int'];
+};
+
 export type MutationConfirmReservationArgs = {
   token: Scalars['String'];
 };
 
-export type MutationRequestReservationArgs = {
-  primaryEmail: Scalars['String'];
-  primaryPerson: Scalars['String'];
-  otherPersons: Array<Scalars['String']>;
-  startTime: Scalars['DateTime'];
-  endTime: Scalars['DateTime'];
-  areaId: Scalars['ID'];
-  tableType?: Maybe<TableType>;
-};
-
-export type MutationUpdateReservationArgs = {
-  id: Scalars['Int'];
-  startTime?: Maybe<Scalars['DateTime']>;
-  endTime?: Maybe<Scalars['DateTime']>;
-  tableId?: Maybe<Scalars['ID']>;
-  checkedInPersons?: Maybe<Scalars['Int']>;
-  note?: Maybe<Scalars['String']>;
-  primaryPerson?: Maybe<Scalars['String']>;
-};
-
-export type MutationCheckInReservationArgs = {
-  id: Scalars['Int'];
-  checkedInPersons: Scalars['Int'];
+export type MutationCreateBandApplicationArgs = {
+  data: CreateBandApplicationInput;
 };
 
 export type MutationCreateOrderArgs = {
-  products: Array<OrderItemInput>;
-  payment: OrderPayment;
-  clientId?: Maybe<Scalars['String']>;
   deposit: Scalars['Int'];
   deviceTime: Scalars['DateTime'];
+  payment: OrderPayment;
+  products: Array<OrderItemInput>;
 };
 
 export type MutationCreateReservationArgs = {
-  tableId: Scalars['ID'];
-  primaryEmail: Scalars['String'];
-  primaryPerson: Scalars['String'];
-  otherPersons: Array<Scalars['String']>;
-  startTime: Scalars['DateTime'];
   endTime: Scalars['DateTime'];
   note?: Maybe<Scalars['String']>;
-};
-
-export type MutationUpsertProductListArgs = {
-  id?: Maybe<Scalars['Int']>;
-  name?: Maybe<Scalars['String']>;
-  emoji?: Maybe<Scalars['String']>;
-  active?: Maybe<Scalars['Boolean']>;
-  products?: Maybe<Array<ProductInput>>;
-};
-
-export type MutationSwapReservationsArgs = {
-  a: Scalars['Int'];
-  b: Scalars['Int'];
-};
-
-export type MutationCreateBandApplicationArgs = {
-  data: CreateBandApplicationInput;
+  otherPersons: Array<Scalars['String']>;
+  primaryEmail: Scalars['String'];
+  primaryPerson: Scalars['String'];
+  startTime: Scalars['DateTime'];
+  tableId: Scalars['ID'];
 };
 
 export type MutationMarkBandApplicationContactedArgs = {
@@ -285,6 +250,44 @@ export type MutationRateBandApplicationArgs = {
   rating?: Maybe<Scalars['Int']>;
 };
 
+export type MutationRequestReservationArgs = {
+  areaId: Scalars['ID'];
+  endTime: Scalars['DateTime'];
+  otherPersons: Array<Scalars['String']>;
+  primaryEmail: Scalars['String'];
+  primaryPerson: Scalars['String'];
+  startTime: Scalars['DateTime'];
+  tableType?: Maybe<TableType>;
+};
+
+export type MutationSwapReservationsArgs = {
+  a: Scalars['Int'];
+  b: Scalars['Int'];
+};
+
+export type MutationUpdateReservationArgs = {
+  checkedInPersons?: Maybe<Scalars['Int']>;
+  endTime?: Maybe<Scalars['DateTime']>;
+  id: Scalars['Int'];
+  note?: Maybe<Scalars['String']>;
+  primaryPerson?: Maybe<Scalars['String']>;
+  startTime?: Maybe<Scalars['DateTime']>;
+  tableId?: Maybe<Scalars['ID']>;
+};
+
+export type MutationUpdateReservationOtherPersonsArgs = {
+  otherPersons: Array<Scalars['String']>;
+  token: Scalars['String'];
+};
+
+export type MutationUpsertProductListArgs = {
+  active?: Maybe<Scalars['Boolean']>;
+  emoji?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['Int']>;
+  name?: Maybe<Scalars['String']>;
+  products?: Maybe<Array<ProductInput>>;
+};
+
 export type Node = {
   /** Unique identifier for the resource */
   id: Scalars['ID'];
@@ -292,57 +295,63 @@ export type Node = {
 
 export type OpeningHour = {
   __typename?: 'OpeningHour';
-  startTime: Scalars['DateTime'];
   endTime: Scalars['DateTime'];
+  startTime: Scalars['DateTime'];
 };
 
 export type Order = {
   __typename?: 'Order';
-  id: Scalars['Int'];
-  payment: OrderPayment;
-  tokens: Scalars['Int'];
   createdAt: Scalars['DateTime'];
-  deviceTime: Scalars['DateTime'];
-  deviceId: Scalars['String'];
+  deposit: Scalars['Int'];
+  deviceId?: Maybe<Scalars['String']>;
+  id: Scalars['Int'];
   items: Array<OrderItem>;
+  payment: OrderPayment;
   total?: Maybe<Scalars['Int']>;
 };
 
 export type OrderItem = {
   __typename?: 'OrderItem';
-  id: Scalars['Int'];
-  note?: Maybe<Scalars['String']>;
   amount: Scalars['Int'];
+  id: Scalars['Int'];
   name: Scalars['String'];
-  productList?: Maybe<ProductList>;
+  note?: Maybe<Scalars['String']>;
   perUnitPrice: Scalars['Int'];
+  productList?: Maybe<ProductList>;
 };
 
 export type OrderItemInput = {
-  perUnitPrice: Scalars['Int'];
-  name: Scalars['String'];
   amount: Scalars['Int'];
-  productListId?: Maybe<Scalars['Int']>;
+  name: Scalars['String'];
   note?: Maybe<Scalars['String']>;
+  perUnitPrice: Scalars['Int'];
+  productListId?: Maybe<Scalars['Int']>;
 };
 
 export enum OrderPayment {
-  Cash = 'CASH',
   Bon = 'BON',
+  Cash = 'CASH',
+  FreeBand = 'FREE_BAND',
+  FreeCrew = 'FREE_CREW',
+  KultCard = 'KULT_CARD',
   SumUp = 'SUM_UP',
   Voucher = 'VOUCHER',
-  FreeCrew = 'FREE_CREW',
-  FreeBand = 'FREE_BAND',
+}
+
+export enum PreviouslyPlayed {
+  No = 'No',
+  OtherFormation = 'OtherFormation',
+  Yes = 'Yes',
 }
 
 export type Product = Billable & {
   __typename?: 'Product';
-  salesNumbers: SalesNumber;
   id: Scalars['Int'];
   name: Scalars['String'];
   price: Scalars['Int'];
-  requiresDeposit: Scalars['Boolean'];
   productListId: Scalars['Int'];
+  requiresDeposit: Scalars['Boolean'];
+  salesNumbers: SalesNumber;
 };
 
 export type ProductSalesNumbersArgs = {
@@ -358,12 +367,12 @@ export type ProductInput = {
 
 export type ProductList = Billable & {
   __typename?: 'ProductList';
-  salesNumbers: SalesNumber;
+  emoji?: Maybe<Scalars['String']>;
+  historicalProducts: Array<HistoricalProduct>;
   id: Scalars['Int'];
   name: Scalars['String'];
-  emoji?: Maybe<Scalars['String']>;
   product: Array<Product>;
-  historicalProducts: Array<HistoricalProduct>;
+  salesNumbers: SalesNumber;
 };
 
 export type ProductListSalesNumbersArgs = {
@@ -374,58 +383,58 @@ export type ProductListSalesNumbersArgs = {
 export type Query = {
   __typename?: 'Query';
   areas: Array<Area>;
-  reservationForToken?: Maybe<Reservation>;
-  viewer?: Maybe<Viewer>;
-  node?: Maybe<Node>;
-  productLists: Array<ProductList>;
-  config?: Maybe<Config>;
   availableCapacity: Scalars['Int'];
-  reservationsByPerson: Array<ReservationByPerson>;
+  config?: Maybe<Config>;
   devices: Array<Device>;
-  productList?: Maybe<ProductList>;
   distanceToKult?: Maybe<Scalars['Float']>;
   events: Array<Event>;
-};
-
-export type QueryReservationForTokenArgs = {
-  token: Scalars['String'];
-};
-
-export type QueryNodeArgs = {
-  id: Scalars['ID'];
+  node?: Maybe<Node>;
+  productList?: Maybe<ProductList>;
+  productLists: Array<ProductList>;
+  reservationForToken?: Maybe<Reservation>;
+  reservationsByPerson: Array<ReservationByPerson>;
+  viewer?: Maybe<Viewer>;
 };
 
 export type QueryAvailableCapacityArgs = {
   time?: Maybe<Scalars['DateTime']>;
 };
 
-export type QueryProductListArgs = {
-  id: Scalars['Int'];
-};
-
 export type QueryDistanceToKultArgs = {
   origin: Scalars['String'];
 };
 
+export type QueryNodeArgs = {
+  id: Scalars['ID'];
+};
+
+export type QueryProductListArgs = {
+  id: Scalars['Int'];
+};
+
+export type QueryReservationForTokenArgs = {
+  token: Scalars['String'];
+};
+
 export type Reservation = {
   __typename?: 'Reservation';
-  id: Scalars['Int'];
-  status: ReservationStatus;
-  token: Scalars['String'];
-  table: Table;
-  tableId: Scalars['String'];
-  startTime: Scalars['DateTime'];
-  endTime: Scalars['DateTime'];
-  primaryPerson: Scalars['String'];
-  primaryEmail: Scalars['String'];
-  otherPersons: Array<Scalars['String']>;
-  checkedInPersons: Scalars['Int'];
-  note?: Maybe<Scalars['String']>;
-  checkInTime?: Maybe<Scalars['DateTime']>;
-  swappableWith: Array<Maybe<Reservation>>;
   alternativeTables: Array<Maybe<Table>>;
   availableToCheckIn: Scalars['Int'];
+  checkInTime?: Maybe<Scalars['DateTime']>;
+  checkedInPersons: Scalars['Int'];
+  endTime: Scalars['DateTime'];
+  id: Scalars['Int'];
+  note?: Maybe<Scalars['String']>;
+  otherPersons: Array<Scalars['String']>;
+  primaryEmail: Scalars['String'];
+  primaryPerson: Scalars['String'];
   reservationsFromSamePerson: Array<Reservation>;
+  startTime: Scalars['DateTime'];
+  status: ReservationStatus;
+  swappableWith: Array<Maybe<Reservation>>;
+  table: Table;
+  tableId: Scalars['String'];
+  token: Scalars['String'];
 };
 
 export type ReservationByPerson = {
@@ -435,16 +444,16 @@ export type ReservationByPerson = {
 };
 
 export enum ReservationStatus {
-  Pending = 'Pending',
-  Confirmed = 'Confirmed',
   CheckedIn = 'CheckedIn',
+  Confirmed = 'Confirmed',
+  Pending = 'Pending',
 }
 
 export type SalesNumber = {
   __typename?: 'SalesNumber';
   count: Scalars['Int'];
-  total: Scalars['Float'];
   timeSeries: Array<TimeSeries>;
+  total: Scalars['Float'];
 };
 
 export type SalesNumberTimeSeriesArgs = {
@@ -453,12 +462,12 @@ export type SalesNumberTimeSeriesArgs = {
 
 export type Table = Node & {
   __typename?: 'Table';
-  id: Scalars['ID'];
-  displayName: Scalars['String'];
-  maxCapacity: Scalars['Int'];
-  type: TableType;
   area: Area;
+  displayName: Scalars['String'];
+  id: Scalars['ID'];
+  maxCapacity: Scalars['Int'];
   reservations: Array<Reservation>;
+  type: TableType;
 };
 
 export type TableReservationsArgs = {
@@ -467,19 +476,19 @@ export type TableReservationsArgs = {
 
 export type TableAvailability = {
   __typename?: 'TableAvailability';
-  startTime: Scalars['DateTime'];
   endTime: Scalars['DateTime'];
+  startTime: Scalars['DateTime'];
   tableType: TableType;
 };
 
 export enum TableType {
-  Table = 'TABLE',
   Island = 'ISLAND',
+  Table = 'TABLE',
 }
 
 export enum TimeGrouping {
-  Hour = 'Hour',
   Day = 'Day',
+  Hour = 'Hour',
 }
 
 export type TimeSeries = {
@@ -490,9 +499,9 @@ export type TimeSeries = {
 
 export type Viewer = Node & {
   __typename?: 'Viewer';
-  id: Scalars['ID'];
   displayName: Scalars['String'];
   email: Scalars['String'];
+  id: Scalars['ID'];
   profilePicture?: Maybe<Scalars['String']>;
 };
 
@@ -500,38 +509,53 @@ export type ApplicationDetailsQueryVariables = Exact<{
   id: Scalars['ID'];
 }>;
 
-export type ApplicationDetailsQuery = {__typename?: 'Query'} & {
-  node?: Maybe<
+export type ApplicationDetailsQuery = {
+  __typename?: 'Query';
+  node?:
     | {__typename?: 'Area'}
-    | ({__typename?: 'BandApplication'} & Pick<
-        BandApplication,
-        | 'id'
-        | 'bandname'
-        | 'instagram'
-        | 'instagramFollower'
-        | 'facebook'
-        | 'facebookLikes'
-        | 'description'
-        | 'knowsKultFrom'
-        | 'heardAboutBookingFrom'
-        | 'contactName'
-        | 'contactPhone'
-        | 'email'
-        | 'demo'
-        | 'numberOfArtists'
-        | 'numberOfNonMaleArtists'
-      > &
-        RatingFragment)
+    | {
+        __typename?: 'BandApplication';
+        id: string;
+        bandname: string;
+        instagram?: string | null | undefined;
+        instagramFollower?: number | null | undefined;
+        facebook?: string | null | undefined;
+        facebookLikes?: number | null | undefined;
+        description?: string | null | undefined;
+        knowsKultFrom?: string | null | undefined;
+        heardAboutBookingFrom?: HeardAboutBookingFrom | null | undefined;
+        contactName: string;
+        contactPhone: string;
+        email: string;
+        demo?: string | null | undefined;
+        numberOfArtists?: number | null | undefined;
+        numberOfNonMaleArtists?: number | null | undefined;
+        hasPreviouslyPlayed?: PreviouslyPlayed | null | undefined;
+        rating?: number | null | undefined;
+        bandApplicationRating: Array<{
+          __typename?: 'BandApplicationRating';
+          rating: number;
+          viewer: {
+            __typename?: 'Viewer';
+            id: string;
+            displayName: string;
+            profilePicture?: string | null | undefined;
+          };
+        }>;
+      }
     | {__typename?: 'Event'}
     | {__typename?: 'Table'}
     | {__typename?: 'Viewer'}
-  >;
+    | null
+    | undefined;
 };
 
-export type ContactedByFragment = {__typename?: 'BandApplication'} & {
-  contactedByViewer?: Maybe<
-    {__typename?: 'Viewer'} & Pick<Viewer, 'id' | 'displayName'>
-  >;
+export type ContactedByFragment = {
+  __typename?: 'BandApplication';
+  contactedByViewer?:
+    | {__typename?: 'Viewer'; id: string; displayName: string}
+    | null
+    | undefined;
 };
 
 export type MarkAsContextedMutationVariables = Exact<{
@@ -539,11 +563,19 @@ export type MarkAsContextedMutationVariables = Exact<{
   contacted: Scalars['Boolean'];
 }>;
 
-export type MarkAsContextedMutation = {__typename?: 'Mutation'} & {
-  markBandApplicationContacted?: Maybe<
-    {__typename?: 'BandApplication'} & Pick<BandApplication, 'id'> &
-      ContactedByFragment
-  >;
+export type MarkAsContextedMutation = {
+  __typename?: 'Mutation';
+  markBandApplicationContacted?:
+    | {
+        __typename?: 'BandApplication';
+        id: string;
+        contactedByViewer?:
+          | {__typename?: 'Viewer'; id: string; displayName: string}
+          | null
+          | undefined;
+      }
+    | null
+    | undefined;
 };
 
 export type BandApplicationRatingMutationVariables = Exact<{
@@ -551,21 +583,41 @@ export type BandApplicationRatingMutationVariables = Exact<{
   rating?: Maybe<Scalars['Int']>;
 }>;
 
-export type BandApplicationRatingMutation = {__typename?: 'Mutation'} & {
-  rateBandApplication?: Maybe<
-    {__typename?: 'BandApplication'} & Pick<BandApplication, 'id'> &
-      RatingFragment
-  >;
+export type BandApplicationRatingMutation = {
+  __typename?: 'Mutation';
+  rateBandApplication?:
+    | {
+        __typename?: 'BandApplication';
+        id: string;
+        rating?: number | null | undefined;
+        bandApplicationRating: Array<{
+          __typename?: 'BandApplicationRating';
+          rating: number;
+          viewer: {
+            __typename?: 'Viewer';
+            id: string;
+            displayName: string;
+            profilePicture?: string | null | undefined;
+          };
+        }>;
+      }
+    | null
+    | undefined;
 };
 
-export type ProductListFragment = {__typename?: 'ProductList'} & Pick<
-  ProductList,
-  'id' | 'name' | 'emoji'
-> & {
-    product: Array<
-      {__typename?: 'Product'} & Pick<Product, 'id'> & ProductRowFragment
-    >;
-  };
+export type ProductListFragment = {
+  __typename?: 'ProductList';
+  id: number;
+  name: string;
+  emoji?: string | null | undefined;
+  product: Array<{
+    __typename?: 'Product';
+    id: number;
+    name: string;
+    price: number;
+    requiresDeposit: boolean;
+  }>;
+};
 
 export type UpsertProductListMutationVariables = Exact<{
   id?: Maybe<Scalars['Int']>;
@@ -575,14 +627,33 @@ export type UpsertProductListMutationVariables = Exact<{
   active?: Maybe<Scalars['Boolean']>;
 }>;
 
-export type UpsertProductListMutation = {__typename?: 'Mutation'} & {
-  upsertProductList?: Maybe<{__typename?: 'ProductList'} & ProductListFragment>;
+export type UpsertProductListMutation = {
+  __typename?: 'Mutation';
+  upsertProductList?:
+    | {
+        __typename?: 'ProductList';
+        id: number;
+        name: string;
+        emoji?: string | null | undefined;
+        product: Array<{
+          __typename?: 'Product';
+          id: number;
+          name: string;
+          price: number;
+          requiresDeposit: boolean;
+        }>;
+      }
+    | null
+    | undefined;
 };
 
-export type ProductRowFragment = {__typename?: 'Product'} & Pick<
-  Product,
-  'id' | 'name' | 'price' | 'requiresDeposit'
->;
+export type ProductRowFragment = {
+  __typename?: 'Product';
+  id: number;
+  name: string;
+  price: number;
+  requiresDeposit: boolean;
+};
 
 export type RevenueDetailsQueryVariables = Exact<{
   id: Scalars['Int'];
@@ -591,99 +662,119 @@ export type RevenueDetailsQueryVariables = Exact<{
   grouping: TimeGrouping;
 }>;
 
-export type RevenueDetailsQuery = {__typename?: 'Query'} & {
-  productList?: Maybe<
-    {__typename?: 'ProductList'} & Pick<ProductList, 'id' | 'name'> & {
-        salesNumbers: {__typename?: 'SalesNumber'} & {
-          timeSeries: Array<
-            {__typename?: 'TimeSeries'} & Pick<TimeSeries, 'time' | 'value'>
-          >;
+export type RevenueDetailsQuery = {
+  __typename?: 'Query';
+  productList?:
+    | {
+        __typename?: 'ProductList';
+        id: number;
+        name: string;
+        salesNumbers: {
+          __typename?: 'SalesNumber';
+          timeSeries: Array<{
+            __typename?: 'TimeSeries';
+            time: Date;
+            value: number;
+          }>;
         };
-        historicalProducts: Array<
-          {__typename?: 'HistoricalProduct'} & Pick<
-            HistoricalProduct,
-            'name'
-          > & {
-              salesNumbers: {__typename?: 'SalesNumber'} & Pick<
-                SalesNumber,
-                'count' | 'total'
-              >;
-            }
-        >;
+        historicalProducts: Array<{
+          __typename?: 'HistoricalProduct';
+          name: string;
+          salesNumbers: {
+            __typename?: 'SalesNumber';
+            count: number;
+            total: number;
+          };
+        }>;
       }
-  >;
+    | null
+    | undefined;
 };
 
 export type SlotsQueryVariables = Exact<{
   day?: Maybe<Scalars['Date']>;
 }>;
 
-export type SlotsQuery = {__typename?: 'Query'} & {
-  areas: Array<
-    {__typename?: 'Area'} & Pick<Area, 'id' | 'displayName' | 'themeColor'> & {
-        table: Array<
-          {__typename?: 'Table'} & Pick<
-            Table,
-            'id' | 'displayName' | 'maxCapacity'
-          > & {
-              reservations: Array<
-                {__typename?: 'Reservation'} & TableRowFragment
-              >;
-            }
-        >;
-        openingHour: Array<
-          {__typename?: 'OpeningHour'} & Pick<
-            OpeningHour,
-            'startTime' | 'endTime'
-          >
-        >;
-      }
-  >;
+export type SlotsQuery = {
+  __typename?: 'Query';
+  areas: Array<{
+    __typename?: 'Area';
+    id: string;
+    displayName: string;
+    themeColor: string;
+    table: Array<{
+      __typename?: 'Table';
+      id: string;
+      displayName: string;
+      maxCapacity: number;
+      reservations: Array<{
+        __typename?: 'Reservation';
+        id: number;
+        startTime: Date;
+        endTime: Date;
+        primaryPerson: string;
+        otherPersons: Array<string>;
+        status: ReservationStatus;
+        checkedInPersons: number;
+        checkInTime?: Date | null | undefined;
+        token: string;
+      }>;
+    }>;
+    openingHour: Array<{
+      __typename?: 'OpeningHour';
+      startTime: Date;
+      endTime: Date;
+    }>;
+  }>;
 };
 
-export type TableRowFragment = {__typename?: 'Reservation'} & Pick<
-  Reservation,
-  | 'id'
-  | 'startTime'
-  | 'endTime'
-  | 'primaryPerson'
-  | 'otherPersons'
-  | 'status'
-  | 'checkedInPersons'
-  | 'checkInTime'
-  | 'token'
->;
+export type TableRowFragment = {
+  __typename?: 'Reservation';
+  id: number;
+  startTime: Date;
+  endTime: Date;
+  primaryPerson: string;
+  otherPersons: Array<string>;
+  status: ReservationStatus;
+  checkedInPersons: number;
+  checkInTime?: Date | null | undefined;
+  token: string;
+};
 
 export type CreateModalQueryVariables = Exact<{
   id: Scalars['ID'];
 }>;
 
-export type CreateModalQuery = {__typename?: 'Query'} & {
-  node?: Maybe<
+export type CreateModalQuery = {
+  __typename?: 'Query';
+  node?:
     | {__typename?: 'Area'}
     | {__typename?: 'BandApplication'}
     | {__typename?: 'Event'}
-    | ({__typename?: 'Table'} & Pick<
-        Table,
-        'id' | 'maxCapacity' | 'displayName'
-      > & {
-          area: {__typename?: 'Area'} & Pick<Area, 'id' | 'displayName'> & {
-              openingHour: Array<
-                {__typename?: 'OpeningHour'} & Pick<
-                  OpeningHour,
-                  'startTime' | 'endTime'
-                >
-              >;
-            };
-          reservations: Array<
-            {__typename?: 'Reservation'} & Pick<
-              Reservation,
-              'startTime' | 'endTime'
-            >
-          >;
-        })
+    | {
+        __typename?: 'Table';
+        id: string;
+        maxCapacity: number;
+        displayName: string;
+        area: {
+          __typename?: 'Area';
+          id: string;
+          displayName: string;
+          openingHour: Array<{
+            __typename?: 'OpeningHour';
+            startTime: Date;
+            endTime: Date;
+          }>;
+        };
+        reservations: Array<{
+          __typename?: 'Reservation';
+          startTime: Date;
+          endTime: Date;
+        }>;
+      }
     | {__typename?: 'Viewer'}
-  >;
+    | null
+    | undefined;
 };
 
 export type CreateReservationMutationVariables = Exact<{
@@ -696,70 +787,83 @@ export type CreateReservationMutationVariables = Exact<{
   tableId: Scalars['ID'];
 }>;
 
-export type CreateReservationMutation = {__typename?: 'Mutation'} & {
-  createReservation?: Maybe<
-    {__typename?: 'Reservation'} & Pick<Reservation, 'id'>
-  >;
+export type CreateReservationMutation = {
+  __typename?: 'Mutation';
+  createReservation?:
+    | {__typename?: 'Reservation'; id: number}
+    | null
+    | undefined;
 };
 
-export type ReservationFragmentFragment = {__typename?: 'Reservation'} & Pick<
-  Reservation,
-  | 'id'
-  | 'startTime'
-  | 'endTime'
-  | 'status'
-  | 'checkedInPersons'
-  | 'primaryPerson'
-  | 'primaryEmail'
-  | 'otherPersons'
-  | 'note'
-  | 'availableToCheckIn'
-> & {
-    reservationsFromSamePerson: Array<
-      {__typename?: 'Reservation'} & Pick<
-        Reservation,
-        'id' | 'startTime' | 'endTime' | 'otherPersons'
-      > & {
-          table: {__typename?: 'Table'} & Pick<Table, 'id'> & {
-              area: {__typename?: 'Area'} & Pick<Area, 'id' | 'displayName'>;
-            };
-        }
-    >;
-    alternativeTables: Array<
-      Maybe<
-        {__typename?: 'Table'} & Pick<Table, 'id' | 'displayName'> & {
-            area: {__typename?: 'Area'} & Pick<Area, 'id' | 'displayName'>;
-          }
-      >
-    >;
-    table: {__typename?: 'Table'} & Pick<
-      Table,
-      'id' | 'displayName' | 'maxCapacity'
-    > & {
-        reservations: Array<
-          {__typename?: 'Reservation'} & Pick<
-            Reservation,
-            'id' | 'startTime' | 'endTime' | 'status'
-          >
-        >;
-        area: {__typename?: 'Area'} & Pick<Area, 'id' | 'displayName'> & {
-            openingHour: Array<
-              {__typename?: 'OpeningHour'} & Pick<
-                OpeningHour,
-                'startTime' | 'endTime'
-              >
-            >;
-          };
-      };
-    swappableWith: Array<
-      Maybe<
-        {__typename?: 'Reservation'} & Pick<
-          Reservation,
-          'id' | 'primaryPerson' | 'status'
-        > & {table: {__typename?: 'Table'} & Pick<Table, 'id' | 'displayName'>}
-      >
-    >;
+export type ReservationFragmentFragment = {
+  __typename?: 'Reservation';
+  id: number;
+  startTime: Date;
+  endTime: Date;
+  status: ReservationStatus;
+  checkedInPersons: number;
+  primaryPerson: string;
+  primaryEmail: string;
+  otherPersons: Array<string>;
+  note?: string | null | undefined;
+  availableToCheckIn: number;
+  reservationsFromSamePerson: Array<{
+    __typename?: 'Reservation';
+    id: number;
+    startTime: Date;
+    endTime: Date;
+    otherPersons: Array<string>;
+    table: {
+      __typename?: 'Table';
+      id: string;
+      area: {__typename?: 'Area'; id: string; displayName: string};
+    };
+  }>;
+  alternativeTables: Array<
+    | {
+        __typename?: 'Table';
+        id: string;
+        displayName: string;
+        area: {__typename?: 'Area'; id: string; displayName: string};
+      }
+    | null
+    | undefined
+  >;
+  table: {
+    __typename?: 'Table';
+    id: string;
+    displayName: string;
+    maxCapacity: number;
+    reservations: Array<{
+      __typename?: 'Reservation';
+      id: number;
+      startTime: Date;
+      endTime: Date;
+      status: ReservationStatus;
+    }>;
+    area: {
+      __typename?: 'Area';
+      id: string;
+      displayName: string;
+      openingHour: Array<{
+        __typename?: 'OpeningHour';
+        startTime: Date;
+        endTime: Date;
+      }>;
+    };
   };
+  swappableWith: Array<
+    | {
+        __typename?: 'Reservation';
+        id: number;
+        primaryPerson: string;
+        status: ReservationStatus;
+        table: {__typename?: 'Table'; id: string; displayName: string};
+      }
+    | null
+    | undefined
+  >;
+};
 
 export type UpdateReservationMutationVariables = Exact<{
   id: Scalars['Int'];
@@ -771,30 +875,170 @@ export type UpdateReservationMutationVariables = Exact<{
   primaryPerson?: Maybe<Scalars['String']>;
 }>;
 
-export type UpdateReservationMutation = {__typename?: 'Mutation'} & {
-  updateReservation?: Maybe<
-    {__typename?: 'Reservation'} & ReservationFragmentFragment
-  >;
+export type UpdateReservationMutation = {
+  __typename?: 'Mutation';
+  updateReservation?:
+    | {
+        __typename?: 'Reservation';
+        id: number;
+        startTime: Date;
+        endTime: Date;
+        status: ReservationStatus;
+        checkedInPersons: number;
+        primaryPerson: string;
+        primaryEmail: string;
+        otherPersons: Array<string>;
+        note?: string | null | undefined;
+        availableToCheckIn: number;
+        reservationsFromSamePerson: Array<{
+          __typename?: 'Reservation';
+          id: number;
+          startTime: Date;
+          endTime: Date;
+          otherPersons: Array<string>;
+          table: {
+            __typename?: 'Table';
+            id: string;
+            area: {__typename?: 'Area'; id: string; displayName: string};
+          };
+        }>;
+        alternativeTables: Array<
+          | {
+              __typename?: 'Table';
+              id: string;
+              displayName: string;
+              area: {__typename?: 'Area'; id: string; displayName: string};
+            }
+          | null
+          | undefined
+        >;
+        table: {
+          __typename?: 'Table';
+          id: string;
+          displayName: string;
+          maxCapacity: number;
+          reservations: Array<{
+            __typename?: 'Reservation';
+            id: number;
+            startTime: Date;
+            endTime: Date;
+            status: ReservationStatus;
+          }>;
+          area: {
+            __typename?: 'Area';
+            id: string;
+            displayName: string;
+            openingHour: Array<{
+              __typename?: 'OpeningHour';
+              startTime: Date;
+              endTime: Date;
+            }>;
+          };
+        };
+        swappableWith: Array<
+          | {
+              __typename?: 'Reservation';
+              id: number;
+              primaryPerson: string;
+              status: ReservationStatus;
+              table: {__typename?: 'Table'; id: string; displayName: string};
+            }
+          | null
+          | undefined
+        >;
+      }
+    | null
+    | undefined;
 };
 
 export type CancelReservationMutationVariables = Exact<{
   token: Scalars['String'];
 }>;
 
-export type CancelReservationMutation = {__typename?: 'Mutation'} & Pick<
-  Mutation,
-  'cancelReservation'
->;
+export type CancelReservationMutation = {
+  __typename?: 'Mutation';
+  cancelReservation?: boolean | null | undefined;
+};
 
 export type UpdateOtherPersonsMutationVariables = Exact<{
   token: Scalars['String'];
   otherPersons: Array<Scalars['String']> | Scalars['String'];
 }>;
 
-export type UpdateOtherPersonsMutation = {__typename?: 'Mutation'} & {
-  updateReservationOtherPersons?: Maybe<
-    {__typename?: 'Reservation'} & ReservationFragmentFragment
-  >;
+export type UpdateOtherPersonsMutation = {
+  __typename?: 'Mutation';
+  updateReservationOtherPersons?:
+    | {
+        __typename?: 'Reservation';
+        id: number;
+        startTime: Date;
+        endTime: Date;
+        status: ReservationStatus;
+        checkedInPersons: number;
+        primaryPerson: string;
+        primaryEmail: string;
+        otherPersons: Array<string>;
+        note?: string | null | undefined;
+        availableToCheckIn: number;
+        reservationsFromSamePerson: Array<{
+          __typename?: 'Reservation';
+          id: number;
+          startTime: Date;
+          endTime: Date;
+          otherPersons: Array<string>;
+          table: {
+            __typename?: 'Table';
+            id: string;
+            area: {__typename?: 'Area'; id: string; displayName: string};
+          };
+        }>;
+        alternativeTables: Array<
+          | {
+              __typename?: 'Table';
+              id: string;
+              displayName: string;
+              area: {__typename?: 'Area'; id: string; displayName: string};
+            }
+          | null
+          | undefined
+        >;
+        table: {
+          __typename?: 'Table';
+          id: string;
+          displayName: string;
+          maxCapacity: number;
+          reservations: Array<{
+            __typename?: 'Reservation';
+            id: number;
+            startTime: Date;
+            endTime: Date;
+            status: ReservationStatus;
+          }>;
+          area: {
+            __typename?: 'Area';
+            id: string;
+            displayName: string;
+            openingHour: Array<{
+              __typename?: 'OpeningHour';
+              startTime: Date;
+              endTime: Date;
+            }>;
+          };
+        };
+        swappableWith: Array<
+          | {
+              __typename?: 'Reservation';
+              id: number;
+              primaryPerson: string;
+              status: ReservationStatus;
+              table: {__typename?: 'Table'; id: string; displayName: string};
+            }
+          | null
+          | undefined
+        >;
+      }
+    | null
+    | undefined;
 };
 
 export type SwapReservationsMutationVariables = Exact<{
@@ -802,113 +1046,221 @@ export type SwapReservationsMutationVariables = Exact<{
   b: Scalars['Int'];
 }>;
 
-export type SwapReservationsMutation = {__typename?: 'Mutation'} & Pick<
-  Mutation,
-  'swapReservations'
->;
+export type SwapReservationsMutation = {
+  __typename?: 'Mutation';
+  swapReservations?: boolean | null | undefined;
+};
 
 export type ReservationModalQueryVariables = Exact<{
   token: Scalars['String'];
 }>;
 
-export type ReservationModalQuery = {__typename?: 'Query'} & Pick<
-  Query,
-  'availableCapacity'
-> & {
-    reservationForToken?: Maybe<
-      {__typename?: 'Reservation'} & ReservationFragmentFragment
-    >;
-    areas: Array<{__typename?: 'Area'} & Pick<Area, 'id' | 'displayName'>>;
-  };
+export type ReservationModalQuery = {
+  __typename?: 'Query';
+  availableCapacity: number;
+  reservationForToken?:
+    | {
+        __typename?: 'Reservation';
+        id: number;
+        startTime: Date;
+        endTime: Date;
+        status: ReservationStatus;
+        checkedInPersons: number;
+        primaryPerson: string;
+        primaryEmail: string;
+        otherPersons: Array<string>;
+        note?: string | null | undefined;
+        availableToCheckIn: number;
+        reservationsFromSamePerson: Array<{
+          __typename?: 'Reservation';
+          id: number;
+          startTime: Date;
+          endTime: Date;
+          otherPersons: Array<string>;
+          table: {
+            __typename?: 'Table';
+            id: string;
+            area: {__typename?: 'Area'; id: string; displayName: string};
+          };
+        }>;
+        alternativeTables: Array<
+          | {
+              __typename?: 'Table';
+              id: string;
+              displayName: string;
+              area: {__typename?: 'Area'; id: string; displayName: string};
+            }
+          | null
+          | undefined
+        >;
+        table: {
+          __typename?: 'Table';
+          id: string;
+          displayName: string;
+          maxCapacity: number;
+          reservations: Array<{
+            __typename?: 'Reservation';
+            id: number;
+            startTime: Date;
+            endTime: Date;
+            status: ReservationStatus;
+          }>;
+          area: {
+            __typename?: 'Area';
+            id: string;
+            displayName: string;
+            openingHour: Array<{
+              __typename?: 'OpeningHour';
+              startTime: Date;
+              endTime: Date;
+            }>;
+          };
+        };
+        swappableWith: Array<
+          | {
+              __typename?: 'Reservation';
+              id: number;
+              primaryPerson: string;
+              status: ReservationStatus;
+              table: {__typename?: 'Table'; id: string; displayName: string};
+            }
+          | null
+          | undefined
+        >;
+      }
+    | null
+    | undefined;
+  areas: Array<{__typename?: 'Area'; id: string; displayName: string}>;
+};
 
-export type RatingFragment = {__typename?: 'BandApplication'} & Pick<
-  BandApplication,
-  'rating'
-> & {
-    bandApplicationRating: Array<
-      {__typename?: 'BandApplicationRating'} & Pick<
-        BandApplicationRating,
-        'rating'
-      > & {
-          viewer: {__typename?: 'Viewer'} & Pick<
-            Viewer,
-            'id' | 'displayName' | 'profilePicture'
-          >;
-        }
-    >;
-  };
+export type RatingFragment = {
+  __typename?: 'BandApplication';
+  rating?: number | null | undefined;
+  bandApplicationRating: Array<{
+    __typename?: 'BandApplicationRating';
+    rating: number;
+    viewer: {
+      __typename?: 'Viewer';
+      id: string;
+      displayName: string;
+      profilePicture?: string | null | undefined;
+    };
+  }>;
+};
 
 export type BandApplcationsQueryVariables = Exact<{
   id: Scalars['ID'];
 }>;
 
-export type BandApplcationsQuery = {__typename?: 'Query'} & {
-  viewer?: Maybe<{__typename?: 'Viewer'} & Pick<Viewer, 'id'>>;
-  node?: Maybe<
+export type BandApplcationsQuery = {
+  __typename?: 'Query';
+  viewer?: {__typename?: 'Viewer'; id: string} | null | undefined;
+  node?:
     | {__typename?: 'Area'}
     | {__typename?: 'BandApplication'}
-    | ({__typename?: 'Event'} & {
-        bandApplication: Array<
-          {__typename?: 'BandApplication'} & Pick<
-            BandApplication,
-            | 'id'
-            | 'bandname'
-            | 'rating'
-            | 'city'
-            | 'genre'
-            | 'genreCategory'
-            | 'distance'
-            | 'facebookLikes'
-            | 'instagramFollower'
-          > &
-            ContactedByFragment &
-            RatingFragment
-        >;
-      })
+    | {
+        __typename?: 'Event';
+        bandApplication: Array<{
+          __typename?: 'BandApplication';
+          id: string;
+          bandname: string;
+          rating?: number | null | undefined;
+          city: string;
+          genre?: string | null | undefined;
+          genreCategory: GenreCategory;
+          distance?: number | null | undefined;
+          facebookLikes?: number | null | undefined;
+          instagramFollower?: number | null | undefined;
+          contactedByViewer?:
+            | {__typename?: 'Viewer'; id: string; displayName: string}
+            | null
+            | undefined;
+          bandApplicationRating: Array<{
+            __typename?: 'BandApplicationRating';
+            rating: number;
+            viewer: {
+              __typename?: 'Viewer';
+              id: string;
+              displayName: string;
+              profilePicture?: string | null | undefined;
+            };
+          }>;
+        }>;
+      }
     | {__typename?: 'Table'}
     | {__typename?: 'Viewer'}
-  >;
+    | null
+    | undefined;
 };
 
 export type EventsQueryVariables = Exact<{[key: string]: never}>;
 
-export type EventsQuery = {__typename?: 'Query'} & {
-  events: Array<{__typename?: 'Event'} & Pick<Event, 'id' | 'name'>>;
+export type EventsQuery = {
+  __typename?: 'Query';
+  events: Array<{__typename?: 'Event'; id: string; name: string}>;
 };
 
 export type ProductListQueryVariables = Exact<{[key: string]: never}>;
 
-export type ProductListQuery = {__typename?: 'Query'} & {
-  productLists: Array<
-    {__typename?: 'ProductList'} & Pick<ProductList, 'id'> & ProductListFragment
-  >;
+export type ProductListQuery = {
+  __typename?: 'Query';
+  productLists: Array<{
+    __typename?: 'ProductList';
+    id: number;
+    name: string;
+    emoji?: string | null | undefined;
+    product: Array<{
+      __typename?: 'Product';
+      id: number;
+      name: string;
+      price: number;
+      requiresDeposit: boolean;
+    }>;
+  }>;
 };
 
 export type CreateProductListMutationVariables = Exact<{
   name: Scalars['String'];
 }>;
 
-export type CreateProductListMutation = {__typename?: 'Mutation'} & {
-  upsertProductList?: Maybe<{__typename?: 'ProductList'} & ProductListFragment>;
+export type CreateProductListMutation = {
+  __typename?: 'Mutation';
+  upsertProductList?:
+    | {
+        __typename?: 'ProductList';
+        id: number;
+        name: string;
+        emoji?: string | null | undefined;
+        product: Array<{
+          __typename?: 'Product';
+          id: number;
+          name: string;
+          price: number;
+          requiresDeposit: boolean;
+        }>;
+      }
+    | null
+    | undefined;
 };
 
 export type ProductPrintQueryVariables = Exact<{[key: string]: never}>;
 
-export type ProductPrintQuery = {__typename?: 'Query'} & {
-  productLists: Array<
-    {__typename?: 'ProductList'} & Pick<
-      ProductList,
-      'id' | 'emoji' | 'name'
-    > & {
-        product: Array<
-          {__typename?: 'Product'} & Pick<
-            Product,
-            'id' | 'name' | 'price' | 'requiresDeposit'
-          >
-        >;
-      }
-  >;
-  config?: Maybe<{__typename?: 'Config'} & Pick<Config, 'tokenValue'>>;
+export type ProductPrintQuery = {
+  __typename?: 'Query';
+  productLists: Array<{
+    __typename?: 'ProductList';
+    id: number;
+    emoji?: string | null | undefined;
+    name: string;
+    product: Array<{
+      __typename?: 'Product';
+      id: number;
+      name: string;
+      price: number;
+      requiresDeposit: boolean;
+    }>;
+  }>;
+  config?: {__typename?: 'Config'; tokenValue: number} | null | undefined;
 };
 
 export type RevenueQueryVariables = Exact<{
@@ -916,65 +1268,57 @@ export type RevenueQueryVariables = Exact<{
   before: Scalars['DateTime'];
 }>;
 
-export type RevenueQuery = {__typename?: 'Query'} & {
-  productLists: Array<
-    {__typename?: 'ProductList'} & Pick<ProductList, 'id' | 'name'> & {
-        salesNumbers: {__typename?: 'SalesNumber'} & Pick<
-          SalesNumber,
-          'count' | 'total'
-        >;
-      }
-  >;
+export type RevenueQuery = {
+  __typename?: 'Query';
+  productLists: Array<{
+    __typename?: 'ProductList';
+    id: number;
+    name: string;
+    salesNumbers: {__typename?: 'SalesNumber'; count: number; total: number};
+  }>;
 };
 
 export type OverlapQueryVariables = Exact<{[key: string]: never}>;
 
-export type OverlapQuery = {__typename?: 'Query'} & {
-  reservationsByPerson: Array<
-    {__typename?: 'ReservationByPerson'} & Pick<
-      ReservationByPerson,
-      'email'
-    > & {
-        reservations: Array<
-          {__typename?: 'Reservation'} & Pick<
-            Reservation,
-            | 'id'
-            | 'status'
-            | 'startTime'
-            | 'endTime'
-            | 'otherPersons'
-            | 'primaryPerson'
-          > & {
-              table: {__typename?: 'Table'} & Pick<
-                Table,
-                'id' | 'displayName'
-              > & {
-                  area: {__typename?: 'Area'} & Pick<
-                    Area,
-                    'id' | 'displayName'
-                  >;
-                };
-            }
-        >;
-      }
-  >;
+export type OverlapQuery = {
+  __typename?: 'Query';
+  reservationsByPerson: Array<{
+    __typename?: 'ReservationByPerson';
+    email: string;
+    reservations: Array<{
+      __typename?: 'Reservation';
+      id: number;
+      status: ReservationStatus;
+      startTime: Date;
+      endTime: Date;
+      otherPersons: Array<string>;
+      primaryPerson: string;
+      table: {
+        __typename?: 'Table';
+        id: string;
+        displayName: string;
+        area: {__typename?: 'Area'; id: string; displayName: string};
+      };
+    }>;
+  }>;
 };
 
-export type OverviewReservationFragment = {__typename?: 'Reservation'} & Pick<
-  Reservation,
-  | 'id'
-  | 'status'
-  | 'startTime'
-  | 'endTime'
-  | 'primaryPerson'
-  | 'otherPersons'
-  | 'checkedInPersons'
->;
+export type OverviewReservationFragment = {
+  __typename?: 'Reservation';
+  id: number;
+  status: ReservationStatus;
+  startTime: Date;
+  endTime: Date;
+  primaryPerson: string;
+  otherPersons: Array<string>;
+  checkedInPersons: number;
+};
 
 export type OverviewAreasQueryVariables = Exact<{[key: string]: never}>;
 
-export type OverviewAreasQuery = {__typename?: 'Query'} & {
-  areas: Array<{__typename?: 'Area'} & Pick<Area, 'id' | 'displayName'>>;
+export type OverviewAreasQuery = {
+  __typename?: 'Query';
+  areas: Array<{__typename?: 'Area'; id: string; displayName: string}>;
 };
 
 export type OverviewQueryVariables = Exact<{
@@ -982,37 +1326,49 @@ export type OverviewQueryVariables = Exact<{
   day: Scalars['Date'];
 }>;
 
-export type OverviewQuery = {__typename?: 'Query'} & {
-  node?: Maybe<
-    | ({__typename?: 'Area'} & {
-        table: Array<
-          {__typename?: 'Table'} & Pick<
-            Table,
-            'id' | 'displayName' | 'maxCapacity'
-          > & {
-              reservations: Array<
-                {__typename?: 'Reservation'} & Pick<Reservation, 'id'> &
-                  OverviewReservationFragment
-              >;
-            }
-        >;
-      })
+export type OverviewQuery = {
+  __typename?: 'Query';
+  node?:
+    | {
+        __typename?: 'Area';
+        table: Array<{
+          __typename?: 'Table';
+          id: string;
+          displayName: string;
+          maxCapacity: number;
+          reservations: Array<{
+            __typename?: 'Reservation';
+            id: number;
+            status: ReservationStatus;
+            startTime: Date;
+            endTime: Date;
+            primaryPerson: string;
+            otherPersons: Array<string>;
+            checkedInPersons: number;
+          }>;
+        }>;
+      }
     | {__typename?: 'BandApplication'}
     | {__typename?: 'Event'}
     | {__typename?: 'Table'}
     | {__typename?: 'Viewer'}
-  >;
+    | null
+    | undefined;
 };
 
 export type ViewerContextProviderQueryVariables = Exact<{[key: string]: never}>;
 
-export type ViewerContextProviderQuery = {__typename?: 'Query'} & {
-  viewer?: Maybe<
-    {__typename?: 'Viewer'} & Pick<
-      Viewer,
-      'id' | 'profilePicture' | 'displayName'
-    >
-  >;
+export type ViewerContextProviderQuery = {
+  __typename?: 'Query';
+  viewer?:
+    | {
+        __typename?: 'Viewer';
+        id: string;
+        profilePicture?: string | null | undefined;
+        displayName: string;
+      }
+    | null
+    | undefined;
 };
 
 export const ContactedByFragmentDoc = gql`
@@ -1162,6 +1518,7 @@ export const ApplicationDetailsDocument = gql`
         demo
         numberOfArtists
         numberOfNonMaleArtists
+        hasPreviouslyPlayed
         ...Rating
       }
     }
@@ -1269,7 +1626,8 @@ export function useMarkAsContextedMutation(
 export type MarkAsContextedMutationHookResult = ReturnType<
   typeof useMarkAsContextedMutation
 >;
-export type MarkAsContextedMutationResult = Apollo.MutationResult<MarkAsContextedMutation>;
+export type MarkAsContextedMutationResult =
+  Apollo.MutationResult<MarkAsContextedMutation>;
 export type MarkAsContextedMutationOptions = Apollo.BaseMutationOptions<
   MarkAsContextedMutation,
   MarkAsContextedMutationVariables
@@ -1321,7 +1679,8 @@ export function useBandApplicationRatingMutation(
 export type BandApplicationRatingMutationHookResult = ReturnType<
   typeof useBandApplicationRatingMutation
 >;
-export type BandApplicationRatingMutationResult = Apollo.MutationResult<BandApplicationRatingMutation>;
+export type BandApplicationRatingMutationResult =
+  Apollo.MutationResult<BandApplicationRatingMutation>;
 export type BandApplicationRatingMutationOptions = Apollo.BaseMutationOptions<
   BandApplicationRatingMutation,
   BandApplicationRatingMutationVariables
@@ -1387,7 +1746,8 @@ export function useUpsertProductListMutation(
 export type UpsertProductListMutationHookResult = ReturnType<
   typeof useUpsertProductListMutation
 >;
-export type UpsertProductListMutationResult = Apollo.MutationResult<UpsertProductListMutation>;
+export type UpsertProductListMutationResult =
+  Apollo.MutationResult<UpsertProductListMutation>;
 export type UpsertProductListMutationOptions = Apollo.BaseMutationOptions<
   UpsertProductListMutation,
   UpsertProductListMutationVariables
@@ -1673,7 +2033,8 @@ export function useCreateReservationMutation(
 export type CreateReservationMutationHookResult = ReturnType<
   typeof useCreateReservationMutation
 >;
-export type CreateReservationMutationResult = Apollo.MutationResult<CreateReservationMutation>;
+export type CreateReservationMutationResult =
+  Apollo.MutationResult<CreateReservationMutation>;
 export type CreateReservationMutationOptions = Apollo.BaseMutationOptions<
   CreateReservationMutation,
   CreateReservationMutationVariables
@@ -1745,7 +2106,8 @@ export function useUpdateReservationMutation(
 export type UpdateReservationMutationHookResult = ReturnType<
   typeof useUpdateReservationMutation
 >;
-export type UpdateReservationMutationResult = Apollo.MutationResult<UpdateReservationMutation>;
+export type UpdateReservationMutationResult =
+  Apollo.MutationResult<UpdateReservationMutation>;
 export type UpdateReservationMutationOptions = Apollo.BaseMutationOptions<
   UpdateReservationMutation,
   UpdateReservationMutationVariables
@@ -1792,7 +2154,8 @@ export function useCancelReservationMutation(
 export type CancelReservationMutationHookResult = ReturnType<
   typeof useCancelReservationMutation
 >;
-export type CancelReservationMutationResult = Apollo.MutationResult<CancelReservationMutation>;
+export type CancelReservationMutationResult =
+  Apollo.MutationResult<CancelReservationMutation>;
 export type CancelReservationMutationOptions = Apollo.BaseMutationOptions<
   CancelReservationMutation,
   CancelReservationMutationVariables
@@ -1843,7 +2206,8 @@ export function useUpdateOtherPersonsMutation(
 export type UpdateOtherPersonsMutationHookResult = ReturnType<
   typeof useUpdateOtherPersonsMutation
 >;
-export type UpdateOtherPersonsMutationResult = Apollo.MutationResult<UpdateOtherPersonsMutation>;
+export type UpdateOtherPersonsMutationResult =
+  Apollo.MutationResult<UpdateOtherPersonsMutation>;
 export type UpdateOtherPersonsMutationOptions = Apollo.BaseMutationOptions<
   UpdateOtherPersonsMutation,
   UpdateOtherPersonsMutationVariables
@@ -1891,7 +2255,8 @@ export function useSwapReservationsMutation(
 export type SwapReservationsMutationHookResult = ReturnType<
   typeof useSwapReservationsMutation
 >;
-export type SwapReservationsMutationResult = Apollo.MutationResult<SwapReservationsMutation>;
+export type SwapReservationsMutationResult =
+  Apollo.MutationResult<SwapReservationsMutation>;
 export type SwapReservationsMutationOptions = Apollo.BaseMutationOptions<
   SwapReservationsMutation,
   SwapReservationsMutationVariables
@@ -2187,7 +2552,8 @@ export function useCreateProductListMutation(
 export type CreateProductListMutationHookResult = ReturnType<
   typeof useCreateProductListMutation
 >;
-export type CreateProductListMutationResult = Apollo.MutationResult<CreateProductListMutation>;
+export type CreateProductListMutationResult =
+  Apollo.MutationResult<CreateProductListMutation>;
 export type CreateProductListMutationOptions = Apollo.BaseMutationOptions<
   CreateProductListMutation,
   CreateProductListMutationVariables
