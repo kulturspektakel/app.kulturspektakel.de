@@ -1,5 +1,5 @@
-import {Avatar, Checkbox, Statistic, Table, Tooltip} from 'antd';
-import React, {useState} from 'react';
+import {Avatar, Checkbox, Table, Tooltip} from 'antd';
+import React, {useMemo, useState} from 'react';
 import Page from '../../../components/shared/Page';
 import {gql} from '@apollo/client';
 import {
@@ -141,6 +141,15 @@ const MemoizedTable = React.memo(
   }) => {
     const viewer = useViewerContext();
     const [markContacted] = useMarkAsContextedMutation();
+    const ids = useMemo(
+      () =>
+        dataSource?.reduce(
+          (acc, cv, i) => acc.set(cv.id, i + 1),
+          new Map<string, number>(),
+        ) ?? new Map(),
+      [dataSource],
+    );
+
     return (
       <Table<RecordType>
         loading={loading}
@@ -160,7 +169,7 @@ const MemoizedTable = React.memo(
             dataIndex: 'id',
             align: 'center',
             width: 50,
-            render: (_, __, index) => index + 1,
+            render: (id) => ids.get(id),
           },
           {
             key: 'genreCategory',
