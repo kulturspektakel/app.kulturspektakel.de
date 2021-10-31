@@ -11,6 +11,7 @@ import useViewerContext from '../../utils/useViewerContext';
 import Demo from './Demo';
 import Rater from './Rater';
 import Rating from './Rating';
+import {GlobalOutlined} from '@ant-design/icons';
 
 gql`
   query ApplicationDetails($id: ID!) {
@@ -32,6 +33,7 @@ gql`
         numberOfArtists
         numberOfNonMaleArtists
         hasPreviouslyPlayed
+        website
         ...Rating
       }
     }
@@ -94,22 +96,38 @@ function DrawerContent(
 ) {
   const [contacted] = useMarkAsContextedMutation();
   const viewer = useViewerContext();
-
   return (
     <>
       <Demo demo={props.demo} />
       <Row>
+        {props.website && (
+          <Col span={8}>
+            <a href={props.website} target="_blank">
+              <Statistic
+                valueStyle={{color: '#1890ff'}}
+                value={' '}
+                prefix={<GlobalOutlined color="blue" />}
+                title="Webseite"
+              />
+            </a>
+          </Col>
+        )}
         {props.facebook && (
-          <Col span={12}>
+          <Col span={8}>
             <a href={props.facebook} target="_blank">
-              <Statistic value={props.facebookLikes ?? '?'} title="Facebook" />
+              <Statistic
+                valueStyle={{color: '#1890ff'}}
+                value={props.facebookLikes ?? '?'}
+                title="Facebook"
+              />
             </a>
           </Col>
         )}
         {props.instagram && (
-          <Col span={12}>
+          <Col span={8}>
             <a href={`https://instagram.com/${props.instagram}`}>
               <Statistic
+                valueStyle={{color: '#1890ff'}}
                 value={props.instagramFollower ?? '?'}
                 title="Instagram"
               />
@@ -149,13 +167,13 @@ function DrawerContent(
       )}
       <div style={{display: 'flex'}}>
         <h4>Bandgröße:</h4>&nbsp;{props.numberOfArtists} Personen (
-        {(props.numberOfNonMaleArtists / props.numberOfArtists).toLocaleString(
-          undefined,
-          {
-            style: 'percent',
-            maximumFractionDigits: 1,
-          },
-        )}
+        {(
+          (props.numberOfArtists - props.numberOfNonMaleArtists) /
+          props.numberOfArtists
+        ).toLocaleString(undefined, {
+          style: 'percent',
+          maximumFractionDigits: 1,
+        })}
         &nbsp;männlich)
       </div>
 

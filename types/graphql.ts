@@ -88,6 +88,7 @@ export type BandApplication = Node & {
   numberOfArtists?: Maybe<Scalars['Int']>;
   numberOfNonMaleArtists?: Maybe<Scalars['Int']>;
   rating?: Maybe<Scalars['Float']>;
+  website?: Maybe<Scalars['String']>;
 };
 
 export type BandApplicationRating = {
@@ -367,6 +368,7 @@ export type ProductInput = {
 
 export type ProductList = Billable & {
   __typename?: 'ProductList';
+  active: Scalars['Boolean'];
   emoji?: Maybe<Scalars['String']>;
   historicalProducts: Array<HistoricalProduct>;
   id: Scalars['Int'];
@@ -531,6 +533,7 @@ export type ApplicationDetailsQuery = {
         numberOfArtists?: number | null | undefined;
         numberOfNonMaleArtists?: number | null | undefined;
         hasPreviouslyPlayed?: PreviouslyPlayed | null | undefined;
+        website?: string | null | undefined;
         rating?: number | null | undefined;
         bandApplicationRating: Array<{
           __typename?: 'BandApplicationRating';
@@ -610,6 +613,7 @@ export type ProductListFragment = {
   id: number;
   name: string;
   emoji?: string | null | undefined;
+  active: boolean;
   product: Array<{
     __typename?: 'Product';
     id: number;
@@ -635,6 +639,7 @@ export type UpsertProductListMutation = {
         id: number;
         name: string;
         emoji?: string | null | undefined;
+        active: boolean;
         product: Array<{
           __typename?: 'Product';
           id: number;
@@ -1209,6 +1214,7 @@ export type ProductListQuery = {
     id: number;
     name: string;
     emoji?: string | null | undefined;
+    active: boolean;
     product: Array<{
       __typename?: 'Product';
       id: number;
@@ -1231,6 +1237,7 @@ export type CreateProductListMutation = {
         id: number;
         name: string;
         emoji?: string | null | undefined;
+        active: boolean;
         product: Array<{
           __typename?: 'Product';
           id: number;
@@ -1399,6 +1406,7 @@ export const ProductListFragmentDoc = gql`
     id
     name
     emoji
+    active
     product {
       id
       ...ProductRow
@@ -1526,6 +1534,7 @@ export const ApplicationDetailsDocument = gql`
         numberOfArtists
         numberOfNonMaleArtists
         hasPreviouslyPlayed
+        website
         ...Rating
       }
     }

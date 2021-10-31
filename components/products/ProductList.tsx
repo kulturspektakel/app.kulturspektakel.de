@@ -8,6 +8,7 @@ import {
   DeleteOutlined,
   ExclamationCircleOutlined,
   PlusCircleOutlined,
+  PoweroffOutlined,
 } from '@ant-design/icons';
 import styles from './ProductList.module.css';
 import {gql} from '@apollo/client';
@@ -40,6 +41,7 @@ gql`
     id
     name
     emoji
+    active
     product {
       id
       ...ProductRow
@@ -137,26 +139,31 @@ export default function ProductList({list}: {list: ProductListFragment}) {
           Produkt
         </Button>,
         <Button
-          icon={<DeleteOutlined />}
+          icon={<PoweroffOutlined />}
           type="link"
-          danger
+          danger={list.active}
+          style={list.active ? null : {color: '#52c41a'}}
           onClick={() => {
-            Modal.confirm({
-              title: 'Preisliste löschen',
-              icon: <ExclamationCircleOutlined />,
-              okText: 'Löschen',
-              okButtonProps: {
-                danger: true,
-              },
-              cancelText: 'Abbrechen',
-              content: `Soll die Preisliste ${list.name} wirklich gelöscht werden?`,
-              onOk() {
-                return mutate({variables: {id: list.id, active: false}});
-              },
-            });
+            if (list.active) {
+              return Modal.confirm({
+                title: 'Preisliste deaktivieren',
+                icon: <ExclamationCircleOutlined />,
+                okText: 'Deaktivieren',
+                okButtonProps: {
+                  danger: true,
+                },
+                cancelText: 'Abbrechen',
+                content: `Soll die Preisliste ${list.name} wirklich deaktiviert werden? Sie wird dann von allen Geräten entfernt die sie verwenden.`,
+                onOk() {
+                  return mutate({variables: {id: list.id, active: false}});
+                },
+              });
+            } else {
+              return mutate({variables: {id: list.id, active: true}});
+            }
           }}
         >
-          Löschen
+          {list.active ? 'Deaktivieren' : 'Aktivieren'}
         </Button>,
       ]}
     >

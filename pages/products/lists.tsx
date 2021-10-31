@@ -90,13 +90,27 @@ export default function Lists() {
           <Empty description="Keine Preislisten" />
         )}
         {data?.productLists ? (
-          <Row gutter={16}>
-            {data.productLists.map((list) => (
-              <Col sm={24} md={12} lg={8} xxl={6} key={list.name}>
-                <ProductList list={list} />
-              </Col>
-            ))}
-          </Row>
+          <>
+            <Row gutter={16}>
+              {data.productLists
+                .filter((p) => p.active)
+                .map((list) => (
+                  <Col sm={24} md={12} lg={8} xxl={6} key={list.name}>
+                    <ProductList list={list} />
+                  </Col>
+                ))}
+            </Row>
+            <h3>Deaktivierte Listen</h3>
+            <Row gutter={16}>
+              {data.productLists
+                .filter((p) => !p.active)
+                .map((list) => (
+                  <Col sm={24} md={12} lg={8} xxl={6} key={list.name}>
+                    <ProductList list={list} />
+                  </Col>
+                ))}
+            </Row>
+          </>
         ) : (
           <div
             style={{
