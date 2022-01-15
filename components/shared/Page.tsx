@@ -13,15 +13,20 @@ export const HEADER_HEIGHT = 64;
 export default function Page({
   children,
   title,
+  className,
 }: {
   children: any;
   title?: string;
+  className?: string;
 }) {
   const {asPath} = useRouter();
   const viewer = useViewerContext();
 
   return (
-    <Layout className={styles.layout} style={{paddingTop: HEADER_HEIGHT}}>
+    <Layout
+      className={`${styles.layout} ${className ?? ''}`}
+      style={{paddingTop: HEADER_HEIGHT}}
+    >
       <Head>
         <title>{title ?? 'Crew'} · Kulturspektakel Gauting</title>
         <meta name="theme-color" content="#001529" />
@@ -72,6 +77,9 @@ export default function Page({
           </Menu.SubMenu>
           <Menu.Item key="booking">
             <Link href="/booking">Booking</Link>
+          </Menu.Item>
+          <Menu.Item key="stationery">
+            <Link href="/stationery">Briefpapier</Link>
           </Menu.Item>
         </Menu>
         <div className={styles.spacer} />

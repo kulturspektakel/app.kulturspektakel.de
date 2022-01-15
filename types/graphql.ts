@@ -1,6 +1,7 @@
 import {gql} from '@apollo/client';
 import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
+export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends {[key: string]: unknown}> = {[K in keyof T]: T[K]};
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
   [SubKey in K]?: Maybe<T[SubKey]>;
@@ -8,7 +9,7 @@ export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
   [SubKey in K]: Maybe<T[SubKey]>;
 };
-const defaultOptions = {};
+const defaultOptions = {} as const;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -42,7 +43,7 @@ export type AreaAvailabilityArgs = {
 };
 
 export type AreaAvailableTablesArgs = {
-  time?: Maybe<Scalars['DateTime']>;
+  time?: InputMaybe<Scalars['DateTime']>;
 };
 
 export type AreaBandsPlayingArgs = {
@@ -50,7 +51,7 @@ export type AreaBandsPlayingArgs = {
 };
 
 export type AreaOpeningHourArgs = {
-  day?: Maybe<Scalars['Date']>;
+  day?: InputMaybe<Scalars['Date']>;
 };
 
 export type Band = {
@@ -121,16 +122,16 @@ export type CreateBandApplicationInput = {
   demo: Scalars['String'];
   description: Scalars['String'];
   email: Scalars['String'];
-  facebook?: Maybe<Scalars['String']>;
-  genre?: Maybe<Scalars['String']>;
+  facebook?: InputMaybe<Scalars['String']>;
+  genre?: InputMaybe<Scalars['String']>;
   genreCategory: GenreCategory;
-  hasPreviouslyPlayed?: Maybe<PreviouslyPlayed>;
-  heardAboutBookingFrom?: Maybe<HeardAboutBookingFrom>;
-  instagram?: Maybe<Scalars['String']>;
-  knowsKultFrom?: Maybe<Scalars['String']>;
+  hasPreviouslyPlayed?: InputMaybe<PreviouslyPlayed>;
+  heardAboutBookingFrom?: InputMaybe<HeardAboutBookingFrom>;
+  instagram?: InputMaybe<Scalars['String']>;
+  knowsKultFrom?: InputMaybe<Scalars['String']>;
   numberOfArtists: Scalars['Int'];
   numberOfNonMaleArtists: Scalars['Int'];
-  website?: Maybe<Scalars['String']>;
+  website?: InputMaybe<Scalars['String']>;
 };
 
 export type Device = Billable & {
@@ -233,7 +234,7 @@ export type MutationCreateOrderArgs = {
 
 export type MutationCreateReservationArgs = {
   endTime: Scalars['DateTime'];
-  note?: Maybe<Scalars['String']>;
+  note?: InputMaybe<Scalars['String']>;
   otherPersons: Array<Scalars['String']>;
   primaryEmail: Scalars['String'];
   primaryPerson: Scalars['String'];
@@ -248,7 +249,7 @@ export type MutationMarkBandApplicationContactedArgs = {
 
 export type MutationRateBandApplicationArgs = {
   bandApplicationId: Scalars['ID'];
-  rating?: Maybe<Scalars['Int']>;
+  rating?: InputMaybe<Scalars['Int']>;
 };
 
 export type MutationRequestReservationArgs = {
@@ -258,7 +259,7 @@ export type MutationRequestReservationArgs = {
   primaryEmail: Scalars['String'];
   primaryPerson: Scalars['String'];
   startTime: Scalars['DateTime'];
-  tableType?: Maybe<TableType>;
+  tableType?: InputMaybe<TableType>;
 };
 
 export type MutationSwapReservationsArgs = {
@@ -267,13 +268,13 @@ export type MutationSwapReservationsArgs = {
 };
 
 export type MutationUpdateReservationArgs = {
-  checkedInPersons?: Maybe<Scalars['Int']>;
-  endTime?: Maybe<Scalars['DateTime']>;
+  checkedInPersons?: InputMaybe<Scalars['Int']>;
+  endTime?: InputMaybe<Scalars['DateTime']>;
   id: Scalars['Int'];
-  note?: Maybe<Scalars['String']>;
-  primaryPerson?: Maybe<Scalars['String']>;
-  startTime?: Maybe<Scalars['DateTime']>;
-  tableId?: Maybe<Scalars['ID']>;
+  note?: InputMaybe<Scalars['String']>;
+  primaryPerson?: InputMaybe<Scalars['String']>;
+  startTime?: InputMaybe<Scalars['DateTime']>;
+  tableId?: InputMaybe<Scalars['ID']>;
 };
 
 export type MutationUpdateReservationOtherPersonsArgs = {
@@ -282,16 +283,30 @@ export type MutationUpdateReservationOtherPersonsArgs = {
 };
 
 export type MutationUpsertProductListArgs = {
-  active?: Maybe<Scalars['Boolean']>;
-  emoji?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['Int']>;
-  name?: Maybe<Scalars['String']>;
-  products?: Maybe<Array<ProductInput>>;
+  active?: InputMaybe<Scalars['Boolean']>;
+  emoji?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['Int']>;
+  name?: InputMaybe<Scalars['String']>;
+  products?: InputMaybe<Array<ProductInput>>;
 };
 
 export type Node = {
   /** Unique identifier for the resource */
   id: Scalars['ID'];
+};
+
+export type NuclinoPage = {
+  __typename?: 'NuclinoPage';
+  content: Scalars['String'];
+  id: Scalars['ID'];
+  title: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export type NuclinoSearchResult = {
+  __typename?: 'NuclinoSearchResult';
+  highlight: Scalars['String'];
+  page: NuclinoPage;
 };
 
 export type OpeningHour = {
@@ -324,9 +339,9 @@ export type OrderItem = {
 export type OrderItemInput = {
   amount: Scalars['Int'];
   name: Scalars['String'];
-  note?: Maybe<Scalars['String']>;
+  note?: InputMaybe<Scalars['String']>;
   perUnitPrice: Scalars['Int'];
-  productListId?: Maybe<Scalars['Int']>;
+  productListId?: InputMaybe<Scalars['Int']>;
 };
 
 export enum OrderPayment {
@@ -363,7 +378,7 @@ export type ProductSalesNumbersArgs = {
 export type ProductInput = {
   name: Scalars['String'];
   price: Scalars['Int'];
-  requiresDeposit?: Maybe<Scalars['Boolean']>;
+  requiresDeposit?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type ProductList = Billable & {
@@ -391,6 +406,8 @@ export type Query = {
   distanceToKult?: Maybe<Scalars['Float']>;
   events: Array<Event>;
   node?: Maybe<Node>;
+  nuclinoPage?: Maybe<NuclinoPage>;
+  nuclinoPages: Array<NuclinoSearchResult>;
   productList?: Maybe<ProductList>;
   productLists: Array<ProductList>;
   reservationForToken?: Maybe<Reservation>;
@@ -399,7 +416,7 @@ export type Query = {
 };
 
 export type QueryAvailableCapacityArgs = {
-  time?: Maybe<Scalars['DateTime']>;
+  time?: InputMaybe<Scalars['DateTime']>;
 };
 
 export type QueryDistanceToKultArgs = {
@@ -408,6 +425,14 @@ export type QueryDistanceToKultArgs = {
 
 export type QueryNodeArgs = {
   id: Scalars['ID'];
+};
+
+export type QueryNuclinoPageArgs = {
+  id: Scalars['ID'];
+};
+
+export type QueryNuclinoPagesArgs = {
+  query: Scalars['String'];
 };
 
 export type QueryProductListArgs = {
@@ -459,7 +484,7 @@ export type SalesNumber = {
 };
 
 export type SalesNumberTimeSeriesArgs = {
-  grouping?: Maybe<TimeGrouping>;
+  grouping?: InputMaybe<TimeGrouping>;
 };
 
 export type Table = Node & {
@@ -473,7 +498,7 @@ export type Table = Node & {
 };
 
 export type TableReservationsArgs = {
-  day?: Maybe<Scalars['Date']>;
+  day?: InputMaybe<Scalars['Date']>;
 };
 
 export type TableAvailability = {
@@ -583,7 +608,7 @@ export type MarkAsContextedMutation = {
 
 export type BandApplicationRatingMutationVariables = Exact<{
   id: Scalars['ID'];
-  rating?: Maybe<Scalars['Int']>;
+  rating?: InputMaybe<Scalars['Int']>;
 }>;
 
 export type BandApplicationRatingMutation = {
@@ -624,11 +649,11 @@ export type ProductListFragment = {
 };
 
 export type UpsertProductListMutationVariables = Exact<{
-  id?: Maybe<Scalars['Int']>;
-  emoji?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  products?: Maybe<Array<ProductInput> | ProductInput>;
-  active?: Maybe<Scalars['Boolean']>;
+  id?: InputMaybe<Scalars['Int']>;
+  emoji?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
+  products?: InputMaybe<Array<ProductInput> | ProductInput>;
+  active?: InputMaybe<Scalars['Boolean']>;
 }>;
 
 export type UpsertProductListMutation = {
@@ -697,7 +722,7 @@ export type RevenueDetailsQuery = {
 };
 
 export type SlotsQueryVariables = Exact<{
-  day?: Maybe<Scalars['Date']>;
+  day?: InputMaybe<Scalars['Date']>;
 }>;
 
 export type SlotsQuery = {
@@ -788,7 +813,7 @@ export type CreateReservationMutationVariables = Exact<{
   otherPersons: Array<Scalars['String']> | Scalars['String'];
   startTime: Scalars['DateTime'];
   endTime: Scalars['DateTime'];
-  note?: Maybe<Scalars['String']>;
+  note?: InputMaybe<Scalars['String']>;
   tableId: Scalars['ID'];
 }>;
 
@@ -872,12 +897,12 @@ export type ReservationFragmentFragment = {
 
 export type UpdateReservationMutationVariables = Exact<{
   id: Scalars['Int'];
-  persons?: Maybe<Scalars['Int']>;
-  startTime?: Maybe<Scalars['DateTime']>;
-  endTime?: Maybe<Scalars['DateTime']>;
-  note?: Maybe<Scalars['String']>;
-  tableId?: Maybe<Scalars['ID']>;
-  primaryPerson?: Maybe<Scalars['String']>;
+  persons?: InputMaybe<Scalars['Int']>;
+  startTime?: InputMaybe<Scalars['DateTime']>;
+  endTime?: InputMaybe<Scalars['DateTime']>;
+  note?: InputMaybe<Scalars['String']>;
+  tableId?: InputMaybe<Scalars['ID']>;
+  primaryPerson?: InputMaybe<Scalars['String']>;
 }>;
 
 export type UpdateReservationMutation = {
@@ -1290,6 +1315,31 @@ export type RevenueQuery = {
     name: string;
     salesNumbers: {__typename?: 'SalesNumber'; count: number; total: number};
   }>;
+};
+
+export type StationerySearchQueryVariables = Exact<{
+  query: Scalars['String'];
+}>;
+
+export type StationerySearchQuery = {
+  __typename?: 'Query';
+  nuclinoPages: Array<{
+    __typename?: 'NuclinoSearchResult';
+    highlight: string;
+    page: {__typename?: 'NuclinoPage'; id: string; title: string};
+  }>;
+};
+
+export type StationeryPageQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+export type StationeryPageQuery = {
+  __typename?: 'Query';
+  nuclinoPage?:
+    | {__typename?: 'NuclinoPage'; id: string; title: string; content: string}
+    | null
+    | undefined;
 };
 
 export type OverlapQueryVariables = Exact<{[key: string]: never}>;
@@ -2704,6 +2754,128 @@ export type RevenueLazyQueryHookResult = ReturnType<typeof useRevenueLazyQuery>;
 export type RevenueQueryResult = Apollo.QueryResult<
   RevenueQuery,
   RevenueQueryVariables
+>;
+export const StationerySearchDocument = gql`
+  query StationerySearch($query: String!) {
+    nuclinoPages(query: $query) {
+      highlight
+      page {
+        id
+        title
+      }
+    }
+  }
+`;
+
+/**
+ * __useStationerySearchQuery__
+ *
+ * To run a query within a React component, call `useStationerySearchQuery` and pass it any options that fit your needs.
+ * When your component renders, `useStationerySearchQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useStationerySearchQuery({
+ *   variables: {
+ *      query: // value for 'query'
+ *   },
+ * });
+ */
+export function useStationerySearchQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    StationerySearchQuery,
+    StationerySearchQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useQuery<StationerySearchQuery, StationerySearchQueryVariables>(
+    StationerySearchDocument,
+    options,
+  );
+}
+export function useStationerySearchLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    StationerySearchQuery,
+    StationerySearchQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useLazyQuery<
+    StationerySearchQuery,
+    StationerySearchQueryVariables
+  >(StationerySearchDocument, options);
+}
+export type StationerySearchQueryHookResult = ReturnType<
+  typeof useStationerySearchQuery
+>;
+export type StationerySearchLazyQueryHookResult = ReturnType<
+  typeof useStationerySearchLazyQuery
+>;
+export type StationerySearchQueryResult = Apollo.QueryResult<
+  StationerySearchQuery,
+  StationerySearchQueryVariables
+>;
+export const StationeryPageDocument = gql`
+  query StationeryPage($id: ID!) {
+    nuclinoPage(id: $id) {
+      id
+      title
+      content
+    }
+  }
+`;
+
+/**
+ * __useStationeryPageQuery__
+ *
+ * To run a query within a React component, call `useStationeryPageQuery` and pass it any options that fit your needs.
+ * When your component renders, `useStationeryPageQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useStationeryPageQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useStationeryPageQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    StationeryPageQuery,
+    StationeryPageQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useQuery<StationeryPageQuery, StationeryPageQueryVariables>(
+    StationeryPageDocument,
+    options,
+  );
+}
+export function useStationeryPageLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    StationeryPageQuery,
+    StationeryPageQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useLazyQuery<StationeryPageQuery, StationeryPageQueryVariables>(
+    StationeryPageDocument,
+    options,
+  );
+}
+export type StationeryPageQueryHookResult = ReturnType<
+  typeof useStationeryPageQuery
+>;
+export type StationeryPageLazyQueryHookResult = ReturnType<
+  typeof useStationeryPageLazyQuery
+>;
+export type StationeryPageQueryResult = Apollo.QueryResult<
+  StationeryPageQuery,
+  StationeryPageQueryVariables
 >;
 export const OverlapDocument = gql`
   query Overlap {
