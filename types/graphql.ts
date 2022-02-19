@@ -1,6 +1,7 @@
 import {gql} from '@apollo/client';
 import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
+export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends {[key: string]: unknown}> = {[K in keyof T]: T[K]};
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
   [SubKey in K]?: Maybe<T[SubKey]>;
@@ -8,7 +9,7 @@ export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
   [SubKey in K]: Maybe<T[SubKey]>;
 };
-const defaultOptions = {};
+const defaultOptions = {} as const;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -42,7 +43,7 @@ export type AreaAvailabilityArgs = {
 };
 
 export type AreaAvailableTablesArgs = {
-  time?: Maybe<Scalars['DateTime']>;
+  time?: InputMaybe<Scalars['DateTime']>;
 };
 
 export type AreaBandsPlayingArgs = {
@@ -50,7 +51,7 @@ export type AreaBandsPlayingArgs = {
 };
 
 export type AreaOpeningHourArgs = {
-  day?: Maybe<Scalars['Date']>;
+  day?: InputMaybe<Scalars['Date']>;
 };
 
 export type Band = {
@@ -121,16 +122,16 @@ export type CreateBandApplicationInput = {
   demo: Scalars['String'];
   description: Scalars['String'];
   email: Scalars['String'];
-  facebook?: Maybe<Scalars['String']>;
-  genre?: Maybe<Scalars['String']>;
+  facebook?: InputMaybe<Scalars['String']>;
+  genre?: InputMaybe<Scalars['String']>;
   genreCategory: GenreCategory;
-  hasPreviouslyPlayed?: Maybe<PreviouslyPlayed>;
-  heardAboutBookingFrom?: Maybe<HeardAboutBookingFrom>;
-  instagram?: Maybe<Scalars['String']>;
-  knowsKultFrom?: Maybe<Scalars['String']>;
+  hasPreviouslyPlayed?: InputMaybe<PreviouslyPlayed>;
+  heardAboutBookingFrom?: InputMaybe<HeardAboutBookingFrom>;
+  instagram?: InputMaybe<Scalars['String']>;
+  knowsKultFrom?: InputMaybe<Scalars['String']>;
   numberOfArtists: Scalars['Int'];
   numberOfNonMaleArtists: Scalars['Int'];
-  website?: Maybe<Scalars['String']>;
+  website?: InputMaybe<Scalars['String']>;
 };
 
 export type Device = Billable & {
@@ -151,6 +152,7 @@ export type Event = Node & {
   bandApplication: Array<BandApplication>;
   bandApplicationEnd?: Maybe<Scalars['DateTime']>;
   bandApplicationStart?: Maybe<Scalars['DateTime']>;
+  bandsPlaying: Array<Band>;
   end: Scalars['DateTime'];
   id: Scalars['ID'];
   name: Scalars['String'];
@@ -233,7 +235,7 @@ export type MutationCreateOrderArgs = {
 
 export type MutationCreateReservationArgs = {
   endTime: Scalars['DateTime'];
-  note?: Maybe<Scalars['String']>;
+  note?: InputMaybe<Scalars['String']>;
   otherPersons: Array<Scalars['String']>;
   primaryEmail: Scalars['String'];
   primaryPerson: Scalars['String'];
@@ -248,7 +250,7 @@ export type MutationMarkBandApplicationContactedArgs = {
 
 export type MutationRateBandApplicationArgs = {
   bandApplicationId: Scalars['ID'];
-  rating?: Maybe<Scalars['Int']>;
+  rating?: InputMaybe<Scalars['Int']>;
 };
 
 export type MutationRequestReservationArgs = {
@@ -258,7 +260,7 @@ export type MutationRequestReservationArgs = {
   primaryEmail: Scalars['String'];
   primaryPerson: Scalars['String'];
   startTime: Scalars['DateTime'];
-  tableType?: Maybe<TableType>;
+  tableType?: InputMaybe<TableType>;
 };
 
 export type MutationSwapReservationsArgs = {
@@ -267,13 +269,13 @@ export type MutationSwapReservationsArgs = {
 };
 
 export type MutationUpdateReservationArgs = {
-  checkedInPersons?: Maybe<Scalars['Int']>;
-  endTime?: Maybe<Scalars['DateTime']>;
+  checkedInPersons?: InputMaybe<Scalars['Int']>;
+  endTime?: InputMaybe<Scalars['DateTime']>;
   id: Scalars['Int'];
-  note?: Maybe<Scalars['String']>;
-  primaryPerson?: Maybe<Scalars['String']>;
-  startTime?: Maybe<Scalars['DateTime']>;
-  tableId?: Maybe<Scalars['ID']>;
+  note?: InputMaybe<Scalars['String']>;
+  primaryPerson?: InputMaybe<Scalars['String']>;
+  startTime?: InputMaybe<Scalars['DateTime']>;
+  tableId?: InputMaybe<Scalars['ID']>;
 };
 
 export type MutationUpdateReservationOtherPersonsArgs = {
@@ -282,16 +284,30 @@ export type MutationUpdateReservationOtherPersonsArgs = {
 };
 
 export type MutationUpsertProductListArgs = {
-  active?: Maybe<Scalars['Boolean']>;
-  emoji?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['Int']>;
-  name?: Maybe<Scalars['String']>;
-  products?: Maybe<Array<ProductInput>>;
+  active?: InputMaybe<Scalars['Boolean']>;
+  emoji?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['Int']>;
+  name?: InputMaybe<Scalars['String']>;
+  products?: InputMaybe<Array<ProductInput>>;
 };
 
 export type Node = {
   /** Unique identifier for the resource */
   id: Scalars['ID'];
+};
+
+export type NuclinoPage = {
+  __typename?: 'NuclinoPage';
+  content: Scalars['String'];
+  id: Scalars['ID'];
+  title: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export type NuclinoSearchResult = {
+  __typename?: 'NuclinoSearchResult';
+  highlight: Scalars['String'];
+  page: NuclinoPage;
 };
 
 export type OpeningHour = {
@@ -324,9 +340,9 @@ export type OrderItem = {
 export type OrderItemInput = {
   amount: Scalars['Int'];
   name: Scalars['String'];
-  note?: Maybe<Scalars['String']>;
+  note?: InputMaybe<Scalars['String']>;
   perUnitPrice: Scalars['Int'];
-  productListId?: Maybe<Scalars['Int']>;
+  productListId?: InputMaybe<Scalars['Int']>;
 };
 
 export enum OrderPayment {
@@ -363,7 +379,7 @@ export type ProductSalesNumbersArgs = {
 export type ProductInput = {
   name: Scalars['String'];
   price: Scalars['Int'];
-  requiresDeposit?: Maybe<Scalars['Boolean']>;
+  requiresDeposit?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type ProductList = Billable & {
@@ -391,6 +407,8 @@ export type Query = {
   distanceToKult?: Maybe<Scalars['Float']>;
   events: Array<Event>;
   node?: Maybe<Node>;
+  nuclinoPage?: Maybe<NuclinoPage>;
+  nuclinoPages: Array<NuclinoSearchResult>;
   productList?: Maybe<ProductList>;
   productLists: Array<ProductList>;
   reservationForToken?: Maybe<Reservation>;
@@ -399,7 +417,7 @@ export type Query = {
 };
 
 export type QueryAvailableCapacityArgs = {
-  time?: Maybe<Scalars['DateTime']>;
+  time?: InputMaybe<Scalars['DateTime']>;
 };
 
 export type QueryDistanceToKultArgs = {
@@ -408,6 +426,14 @@ export type QueryDistanceToKultArgs = {
 
 export type QueryNodeArgs = {
   id: Scalars['ID'];
+};
+
+export type QueryNuclinoPageArgs = {
+  id: Scalars['ID'];
+};
+
+export type QueryNuclinoPagesArgs = {
+  query: Scalars['String'];
 };
 
 export type QueryProductListArgs = {
@@ -459,7 +485,7 @@ export type SalesNumber = {
 };
 
 export type SalesNumberTimeSeriesArgs = {
-  grouping?: Maybe<TimeGrouping>;
+  grouping?: InputMaybe<TimeGrouping>;
 };
 
 export type Table = Node & {
@@ -473,7 +499,7 @@ export type Table = Node & {
 };
 
 export type TableReservationsArgs = {
-  day?: Maybe<Scalars['Date']>;
+  day?: InputMaybe<Scalars['Date']>;
 };
 
 export type TableAvailability = {
@@ -519,22 +545,22 @@ export type ApplicationDetailsQuery = {
         __typename?: 'BandApplication';
         id: string;
         bandname: string;
-        instagram?: string | null | undefined;
-        instagramFollower?: number | null | undefined;
-        facebook?: string | null | undefined;
-        facebookLikes?: number | null | undefined;
-        description?: string | null | undefined;
-        knowsKultFrom?: string | null | undefined;
-        heardAboutBookingFrom?: HeardAboutBookingFrom | null | undefined;
+        instagram?: string | null;
+        instagramFollower?: number | null;
+        facebook?: string | null;
+        facebookLikes?: number | null;
+        description?: string | null;
+        knowsKultFrom?: string | null;
+        heardAboutBookingFrom?: HeardAboutBookingFrom | null;
         contactName: string;
         contactPhone: string;
         email: string;
-        demo?: string | null | undefined;
-        numberOfArtists?: number | null | undefined;
-        numberOfNonMaleArtists?: number | null | undefined;
-        hasPreviouslyPlayed?: PreviouslyPlayed | null | undefined;
-        website?: string | null | undefined;
-        rating?: number | null | undefined;
+        demo?: string | null;
+        numberOfArtists?: number | null;
+        numberOfNonMaleArtists?: number | null;
+        hasPreviouslyPlayed?: PreviouslyPlayed | null;
+        website?: string | null;
+        rating?: number | null;
         bandApplicationRating: Array<{
           __typename?: 'BandApplicationRating';
           rating: number;
@@ -542,23 +568,23 @@ export type ApplicationDetailsQuery = {
             __typename?: 'Viewer';
             id: string;
             displayName: string;
-            profilePicture?: string | null | undefined;
+            profilePicture?: string | null;
           };
         }>;
       }
     | {__typename?: 'Event'}
     | {__typename?: 'Table'}
     | {__typename?: 'Viewer'}
-    | null
-    | undefined;
+    | null;
 };
 
 export type ContactedByFragment = {
   __typename?: 'BandApplication';
-  contactedByViewer?:
-    | {__typename?: 'Viewer'; id: string; displayName: string}
-    | null
-    | undefined;
+  contactedByViewer?: {
+    __typename?: 'Viewer';
+    id: string;
+    displayName: string;
+  } | null;
 };
 
 export type MarkAsContextedMutationVariables = Exact<{
@@ -568,51 +594,46 @@ export type MarkAsContextedMutationVariables = Exact<{
 
 export type MarkAsContextedMutation = {
   __typename?: 'Mutation';
-  markBandApplicationContacted?:
-    | {
-        __typename?: 'BandApplication';
-        id: string;
-        contactedByViewer?:
-          | {__typename?: 'Viewer'; id: string; displayName: string}
-          | null
-          | undefined;
-      }
-    | null
-    | undefined;
+  markBandApplicationContacted?: {
+    __typename?: 'BandApplication';
+    id: string;
+    contactedByViewer?: {
+      __typename?: 'Viewer';
+      id: string;
+      displayName: string;
+    } | null;
+  } | null;
 };
 
 export type BandApplicationRatingMutationVariables = Exact<{
   id: Scalars['ID'];
-  rating?: Maybe<Scalars['Int']>;
+  rating?: InputMaybe<Scalars['Int']>;
 }>;
 
 export type BandApplicationRatingMutation = {
   __typename?: 'Mutation';
-  rateBandApplication?:
-    | {
-        __typename?: 'BandApplication';
+  rateBandApplication?: {
+    __typename?: 'BandApplication';
+    id: string;
+    rating?: number | null;
+    bandApplicationRating: Array<{
+      __typename?: 'BandApplicationRating';
+      rating: number;
+      viewer: {
+        __typename?: 'Viewer';
         id: string;
-        rating?: number | null | undefined;
-        bandApplicationRating: Array<{
-          __typename?: 'BandApplicationRating';
-          rating: number;
-          viewer: {
-            __typename?: 'Viewer';
-            id: string;
-            displayName: string;
-            profilePicture?: string | null | undefined;
-          };
-        }>;
-      }
-    | null
-    | undefined;
+        displayName: string;
+        profilePicture?: string | null;
+      };
+    }>;
+  } | null;
 };
 
 export type ProductListFragment = {
   __typename?: 'ProductList';
   id: number;
   name: string;
-  emoji?: string | null | undefined;
+  emoji?: string | null;
   active: boolean;
   product: Array<{
     __typename?: 'Product';
@@ -624,32 +645,29 @@ export type ProductListFragment = {
 };
 
 export type UpsertProductListMutationVariables = Exact<{
-  id?: Maybe<Scalars['Int']>;
-  emoji?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  products?: Maybe<Array<ProductInput> | ProductInput>;
-  active?: Maybe<Scalars['Boolean']>;
+  id?: InputMaybe<Scalars['Int']>;
+  emoji?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
+  products?: InputMaybe<Array<ProductInput> | ProductInput>;
+  active?: InputMaybe<Scalars['Boolean']>;
 }>;
 
 export type UpsertProductListMutation = {
   __typename?: 'Mutation';
-  upsertProductList?:
-    | {
-        __typename?: 'ProductList';
-        id: number;
-        name: string;
-        emoji?: string | null | undefined;
-        active: boolean;
-        product: Array<{
-          __typename?: 'Product';
-          id: number;
-          name: string;
-          price: number;
-          requiresDeposit: boolean;
-        }>;
-      }
-    | null
-    | undefined;
+  upsertProductList?: {
+    __typename?: 'ProductList';
+    id: number;
+    name: string;
+    emoji?: string | null;
+    active: boolean;
+    product: Array<{
+      __typename?: 'Product';
+      id: number;
+      name: string;
+      price: number;
+      requiresDeposit: boolean;
+    }>;
+  } | null;
 };
 
 export type ProductRowFragment = {
@@ -669,35 +687,24 @@ export type RevenueDetailsQueryVariables = Exact<{
 
 export type RevenueDetailsQuery = {
   __typename?: 'Query';
-  productList?:
-    | {
-        __typename?: 'ProductList';
-        id: number;
-        name: string;
-        salesNumbers: {
-          __typename?: 'SalesNumber';
-          timeSeries: Array<{
-            __typename?: 'TimeSeries';
-            time: Date;
-            value: number;
-          }>;
-        };
-        historicalProducts: Array<{
-          __typename?: 'HistoricalProduct';
-          name: string;
-          salesNumbers: {
-            __typename?: 'SalesNumber';
-            count: number;
-            total: number;
-          };
-        }>;
-      }
-    | null
-    | undefined;
+  productList?: {
+    __typename?: 'ProductList';
+    id: number;
+    name: string;
+    salesNumbers: {
+      __typename?: 'SalesNumber';
+      timeSeries: Array<{__typename?: 'TimeSeries'; time: Date; value: number}>;
+    };
+    historicalProducts: Array<{
+      __typename?: 'HistoricalProduct';
+      name: string;
+      salesNumbers: {__typename?: 'SalesNumber'; count: number; total: number};
+    }>;
+  } | null;
 };
 
 export type SlotsQueryVariables = Exact<{
-  day?: Maybe<Scalars['Date']>;
+  day?: InputMaybe<Scalars['Date']>;
 }>;
 
 export type SlotsQuery = {
@@ -721,7 +728,7 @@ export type SlotsQuery = {
         otherPersons: Array<string>;
         status: ReservationStatus;
         checkedInPersons: number;
-        checkInTime?: Date | null | undefined;
+        checkInTime?: Date | null;
         token: string;
       }>;
     }>;
@@ -742,7 +749,7 @@ export type TableRowFragment = {
   otherPersons: Array<string>;
   status: ReservationStatus;
   checkedInPersons: number;
-  checkInTime?: Date | null | undefined;
+  checkInTime?: Date | null;
   token: string;
 };
 
@@ -778,8 +785,7 @@ export type CreateModalQuery = {
         }>;
       }
     | {__typename?: 'Viewer'}
-    | null
-    | undefined;
+    | null;
 };
 
 export type CreateReservationMutationVariables = Exact<{
@@ -788,16 +794,13 @@ export type CreateReservationMutationVariables = Exact<{
   otherPersons: Array<Scalars['String']> | Scalars['String'];
   startTime: Scalars['DateTime'];
   endTime: Scalars['DateTime'];
-  note?: Maybe<Scalars['String']>;
+  note?: InputMaybe<Scalars['String']>;
   tableId: Scalars['ID'];
 }>;
 
 export type CreateReservationMutation = {
   __typename?: 'Mutation';
-  createReservation?:
-    | {__typename?: 'Reservation'; id: number}
-    | null
-    | undefined;
+  createReservation?: {__typename?: 'Reservation'; id: number} | null;
 };
 
 export type ReservationFragmentFragment = {
@@ -810,7 +813,7 @@ export type ReservationFragmentFragment = {
   primaryPerson: string;
   primaryEmail: string;
   otherPersons: Array<string>;
-  note?: string | null | undefined;
+  note?: string | null;
   availableToCheckIn: number;
   reservationsFromSamePerson: Array<{
     __typename?: 'Reservation';
@@ -824,16 +827,12 @@ export type ReservationFragmentFragment = {
       area: {__typename?: 'Area'; id: string; displayName: string};
     };
   }>;
-  alternativeTables: Array<
-    | {
-        __typename?: 'Table';
-        id: string;
-        displayName: string;
-        area: {__typename?: 'Area'; id: string; displayName: string};
-      }
-    | null
-    | undefined
-  >;
+  alternativeTables: Array<{
+    __typename?: 'Table';
+    id: string;
+    displayName: string;
+    area: {__typename?: 'Area'; id: string; displayName: string};
+  } | null>;
   table: {
     __typename?: 'Table';
     id: string;
@@ -857,103 +856,88 @@ export type ReservationFragmentFragment = {
       }>;
     };
   };
-  swappableWith: Array<
-    | {
-        __typename?: 'Reservation';
-        id: number;
-        primaryPerson: string;
-        status: ReservationStatus;
-        table: {__typename?: 'Table'; id: string; displayName: string};
-      }
-    | null
-    | undefined
-  >;
+  swappableWith: Array<{
+    __typename?: 'Reservation';
+    id: number;
+    primaryPerson: string;
+    status: ReservationStatus;
+    table: {__typename?: 'Table'; id: string; displayName: string};
+  } | null>;
 };
 
 export type UpdateReservationMutationVariables = Exact<{
   id: Scalars['Int'];
-  persons?: Maybe<Scalars['Int']>;
-  startTime?: Maybe<Scalars['DateTime']>;
-  endTime?: Maybe<Scalars['DateTime']>;
-  note?: Maybe<Scalars['String']>;
-  tableId?: Maybe<Scalars['ID']>;
-  primaryPerson?: Maybe<Scalars['String']>;
+  persons?: InputMaybe<Scalars['Int']>;
+  startTime?: InputMaybe<Scalars['DateTime']>;
+  endTime?: InputMaybe<Scalars['DateTime']>;
+  note?: InputMaybe<Scalars['String']>;
+  tableId?: InputMaybe<Scalars['ID']>;
+  primaryPerson?: InputMaybe<Scalars['String']>;
 }>;
 
 export type UpdateReservationMutation = {
   __typename?: 'Mutation';
-  updateReservation?:
-    | {
+  updateReservation?: {
+    __typename?: 'Reservation';
+    id: number;
+    startTime: Date;
+    endTime: Date;
+    status: ReservationStatus;
+    checkedInPersons: number;
+    primaryPerson: string;
+    primaryEmail: string;
+    otherPersons: Array<string>;
+    note?: string | null;
+    availableToCheckIn: number;
+    reservationsFromSamePerson: Array<{
+      __typename?: 'Reservation';
+      id: number;
+      startTime: Date;
+      endTime: Date;
+      otherPersons: Array<string>;
+      table: {
+        __typename?: 'Table';
+        id: string;
+        area: {__typename?: 'Area'; id: string; displayName: string};
+      };
+    }>;
+    alternativeTables: Array<{
+      __typename?: 'Table';
+      id: string;
+      displayName: string;
+      area: {__typename?: 'Area'; id: string; displayName: string};
+    } | null>;
+    table: {
+      __typename?: 'Table';
+      id: string;
+      displayName: string;
+      maxCapacity: number;
+      reservations: Array<{
         __typename?: 'Reservation';
         id: number;
         startTime: Date;
         endTime: Date;
         status: ReservationStatus;
-        checkedInPersons: number;
-        primaryPerson: string;
-        primaryEmail: string;
-        otherPersons: Array<string>;
-        note?: string | null | undefined;
-        availableToCheckIn: number;
-        reservationsFromSamePerson: Array<{
-          __typename?: 'Reservation';
-          id: number;
+      }>;
+      area: {
+        __typename?: 'Area';
+        id: string;
+        displayName: string;
+        openingHour: Array<{
+          __typename?: 'OpeningHour';
           startTime: Date;
           endTime: Date;
-          otherPersons: Array<string>;
-          table: {
-            __typename?: 'Table';
-            id: string;
-            area: {__typename?: 'Area'; id: string; displayName: string};
-          };
         }>;
-        alternativeTables: Array<
-          | {
-              __typename?: 'Table';
-              id: string;
-              displayName: string;
-              area: {__typename?: 'Area'; id: string; displayName: string};
-            }
-          | null
-          | undefined
-        >;
-        table: {
-          __typename?: 'Table';
-          id: string;
-          displayName: string;
-          maxCapacity: number;
-          reservations: Array<{
-            __typename?: 'Reservation';
-            id: number;
-            startTime: Date;
-            endTime: Date;
-            status: ReservationStatus;
-          }>;
-          area: {
-            __typename?: 'Area';
-            id: string;
-            displayName: string;
-            openingHour: Array<{
-              __typename?: 'OpeningHour';
-              startTime: Date;
-              endTime: Date;
-            }>;
-          };
-        };
-        swappableWith: Array<
-          | {
-              __typename?: 'Reservation';
-              id: number;
-              primaryPerson: string;
-              status: ReservationStatus;
-              table: {__typename?: 'Table'; id: string; displayName: string};
-            }
-          | null
-          | undefined
-        >;
-      }
-    | null
-    | undefined;
+      };
+    };
+    swappableWith: Array<{
+      __typename?: 'Reservation';
+      id: number;
+      primaryPerson: string;
+      status: ReservationStatus;
+      table: {__typename?: 'Table'; id: string; displayName: string};
+    } | null>;
+  } | null;
 };
 
 export type CancelReservationMutationVariables = Exact<{
@@ -962,7 +946,7 @@ export type CancelReservationMutationVariables = Exact<{
 
 export type CancelReservationMutation = {
   __typename?: 'Mutation';
-  cancelReservation?: boolean | null | undefined;
+  cancelReservation?: boolean | null;
 };
 
 export type UpdateOtherPersonsMutationVariables = Exact<{
@@ -972,78 +956,67 @@ export type UpdateOtherPersonsMutationVariables = Exact<{
 
 export type UpdateOtherPersonsMutation = {
   __typename?: 'Mutation';
-  updateReservationOtherPersons?:
-    | {
+  updateReservationOtherPersons?: {
+    __typename?: 'Reservation';
+    id: number;
+    startTime: Date;
+    endTime: Date;
+    status: ReservationStatus;
+    checkedInPersons: number;
+    primaryPerson: string;
+    primaryEmail: string;
+    otherPersons: Array<string>;
+    note?: string | null;
+    availableToCheckIn: number;
+    reservationsFromSamePerson: Array<{
+      __typename?: 'Reservation';
+      id: number;
+      startTime: Date;
+      endTime: Date;
+      otherPersons: Array<string>;
+      table: {
+        __typename?: 'Table';
+        id: string;
+        area: {__typename?: 'Area'; id: string; displayName: string};
+      };
+    }>;
+    alternativeTables: Array<{
+      __typename?: 'Table';
+      id: string;
+      displayName: string;
+      area: {__typename?: 'Area'; id: string; displayName: string};
+    } | null>;
+    table: {
+      __typename?: 'Table';
+      id: string;
+      displayName: string;
+      maxCapacity: number;
+      reservations: Array<{
         __typename?: 'Reservation';
         id: number;
         startTime: Date;
         endTime: Date;
         status: ReservationStatus;
-        checkedInPersons: number;
-        primaryPerson: string;
-        primaryEmail: string;
-        otherPersons: Array<string>;
-        note?: string | null | undefined;
-        availableToCheckIn: number;
-        reservationsFromSamePerson: Array<{
-          __typename?: 'Reservation';
-          id: number;
+      }>;
+      area: {
+        __typename?: 'Area';
+        id: string;
+        displayName: string;
+        openingHour: Array<{
+          __typename?: 'OpeningHour';
           startTime: Date;
           endTime: Date;
-          otherPersons: Array<string>;
-          table: {
-            __typename?: 'Table';
-            id: string;
-            area: {__typename?: 'Area'; id: string; displayName: string};
-          };
         }>;
-        alternativeTables: Array<
-          | {
-              __typename?: 'Table';
-              id: string;
-              displayName: string;
-              area: {__typename?: 'Area'; id: string; displayName: string};
-            }
-          | null
-          | undefined
-        >;
-        table: {
-          __typename?: 'Table';
-          id: string;
-          displayName: string;
-          maxCapacity: number;
-          reservations: Array<{
-            __typename?: 'Reservation';
-            id: number;
-            startTime: Date;
-            endTime: Date;
-            status: ReservationStatus;
-          }>;
-          area: {
-            __typename?: 'Area';
-            id: string;
-            displayName: string;
-            openingHour: Array<{
-              __typename?: 'OpeningHour';
-              startTime: Date;
-              endTime: Date;
-            }>;
-          };
-        };
-        swappableWith: Array<
-          | {
-              __typename?: 'Reservation';
-              id: number;
-              primaryPerson: string;
-              status: ReservationStatus;
-              table: {__typename?: 'Table'; id: string; displayName: string};
-            }
-          | null
-          | undefined
-        >;
-      }
-    | null
-    | undefined;
+      };
+    };
+    swappableWith: Array<{
+      __typename?: 'Reservation';
+      id: number;
+      primaryPerson: string;
+      status: ReservationStatus;
+      table: {__typename?: 'Table'; id: string; displayName: string};
+    } | null>;
+  } | null;
 };
 
 export type SwapReservationsMutationVariables = Exact<{
@@ -1053,7 +1026,7 @@ export type SwapReservationsMutationVariables = Exact<{
 
 export type SwapReservationsMutation = {
   __typename?: 'Mutation';
-  swapReservations?: boolean | null | undefined;
+  swapReservations?: boolean | null;
 };
 
 export type ReservationModalQueryVariables = Exact<{
@@ -1063,84 +1036,73 @@ export type ReservationModalQueryVariables = Exact<{
 export type ReservationModalQuery = {
   __typename?: 'Query';
   availableCapacity: number;
-  reservationForToken?:
-    | {
+  reservationForToken?: {
+    __typename?: 'Reservation';
+    id: number;
+    startTime: Date;
+    endTime: Date;
+    status: ReservationStatus;
+    checkedInPersons: number;
+    primaryPerson: string;
+    primaryEmail: string;
+    otherPersons: Array<string>;
+    note?: string | null;
+    availableToCheckIn: number;
+    reservationsFromSamePerson: Array<{
+      __typename?: 'Reservation';
+      id: number;
+      startTime: Date;
+      endTime: Date;
+      otherPersons: Array<string>;
+      table: {
+        __typename?: 'Table';
+        id: string;
+        area: {__typename?: 'Area'; id: string; displayName: string};
+      };
+    }>;
+    alternativeTables: Array<{
+      __typename?: 'Table';
+      id: string;
+      displayName: string;
+      area: {__typename?: 'Area'; id: string; displayName: string};
+    } | null>;
+    table: {
+      __typename?: 'Table';
+      id: string;
+      displayName: string;
+      maxCapacity: number;
+      reservations: Array<{
         __typename?: 'Reservation';
         id: number;
         startTime: Date;
         endTime: Date;
         status: ReservationStatus;
-        checkedInPersons: number;
-        primaryPerson: string;
-        primaryEmail: string;
-        otherPersons: Array<string>;
-        note?: string | null | undefined;
-        availableToCheckIn: number;
-        reservationsFromSamePerson: Array<{
-          __typename?: 'Reservation';
-          id: number;
+      }>;
+      area: {
+        __typename?: 'Area';
+        id: string;
+        displayName: string;
+        openingHour: Array<{
+          __typename?: 'OpeningHour';
           startTime: Date;
           endTime: Date;
-          otherPersons: Array<string>;
-          table: {
-            __typename?: 'Table';
-            id: string;
-            area: {__typename?: 'Area'; id: string; displayName: string};
-          };
         }>;
-        alternativeTables: Array<
-          | {
-              __typename?: 'Table';
-              id: string;
-              displayName: string;
-              area: {__typename?: 'Area'; id: string; displayName: string};
-            }
-          | null
-          | undefined
-        >;
-        table: {
-          __typename?: 'Table';
-          id: string;
-          displayName: string;
-          maxCapacity: number;
-          reservations: Array<{
-            __typename?: 'Reservation';
-            id: number;
-            startTime: Date;
-            endTime: Date;
-            status: ReservationStatus;
-          }>;
-          area: {
-            __typename?: 'Area';
-            id: string;
-            displayName: string;
-            openingHour: Array<{
-              __typename?: 'OpeningHour';
-              startTime: Date;
-              endTime: Date;
-            }>;
-          };
-        };
-        swappableWith: Array<
-          | {
-              __typename?: 'Reservation';
-              id: number;
-              primaryPerson: string;
-              status: ReservationStatus;
-              table: {__typename?: 'Table'; id: string; displayName: string};
-            }
-          | null
-          | undefined
-        >;
-      }
-    | null
-    | undefined;
+      };
+    };
+    swappableWith: Array<{
+      __typename?: 'Reservation';
+      id: number;
+      primaryPerson: string;
+      status: ReservationStatus;
+      table: {__typename?: 'Table'; id: string; displayName: string};
+    } | null>;
+  } | null;
   areas: Array<{__typename?: 'Area'; id: string; displayName: string}>;
 };
 
 export type RatingFragment = {
   __typename?: 'BandApplication';
-  rating?: number | null | undefined;
+  rating?: number | null;
   bandApplicationRating: Array<{
     __typename?: 'BandApplicationRating';
     rating: number;
@@ -1148,7 +1110,7 @@ export type RatingFragment = {
       __typename?: 'Viewer';
       id: string;
       displayName: string;
-      profilePicture?: string | null | undefined;
+      profilePicture?: string | null;
     };
   }>;
 };
@@ -1159,7 +1121,7 @@ export type BandApplcationsQueryVariables = Exact<{
 
 export type BandApplcationsQuery = {
   __typename?: 'Query';
-  viewer?: {__typename?: 'Viewer'; id: string} | null | undefined;
+  viewer?: {__typename?: 'Viewer'; id: string} | null;
   node?:
     | {__typename?: 'Area'}
     | {__typename?: 'BandApplication'}
@@ -1169,17 +1131,18 @@ export type BandApplcationsQuery = {
           __typename?: 'BandApplication';
           id: string;
           bandname: string;
-          rating?: number | null | undefined;
+          rating?: number | null;
           city: string;
-          genre?: string | null | undefined;
+          genre?: string | null;
           genreCategory: GenreCategory;
-          distance?: number | null | undefined;
-          facebookLikes?: number | null | undefined;
-          instagramFollower?: number | null | undefined;
-          contactedByViewer?:
-            | {__typename?: 'Viewer'; id: string; displayName: string}
-            | null
-            | undefined;
+          distance?: number | null;
+          facebookLikes?: number | null;
+          instagramFollower?: number | null;
+          contactedByViewer?: {
+            __typename?: 'Viewer';
+            id: string;
+            displayName: string;
+          } | null;
           bandApplicationRating: Array<{
             __typename?: 'BandApplicationRating';
             rating: number;
@@ -1187,15 +1150,14 @@ export type BandApplcationsQuery = {
               __typename?: 'Viewer';
               id: string;
               displayName: string;
-              profilePicture?: string | null | undefined;
+              profilePicture?: string | null;
             };
           }>;
         }>;
       }
     | {__typename?: 'Table'}
     | {__typename?: 'Viewer'}
-    | null
-    | undefined;
+    | null;
 };
 
 export type EventsQueryVariables = Exact<{[key: string]: never}>;
@@ -1213,7 +1175,7 @@ export type ProductListQuery = {
     __typename?: 'ProductList';
     id: number;
     name: string;
-    emoji?: string | null | undefined;
+    emoji?: string | null;
     active: boolean;
     product: Array<{
       __typename?: 'Product';
@@ -1231,23 +1193,20 @@ export type CreateProductListMutationVariables = Exact<{
 
 export type CreateProductListMutation = {
   __typename?: 'Mutation';
-  upsertProductList?:
-    | {
-        __typename?: 'ProductList';
-        id: number;
-        name: string;
-        emoji?: string | null | undefined;
-        active: boolean;
-        product: Array<{
-          __typename?: 'Product';
-          id: number;
-          name: string;
-          price: number;
-          requiresDeposit: boolean;
-        }>;
-      }
-    | null
-    | undefined;
+  upsertProductList?: {
+    __typename?: 'ProductList';
+    id: number;
+    name: string;
+    emoji?: string | null;
+    active: boolean;
+    product: Array<{
+      __typename?: 'Product';
+      id: number;
+      name: string;
+      price: number;
+      requiresDeposit: boolean;
+    }>;
+  } | null;
 };
 
 export type ProductPrintQueryVariables = Exact<{[key: string]: never}>;
@@ -1257,7 +1216,7 @@ export type ProductPrintQuery = {
   productLists: Array<{
     __typename?: 'ProductList';
     id: number;
-    emoji?: string | null | undefined;
+    emoji?: string | null;
     name: string;
     product: Array<{
       __typename?: 'Product';
@@ -1267,7 +1226,7 @@ export type ProductPrintQuery = {
       requiresDeposit: boolean;
     }>;
   }>;
-  config?: {__typename?: 'Config'; tokenValue: number} | null | undefined;
+  config?: {__typename?: 'Config'; tokenValue: number} | null;
 };
 
 export type RevenueQueryVariables = Exact<{
@@ -1366,23 +1325,19 @@ export type OverviewQuery = {
     | {__typename?: 'Event'}
     | {__typename?: 'Table'}
     | {__typename?: 'Viewer'}
-    | null
-    | undefined;
+    | null;
 };
 
 export type ViewerContextProviderQueryVariables = Exact<{[key: string]: never}>;
 
 export type ViewerContextProviderQuery = {
   __typename?: 'Query';
-  viewer?:
-    | {
-        __typename?: 'Viewer';
-        id: string;
-        profilePicture?: string | null | undefined;
-        displayName: string;
-      }
-    | null
-    | undefined;
+  viewer?: {
+    __typename?: 'Viewer';
+    id: string;
+    profilePicture?: string | null;
+    displayName: string;
+  } | null;
 };
 
 export const ContactedByFragmentDoc = gql`

@@ -2,7 +2,7 @@ import {gql} from '@apollo/client';
 import {Spin, Table} from 'antd';
 import {TimeGrouping, useRevenueDetailsQuery} from '../../types/graphql';
 import styles from './RevenueDetails.module.css';
-import Line from '@ant-design/charts/lib/plots/line';
+import {Line} from '@ant-design/plots';
 
 gql`
   query RevenueDetails(
