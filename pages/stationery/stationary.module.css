@@ -28,12 +28,29 @@
 }
 
 .page {
+  width: 21cm;
+  height: 29.7cm;
+  min-height: 100%;
+  overflow: scroll;
   background: white;
+  box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.1);
   margin: 50px;
-  padding: 30px;
   font-family: 'Lato';
-  position: relative;
   font-size: 10pt;
+  padding: 1.5cm;
+}
+
+.checkbox {
+  margin-top: 12px;
+  margin-bottom: 12px;
+}
+.pageInner {
+  position: relative;
+  height: 100%;
+}
+
+.layoutTable {
+  width: 100%;
 }
 
 .select {
@@ -47,7 +64,8 @@
   text-transform: uppercase;
 }
 .page h1 {
-  font-size: 1.6em;
+  font-size: 1.8em;
+  margin-bottom: 8mm;
   text-align: center;
 }
 
@@ -55,36 +73,56 @@
   font-size: 1.3em;
 }
 
+.page * + h1,
+.page * + h2 {
+  margin-top: 1cm;
+}
+
 .address {
   white-space: pre;
-  margin-bottom: 20px;
+  margin-bottom: 2cm;
 }
 
 .returnAddress {
-  margin-bottom: 20px;
-  font-size: 0.9em;
+  margin-bottom: 0.3cm;
+  font-size: 0.8em;
+}
+
+.headerSpace {
+  height: 3.5cm;
+}
+
+.footerSpace {
+  height: 3cm;
 }
 
 .header {
-  text-align: right;
   position: absolute;
-  top: 0;
+  top: 0cm;
+  right: 0cm;
+}
+
+.header img {
+  height: 2cm;
 }
 
 .footer {
   position: absolute;
   display: flex;
   flex-direction: row;
-  width: 100%;
   align-items: flex-end;
   bottom: 0;
-  font-size: 0.8em;
+  font-size: 0.75em;
   line-height: 1.3em;
+  left: 0cm;
+  right: 0cm;
+  bottom: 0cm;
 }
 
 .footer > div {
   flex-basis: 0;
   flex-grow: 1;
+  flex-shrink: 1;
   white-space: nowrap;
 }
 
@@ -106,11 +144,34 @@
 
 .date {
   text-align: right;
+  margin-bottom: 1cm;
 }
 
 .content {
   min-height: 100%;
+  width: 100%;
   padding-bottom: 10em;
+}
+
+.content table {
+  width: 100%;
+  margin-bottom: 3mm;
+}
+
+.content th {
+  text-align: left;
+  font-weight: bold;
+  border-bottom: 0.6mm solid #e5e5e5;
+}
+
+.content td {
+  border-bottom: 0.3mm solid #e5e5e5;
+  padding-top: 2mm;
+  padding-bottom: 2mm;
+}
+
+.content ul {
+  padding-left: 0.5cm;
 }
 
 @media print {
@@ -119,10 +180,12 @@
   }
 
   .page {
-    padding: 0;
-    padding-left: 5mm;
-    padding-right: 5mm;
+    height: auto;
+    width: auto;
     margin: 0;
+    margin-top: -1.67cm;
+    padding: 0;
+    box-shadow: none;
   }
 
   .header {
