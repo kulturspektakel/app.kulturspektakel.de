@@ -32,3 +32,9 @@
   margin-right: 15px;
   cursor: pointer;
 }
+
+@media print {
+  .header {
+    display: none;
+  }
+}
