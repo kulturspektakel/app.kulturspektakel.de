@@ -107,11 +107,29 @@ export type BillableSalesNumbersArgs = {
   before: Scalars['DateTime'];
 };
 
+export type Board = {
+  __typename?: 'Board';
+  chair: Scalars['String'];
+  deputy: Scalars['String'];
+  deputy2: Scalars['String'];
+  observer: Scalars['String'];
+  observer2: Scalars['String'];
+  secretary: Scalars['String'];
+  treasurer: Scalars['String'];
+};
+
+export type CardTransaction = {
+  __typename?: 'CardTransaction';
+  pack: Scalars['String'];
+  password: Scalars['String'];
+  payload: Scalars['String'];
+};
+
 export type Config = {
   __typename?: 'Config';
-  bandApplicationDeadline: Scalars['DateTime'];
+  board?: Maybe<Board>;
+  depositValue: Scalars['Int'];
   reservationStart: Scalars['DateTime'];
-  tokenValue: Scalars['Int'];
 };
 
 export type CreateBandApplicationInput = {
@@ -195,6 +213,7 @@ export type HistoricalProductSalesNumbersArgs = {
 export type Mutation = {
   __typename?: 'Mutation';
   cancelReservation?: Maybe<Scalars['Boolean']>;
+  cardTransaction?: Maybe<CardTransaction>;
   checkInReservation?: Maybe<Reservation>;
   confirmReservation?: Maybe<Reservation>;
   createBandApplication?: Maybe<BandApplication>;
@@ -211,6 +230,12 @@ export type Mutation = {
 
 export type MutationCancelReservationArgs = {
   token: Scalars['String'];
+};
+
+export type MutationCardTransactionArgs = {
+  balanceAfter: Scalars['Int'];
+  cardUri: Scalars['String'];
+  depositAfter: Scalars['Int'];
 };
 
 export type MutationCheckInReservationArgs = {
@@ -300,14 +325,23 @@ export type NuclinoPage = {
   __typename?: 'NuclinoPage';
   content: Scalars['String'];
   id: Scalars['ID'];
+  lastUpdatedAt: Scalars['DateTime'];
+  lastUpdatedUser: NuclinoUser;
   title: Scalars['String'];
-  updatedAt: Scalars['DateTime'];
 };
 
 export type NuclinoSearchResult = {
   __typename?: 'NuclinoSearchResult';
   highlight: Scalars['String'];
   page: NuclinoPage;
+};
+
+export type NuclinoUser = {
+  __typename?: 'NuclinoUser';
+  email: Scalars['String'];
+  firstName: Scalars['String'];
+  id: Scalars['ID'];
+  lastName: Scalars['String'];
 };
 
 export type OpeningHour = {
@@ -1226,7 +1260,7 @@ export type ProductPrintQuery = {
       requiresDeposit: boolean;
     }>;
   }>;
-  config?: {__typename?: 'Config'; tokenValue: number} | null;
+  config?: {__typename?: 'Config'; depositValue: number} | null;
 };
 
 export type RevenueQueryVariables = Exact<{
@@ -2570,7 +2604,7 @@ export const ProductPrintDocument = gql`
       }
     }
     config {
-      tokenValue
+      depositValue
     }
   }
 `;

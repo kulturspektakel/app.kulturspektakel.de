@@ -18,7 +18,7 @@ gql`
       }
     }
     config {
-      tokenValue
+      depositValue
     }
   }
 `;

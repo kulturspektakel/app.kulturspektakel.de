@@ -58,14 +58,6 @@ export default function Page({
             <Menu.Item key="overview">
               <Link href="/tables/overview">Übersicht</Link>
             </Menu.Item>
-            <Menu.Item key="juz">
-              <a
-                target="_blank"
-                href="https://docs.google.com/spreadsheets/d/1mIpkFrLwoXXwGFTokNd_YwmlnSMOjIdTtQv3ZHJXvEw/edit?usp=sharing"
-              >
-                JUZ
-              </a>
-            </Menu.Item>
           </Menu.SubMenu>
           <Menu.SubMenu key="products" title="Verkauf">
             <Menu.Item key="lists">
@@ -73,6 +65,9 @@ export default function Page({
             </Menu.Item>
             <Menu.Item key="revenue">
               <Link href={`/products/revenue`}>Umsätze</Link>
+            </Menu.Item>
+            <Menu.Item key="card-token">
+              <Link href={`/products/card-token`}>Token-Generator</Link>
             </Menu.Item>
           </Menu.SubMenu>
           <Menu.Item key="booking">
