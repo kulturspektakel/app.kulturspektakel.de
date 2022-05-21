@@ -28,7 +28,7 @@ const formatter = new Intl.NumberFormat('de-DE', {
 
 export default React.forwardRef<Ref, Props>(
   ({data, index, onChange, ...props}: Props, ref) => {
-    const inputRef = useRef<Input>(null);
+    const inputRef = useRef(null);
     return (
       <li className={styles.root} ref={ref} {...props}>
         <span className={styles.index}>{index}</span>

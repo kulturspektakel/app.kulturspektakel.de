@@ -170,6 +170,7 @@ export default function ProductList({list}: {list: ProductListFragment}) {
       <Card.Meta
         avatar={
           <EmojiPicker
+            key={list.id}
             value={list.emoji}
             onChange={async (emoji) => {
               await mutate({

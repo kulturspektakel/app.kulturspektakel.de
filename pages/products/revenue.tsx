@@ -9,6 +9,7 @@ import {useEffect} from 'react';
 import {useRouter} from 'next/router';
 import de_DE from 'antd/lib/locale-provider/de_DE';
 import {isEqual} from 'date-fns';
+import {RangeValue} from 'rc-picker/lib/interface';
 
 const {RangePicker} = DatePicker;
 
@@ -38,7 +39,7 @@ gql`
 
 export default function Revenue() {
   const router = useRouter();
-  const [range, setRange] = useState<[moment.Moment, moment.Moment]>([
+  const [range, setRange] = useState<RangeValue<moment.Moment>>([
     moment(router.query.after),
     moment(router.query.before),
   ]);
@@ -94,7 +95,7 @@ export default function Revenue() {
               allowEmpty={[true, true]}
               showTime
               onChange={setRange}
-              value={range}
+              value={range as any}
             />
           </ConfigProvider>
         }
