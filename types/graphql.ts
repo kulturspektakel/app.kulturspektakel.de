@@ -118,12 +118,40 @@ export type Board = {
   treasurer: Scalars['String'];
 };
 
-export type CardTransaction = {
+export type CardStatus = {
+  __typename?: 'CardStatus';
+  balance: Scalars['Int'];
+  cardId: Scalars['ID'];
+  deposit: Scalars['Int'];
+  recentTransactions?: Maybe<Array<Transaction>>;
+};
+
+export type CardTransaction = Transaction & {
   __typename?: 'CardTransaction';
+  Order: Array<Order>;
+  balanceAfter: Scalars['Int'];
+  balanceBefore: Scalars['Int'];
+  cardId: Scalars['String'];
+  clientId: Scalars['ID'];
+  createdAt: Scalars['DateTime'];
+  depositAfter: Scalars['Int'];
+  depositBefore: Scalars['Int'];
+  deviceTime: Scalars['DateTime'];
+  transactionType: CardTransactionType;
+};
+
+export type CardTransactionInput = {
+  __typename?: 'CardTransactionInput';
   pack: Scalars['String'];
   password: Scalars['String'];
   payload: Scalars['String'];
 };
+
+export enum CardTransactionType {
+  Cashout = 'Cashout',
+  Charge = 'Charge',
+  TopUp = 'TopUp',
+}
 
 export type Config = {
   __typename?: 'Config';
@@ -154,16 +182,27 @@ export type CreateBandApplicationInput = {
 
 export type Device = Billable & {
   __typename?: 'Device';
+  cardTransactions: Array<CardTransaction>;
   id: Scalars['ID'];
   lastSeen?: Maybe<Scalars['DateTime']>;
   productList?: Maybe<ProductList>;
   salesNumbers: SalesNumber;
+  softwareVersion?: Maybe<Scalars['String']>;
+};
+
+export type DeviceCardTransactionsArgs = {
+  limit?: InputMaybe<Scalars['Int']>;
 };
 
 export type DeviceSalesNumbersArgs = {
   after: Scalars['DateTime'];
   before: Scalars['DateTime'];
 };
+
+export enum DeviceType {
+  ContactlessTerminal = 'CONTACTLESS_TERMINAL',
+  Ipad = 'IPAD',
+}
 
 export type Event = Node & {
   __typename?: 'Event';
@@ -210,19 +249,29 @@ export type HistoricalProductSalesNumbersArgs = {
   before: Scalars['DateTime'];
 };
 
+export type MissingTransaction = Transaction & {
+  __typename?: 'MissingTransaction';
+  balanceAfter: Scalars['Int'];
+  balanceBefore: Scalars['Int'];
+  depositAfter: Scalars['Int'];
+  depositBefore: Scalars['Int'];
+  numberOfMissingTransactions: Scalars['Int'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   cancelReservation?: Maybe<Scalars['Boolean']>;
-  cardTransaction?: Maybe<CardTransaction>;
   checkInReservation?: Maybe<Reservation>;
   confirmReservation?: Maybe<Reservation>;
   createBandApplication?: Maybe<BandApplication>;
+  createCardTransaction?: Maybe<CardTransactionInput>;
   createOrder?: Maybe<Order>;
   createReservation?: Maybe<Reservation>;
   markBandApplicationContacted?: Maybe<BandApplication>;
   rateBandApplication?: Maybe<BandApplication>;
   requestReservation: Scalars['Boolean'];
   swapReservations?: Maybe<Scalars['Boolean']>;
+  updateDeviceProductList?: Maybe<Device>;
   updateReservation?: Maybe<Reservation>;
   updateReservationOtherPersons?: Maybe<Reservation>;
   upsertProductList?: Maybe<ProductList>;
@@ -230,12 +279,6 @@ export type Mutation = {
 
 export type MutationCancelReservationArgs = {
   token: Scalars['String'];
-};
-
-export type MutationCardTransactionArgs = {
-  balanceAfter: Scalars['Int'];
-  cardUri: Scalars['String'];
-  depositAfter: Scalars['Int'];
 };
 
 export type MutationCheckInReservationArgs = {
@@ -249,6 +292,12 @@ export type MutationConfirmReservationArgs = {
 
 export type MutationCreateBandApplicationArgs = {
   data: CreateBandApplicationInput;
+};
+
+export type MutationCreateCardTransactionArgs = {
+  balanceAfter: Scalars['Int'];
+  cardUri: Scalars['String'];
+  depositAfter: Scalars['Int'];
 };
 
 export type MutationCreateOrderArgs = {
@@ -291,6 +340,11 @@ export type MutationRequestReservationArgs = {
 export type MutationSwapReservationsArgs = {
   a: Scalars['Int'];
   b: Scalars['Int'];
+};
+
+export type MutationUpdateDeviceProductListArgs = {
+  deviceId: Scalars['ID'];
+  productListId?: InputMaybe<Scalars['Int']>;
 };
 
 export type MutationUpdateReservationArgs = {
@@ -436,6 +490,7 @@ export type Query = {
   __typename?: 'Query';
   areas: Array<Area>;
   availableCapacity: Scalars['Int'];
+  cardStatus: CardStatus;
   config?: Maybe<Config>;
   devices: Array<Device>;
   distanceToKult?: Maybe<Scalars['Float']>;
@@ -452,6 +507,14 @@ export type Query = {
 
 export type QueryAvailableCapacityArgs = {
   time?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type QueryCardStatusArgs = {
+  payload: Scalars['String'];
+};
+
+export type QueryDevicesArgs = {
+  type?: InputMaybe<DeviceType>;
 };
 
 export type QueryDistanceToKultArgs = {
@@ -557,6 +620,13 @@ export type TimeSeries = {
   __typename?: 'TimeSeries';
   time: Scalars['DateTime'];
   value: Scalars['Int'];
+};
+
+export type Transaction = {
+  balanceAfter: Scalars['Int'];
+  balanceBefore: Scalars['Int'];
+  depositAfter: Scalars['Int'];
+  depositBefore: Scalars['Int'];
 };
 
 export type Viewer = Node & {
