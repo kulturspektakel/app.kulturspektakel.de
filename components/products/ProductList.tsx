@@ -131,7 +131,8 @@ export default function ProductList({list}: {list: ProductListFragment}) {
         <Button
           icon={<PlusCircleOutlined />}
           type="link"
-          style={{color: '#52c41a'}}
+          style={{color: products.length >= 30 ? null : '#52c41a'}}
+          disabled={products.length >= 30}
           onClick={() => {
             setProducts([...products, generateRow({})]);
           }}

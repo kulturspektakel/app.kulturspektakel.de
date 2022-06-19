@@ -34,6 +34,7 @@ export default React.forwardRef<Ref, Props>(
         <span className={styles.index}>{index}</span>
         <Input
           value={data.name ?? ''}
+          maxLength={30}
           onChange={(e) => {
             onChange(index - 1, {name: e.target.value});
           }}
