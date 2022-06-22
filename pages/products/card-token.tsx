@@ -127,6 +127,8 @@ export default function CardToken() {
       setPayload(
         Buffer.from(newData.buffer)
           .toString('base64')
+          // poor man's base64url, as it's not supported in browsers
+          .replaceAll('+', '-')
           .replaceAll('/', '_')
           .replaceAll('=', ''),
       );
@@ -148,7 +150,11 @@ export default function CardToken() {
         setPayloadError('Wrong payload length');
         return;
       }
-      const payloadBuffer = Buffer.from(payload, 'base64');
+      const payloadBuffer = Buffer.from(
+        // poor man's base64url, as it's not supported in browsers
+        payload.replaceAll('-', '+').replaceAll('_', '/'),
+        'base64',
+      );
       console.log(buf2hex(payloadBuffer.slice(12)));
       setCount(payloadBuffer.slice(7, 9).readUInt16LE());
       setDeposit(payloadBuffer.slice(9, 10).readUInt8());

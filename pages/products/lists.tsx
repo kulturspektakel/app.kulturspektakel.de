@@ -1,12 +1,12 @@
-import {Col, Row, Modal, PageHeader, Button, Input, Spin, Empty} from 'antd';
+import {Modal, PageHeader, Button, Input, Spin, Empty} from 'antd';
 import React, {useState, useCallback} from 'react';
 import Page from '../../components/shared/Page';
-import ProductList from '../../components/products/ProductList';
 import {gql} from '@apollo/client';
 import {
   useCreateProductListMutation,
   useProductListQuery,
 } from '../../types/graphql';
+import ProductListContainer from '../../components/products/ProductListContainer';
 
 gql`
   query ProductList {
@@ -67,6 +67,7 @@ export default function Lists() {
             placeholder="Name"
             autoFocus
             value={newListName ?? ''}
+            maxLength={20}
             onChange={(e) => setNewListName(e.target.value)}
           />
         </form>
@@ -91,25 +92,13 @@ export default function Lists() {
         )}
         {data?.productLists ? (
           <>
-            <Row gutter={16}>
-              {data.productLists
-                .filter((p) => p.active)
-                .map((list) => (
-                  <Col sm={24} md={12} lg={8} xxl={6} key={list.name}>
-                    <ProductList list={list} />
-                  </Col>
-                ))}
-            </Row>
-            <h3>Deaktivierte Listen</h3>
-            <Row gutter={16}>
-              {data.productLists
-                .filter((p) => !p.active)
-                .map((list) => (
-                  <Col sm={24} md={12} lg={8} xxl={6} key={list.name}>
-                    <ProductList list={list} />
-                  </Col>
-                ))}
-            </Row>
+            <ProductListContainer
+              data={data?.productLists.filter((p) => p.active)}
+            />
+            <ProductListContainer
+              title="Deaktivierte Listen"
+              data={data?.productLists.filter((p) => !p.active)}
+            />
           </>
         ) : (
           <div

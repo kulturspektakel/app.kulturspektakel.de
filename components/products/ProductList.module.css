@@ -4,6 +4,7 @@
   overflow: hidden;
   box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.05);
   margin-bottom: 20px;
+  break-inside: avoid;
 }
 
 .root :global(.ant-card-body) {
@@ -18,3 +19,20 @@
 .root :global(.ant-card-meta-description) {
   margin-bottom: 14px;
 }
+
+.root :global(.ant-card-actions) :global(.ant-btn) {
+  max-width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.root :global(.ant-card-actions) :global(.ant-btn) span[role="img"] {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.root :global(.ant-card-actions) :global(.ant-btn) span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
