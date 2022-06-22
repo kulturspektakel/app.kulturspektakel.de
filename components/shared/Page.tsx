@@ -63,6 +63,9 @@ export default function Page({
             <Menu.Item key="lists">
               <Link href={`/products/lists`}>Preislisten</Link>
             </Menu.Item>
+            <Menu.Item key="devices">
+              <Link href={`/products/devices`}>Geräte</Link>
+            </Menu.Item>
             <Menu.Item key="revenue">
               <Link href={`/products/revenue`}>Umsätze</Link>
             </Menu.Item>

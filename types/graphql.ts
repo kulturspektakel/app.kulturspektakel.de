@@ -118,12 +118,41 @@ export type Board = {
   treasurer: Scalars['String'];
 };
 
-export type CardTransaction = {
+export type CardStatus = {
+  __typename?: 'CardStatus';
+  balance: Scalars['Int'];
+  cardId: Scalars['ID'];
+  deposit: Scalars['Int'];
+  hasNewerTransactions?: Maybe<Scalars['Boolean']>;
+  recentTransactions?: Maybe<Array<Transaction>>;
+};
+
+export type CardTransaction = Transaction & {
   __typename?: 'CardTransaction';
+  Order: Array<Order>;
+  balanceAfter: Scalars['Int'];
+  balanceBefore: Scalars['Int'];
+  cardId: Scalars['String'];
+  clientId: Scalars['ID'];
+  createdAt: Scalars['DateTime'];
+  depositAfter: Scalars['Int'];
+  depositBefore: Scalars['Int'];
+  deviceTime: Scalars['DateTime'];
+  transactionType: CardTransactionType;
+};
+
+export type CardTransactionInput = {
+  __typename?: 'CardTransactionInput';
   pack: Scalars['String'];
   password: Scalars['String'];
   payload: Scalars['String'];
 };
+
+export enum CardTransactionType {
+  Cashout = 'Cashout',
+  Charge = 'Charge',
+  TopUp = 'TopUp',
+}
 
 export type Config = {
   __typename?: 'Config';
@@ -154,16 +183,27 @@ export type CreateBandApplicationInput = {
 
 export type Device = Billable & {
   __typename?: 'Device';
+  cardTransactions: Array<CardTransaction>;
   id: Scalars['ID'];
   lastSeen?: Maybe<Scalars['DateTime']>;
   productList?: Maybe<ProductList>;
   salesNumbers: SalesNumber;
+  softwareVersion?: Maybe<Scalars['String']>;
+};
+
+export type DeviceCardTransactionsArgs = {
+  limit?: InputMaybe<Scalars['Int']>;
 };
 
 export type DeviceSalesNumbersArgs = {
   after: Scalars['DateTime'];
   before: Scalars['DateTime'];
 };
+
+export enum DeviceType {
+  ContactlessTerminal = 'CONTACTLESS_TERMINAL',
+  Ipad = 'IPAD',
+}
 
 export type Event = Node & {
   __typename?: 'Event';
@@ -210,19 +250,29 @@ export type HistoricalProductSalesNumbersArgs = {
   before: Scalars['DateTime'];
 };
 
+export type MissingTransaction = Transaction & {
+  __typename?: 'MissingTransaction';
+  balanceAfter: Scalars['Int'];
+  balanceBefore: Scalars['Int'];
+  depositAfter: Scalars['Int'];
+  depositBefore: Scalars['Int'];
+  numberOfMissingTransactions: Scalars['Int'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   cancelReservation?: Maybe<Scalars['Boolean']>;
-  cardTransaction?: Maybe<CardTransaction>;
   checkInReservation?: Maybe<Reservation>;
   confirmReservation?: Maybe<Reservation>;
   createBandApplication?: Maybe<BandApplication>;
+  createCardTransaction?: Maybe<CardTransactionInput>;
   createOrder?: Maybe<Order>;
   createReservation?: Maybe<Reservation>;
   markBandApplicationContacted?: Maybe<BandApplication>;
   rateBandApplication?: Maybe<BandApplication>;
   requestReservation: Scalars['Boolean'];
   swapReservations?: Maybe<Scalars['Boolean']>;
+  updateDeviceProductList?: Maybe<Device>;
   updateReservation?: Maybe<Reservation>;
   updateReservationOtherPersons?: Maybe<Reservation>;
   upsertProductList?: Maybe<ProductList>;
@@ -230,12 +280,6 @@ export type Mutation = {
 
 export type MutationCancelReservationArgs = {
   token: Scalars['String'];
-};
-
-export type MutationCardTransactionArgs = {
-  balanceAfter: Scalars['Int'];
-  cardUri: Scalars['String'];
-  depositAfter: Scalars['Int'];
 };
 
 export type MutationCheckInReservationArgs = {
@@ -249,6 +293,12 @@ export type MutationConfirmReservationArgs = {
 
 export type MutationCreateBandApplicationArgs = {
   data: CreateBandApplicationInput;
+};
+
+export type MutationCreateCardTransactionArgs = {
+  balanceAfter: Scalars['Int'];
+  cardUri: Scalars['String'];
+  depositAfter: Scalars['Int'];
 };
 
 export type MutationCreateOrderArgs = {
@@ -291,6 +341,11 @@ export type MutationRequestReservationArgs = {
 export type MutationSwapReservationsArgs = {
   a: Scalars['Int'];
   b: Scalars['Int'];
+};
+
+export type MutationUpdateDeviceProductListArgs = {
+  deviceId: Scalars['ID'];
+  productListId?: InputMaybe<Scalars['Int']>;
 };
 
 export type MutationUpdateReservationArgs = {
@@ -436,6 +491,7 @@ export type Query = {
   __typename?: 'Query';
   areas: Array<Area>;
   availableCapacity: Scalars['Int'];
+  cardStatus: CardStatus;
   config?: Maybe<Config>;
   devices: Array<Device>;
   distanceToKult?: Maybe<Scalars['Float']>;
@@ -452,6 +508,14 @@ export type Query = {
 
 export type QueryAvailableCapacityArgs = {
   time?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type QueryCardStatusArgs = {
+  payload: Scalars['String'];
+};
+
+export type QueryDevicesArgs = {
+  type?: InputMaybe<DeviceType>;
 };
 
 export type QueryDistanceToKultArgs = {
@@ -557,6 +621,13 @@ export type TimeSeries = {
   __typename?: 'TimeSeries';
   time: Scalars['DateTime'];
   value: Scalars['Int'];
+};
+
+export type Transaction = {
+  balanceAfter: Scalars['Int'];
+  balanceBefore: Scalars['Int'];
+  depositAfter: Scalars['Int'];
+  depositBefore: Scalars['Int'];
 };
 
 export type Viewer = Node & {
@@ -1199,6 +1270,39 @@ export type EventsQueryVariables = Exact<{[key: string]: never}>;
 export type EventsQuery = {
   __typename?: 'Query';
   events: Array<{__typename?: 'Event'; id: string; name: string}>;
+};
+
+export type DevicesQueryVariables = Exact<{[key: string]: never}>;
+
+export type DevicesQuery = {
+  __typename?: 'Query';
+  devices: Array<{
+    __typename?: 'Device';
+    id: string;
+    lastSeen?: Date | null;
+    softwareVersion?: string | null;
+    productList?: {__typename?: 'ProductList'; id: number; name: string} | null;
+  }>;
+  productLists: Array<{
+    __typename?: 'ProductList';
+    id: number;
+    name: string;
+    active: boolean;
+  }>;
+};
+
+export type UpdateDeviceListMutationVariables = Exact<{
+  productListId?: InputMaybe<Scalars['Int']>;
+  deviceId: Scalars['ID'];
+}>;
+
+export type UpdateDeviceListMutation = {
+  __typename?: 'Mutation';
+  updateDeviceProductList?: {
+    __typename?: 'Device';
+    id: string;
+    productList?: {__typename?: 'ProductList'; id: number; name: string} | null;
+  } | null;
 };
 
 export type ProductListQueryVariables = Exact<{[key: string]: never}>;
@@ -2481,6 +2585,125 @@ export type EventsLazyQueryHookResult = ReturnType<typeof useEventsLazyQuery>;
 export type EventsQueryResult = Apollo.QueryResult<
   EventsQuery,
   EventsQueryVariables
+>;
+export const DevicesDocument = gql`
+  query Devices {
+    devices(type: CONTACTLESS_TERMINAL) {
+      id
+      lastSeen
+      softwareVersion
+      productList {
+        id
+        name
+      }
+    }
+    productLists {
+      id
+      name
+      active
+    }
+  }
+`;
+
+/**
+ * __useDevicesQuery__
+ *
+ * To run a query within a React component, call `useDevicesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useDevicesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useDevicesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useDevicesQuery(
+  baseOptions?: Apollo.QueryHookOptions<DevicesQuery, DevicesQueryVariables>,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useQuery<DevicesQuery, DevicesQueryVariables>(
+    DevicesDocument,
+    options,
+  );
+}
+export function useDevicesLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    DevicesQuery,
+    DevicesQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useLazyQuery<DevicesQuery, DevicesQueryVariables>(
+    DevicesDocument,
+    options,
+  );
+}
+export type DevicesQueryHookResult = ReturnType<typeof useDevicesQuery>;
+export type DevicesLazyQueryHookResult = ReturnType<typeof useDevicesLazyQuery>;
+export type DevicesQueryResult = Apollo.QueryResult<
+  DevicesQuery,
+  DevicesQueryVariables
+>;
+export const UpdateDeviceListDocument = gql`
+  mutation UpdateDeviceList($productListId: Int, $deviceId: ID!) {
+    updateDeviceProductList(
+      productListId: $productListId
+      deviceId: $deviceId
+    ) {
+      id
+      productList {
+        id
+        name
+      }
+    }
+  }
+`;
+export type UpdateDeviceListMutationFn = Apollo.MutationFunction<
+  UpdateDeviceListMutation,
+  UpdateDeviceListMutationVariables
+>;
+
+/**
+ * __useUpdateDeviceListMutation__
+ *
+ * To run a mutation, you first call `useUpdateDeviceListMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateDeviceListMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateDeviceListMutation, { data, loading, error }] = useUpdateDeviceListMutation({
+ *   variables: {
+ *      productListId: // value for 'productListId'
+ *      deviceId: // value for 'deviceId'
+ *   },
+ * });
+ */
+export function useUpdateDeviceListMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UpdateDeviceListMutation,
+    UpdateDeviceListMutationVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useMutation<
+    UpdateDeviceListMutation,
+    UpdateDeviceListMutationVariables
+  >(UpdateDeviceListDocument, options);
+}
+export type UpdateDeviceListMutationHookResult = ReturnType<
+  typeof useUpdateDeviceListMutation
+>;
+export type UpdateDeviceListMutationResult =
+  Apollo.MutationResult<UpdateDeviceListMutation>;
+export type UpdateDeviceListMutationOptions = Apollo.BaseMutationOptions<
+  UpdateDeviceListMutation,
+  UpdateDeviceListMutationVariables
 >;
 export const ProductListDocument = gql`
   query ProductList {
