@@ -8,6 +8,7 @@ import {
 } from '../../types/graphql';
 import RelativeDate from '../../components/shared/RelativeDate';
 import {differenceInMinutes} from 'date-fns';
+import DeviceTransactions from '../../components/products/DeviceTransactions';
 
 gql`
   query Devices {
@@ -116,7 +117,9 @@ export default function Devices() {
         dataSource={data?.devices}
         rowKey="id"
         expandable={{
-          expandedRowRender: (record) => null,
+          expandedRowRender: (record) => (
+            <DeviceTransactions deviceID={record.id} />
+          ),
         }}
       />
     </Page>

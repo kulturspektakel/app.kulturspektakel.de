@@ -10,13 +10,9 @@ import {useRouter} from 'next/router';
 import de_DE from 'antd/lib/locale-provider/de_DE';
 import {isEqual} from 'date-fns';
 import {RangeValue} from 'rc-picker/lib/interface';
+import currencyFormatter from '../../utils/currencyFormatter';
 
 const {RangePicker} = DatePicker;
-
-const formatter = new Intl.NumberFormat('de-DE', {
-  style: 'currency',
-  currency: 'EUR',
-});
 
 gql`
   query Revenue($after: DateTime!, $before: DateTime!) {
@@ -113,7 +109,7 @@ export default function Revenue() {
           {
             title: 'Umsatz',
             align: 'right',
-            render: (r) => formatter.format(r.salesNumbers.total),
+            render: (r) => currencyFormatter.format(r.salesNumbers.total),
           },
         ]}
         dataSource={data?.productLists}

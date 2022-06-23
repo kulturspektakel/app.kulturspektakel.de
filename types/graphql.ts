@@ -181,17 +181,19 @@ export type CreateBandApplicationInput = {
   website?: InputMaybe<Scalars['String']>;
 };
 
-export type Device = Billable & {
-  __typename?: 'Device';
-  cardTransactions: Array<CardTransaction>;
-  id: Scalars['ID'];
-  lastSeen?: Maybe<Scalars['DateTime']>;
-  productList?: Maybe<ProductList>;
-  salesNumbers: SalesNumber;
-  softwareVersion?: Maybe<Scalars['String']>;
-};
+export type Device = Billable &
+  Node & {
+    __typename?: 'Device';
+    /** Unique identifier for the resource */
+    id: Scalars['ID'];
+    lastSeen?: Maybe<Scalars['DateTime']>;
+    productList?: Maybe<ProductList>;
+    recentTransactions: Array<CardTransaction>;
+    salesNumbers: SalesNumber;
+    softwareVersion?: Maybe<Scalars['String']>;
+  };
 
-export type DeviceCardTransactionsArgs = {
+export type DeviceRecentTransactionsArgs = {
   limit?: InputMaybe<Scalars['Int']>;
 };
 
@@ -677,6 +679,7 @@ export type ApplicationDetailsQuery = {
           };
         }>;
       }
+    | {__typename?: 'Device'}
     | {__typename?: 'Event'}
     | {__typename?: 'Table'}
     | {__typename?: 'Viewer'}
@@ -732,6 +735,34 @@ export type BandApplicationRatingMutation = {
       };
     }>;
   } | null;
+};
+
+export type DeviceTransactionsQueryVariables = Exact<{
+  deviceID: Scalars['ID'];
+}>;
+
+export type DeviceTransactionsQuery = {
+  __typename?: 'Query';
+  node?:
+    | {__typename?: 'Area'}
+    | {__typename?: 'BandApplication'}
+    | {
+        __typename?: 'Device';
+        recentTransactions: Array<{
+          __typename?: 'CardTransaction';
+          deviceTime: Date;
+          balanceAfter: number;
+          balanceBefore: number;
+          depositBefore: number;
+          depositAfter: number;
+          cardId: string;
+          transactionType: CardTransactionType;
+        }>;
+      }
+    | {__typename?: 'Event'}
+    | {__typename?: 'Table'}
+    | {__typename?: 'Viewer'}
+    | null;
 };
 
 export type ProductListFragment = {
@@ -867,6 +898,7 @@ export type CreateModalQuery = {
   node?:
     | {__typename?: 'Area'}
     | {__typename?: 'BandApplication'}
+    | {__typename?: 'Device'}
     | {__typename?: 'Event'}
     | {
         __typename?: 'Table';
@@ -1230,6 +1262,7 @@ export type BandApplcationsQuery = {
   node?:
     | {__typename?: 'Area'}
     | {__typename?: 'BandApplication'}
+    | {__typename?: 'Device'}
     | {
         __typename?: 'Event';
         bandApplication: Array<{
@@ -1487,6 +1520,7 @@ export type OverviewQuery = {
         }>;
       }
     | {__typename?: 'BandApplication'}
+    | {__typename?: 'Device'}
     | {__typename?: 'Event'}
     | {__typename?: 'Table'}
     | {__typename?: 'Viewer'}
@@ -1820,6 +1854,74 @@ export type BandApplicationRatingMutationResult =
 export type BandApplicationRatingMutationOptions = Apollo.BaseMutationOptions<
   BandApplicationRatingMutation,
   BandApplicationRatingMutationVariables
+>;
+export const DeviceTransactionsDocument = gql`
+  query DeviceTransactions($deviceID: ID!) {
+    node(id: $deviceID) {
+      ... on Device {
+        recentTransactions {
+          deviceTime
+          balanceAfter
+          balanceBefore
+          depositBefore
+          depositAfter
+          cardId
+          transactionType
+        }
+      }
+    }
+  }
+`;
+
+/**
+ * __useDeviceTransactionsQuery__
+ *
+ * To run a query within a React component, call `useDeviceTransactionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useDeviceTransactionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useDeviceTransactionsQuery({
+ *   variables: {
+ *      deviceID: // value for 'deviceID'
+ *   },
+ * });
+ */
+export function useDeviceTransactionsQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    DeviceTransactionsQuery,
+    DeviceTransactionsQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useQuery<
+    DeviceTransactionsQuery,
+    DeviceTransactionsQueryVariables
+  >(DeviceTransactionsDocument, options);
+}
+export function useDeviceTransactionsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    DeviceTransactionsQuery,
+    DeviceTransactionsQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useLazyQuery<
+    DeviceTransactionsQuery,
+    DeviceTransactionsQueryVariables
+  >(DeviceTransactionsDocument, options);
+}
+export type DeviceTransactionsQueryHookResult = ReturnType<
+  typeof useDeviceTransactionsQuery
+>;
+export type DeviceTransactionsLazyQueryHookResult = ReturnType<
+  typeof useDeviceTransactionsLazyQuery
+>;
+export type DeviceTransactionsQueryResult = Apollo.QueryResult<
+  DeviceTransactionsQuery,
+  DeviceTransactionsQueryVariables
 >;
 export const UpsertProductListDocument = gql`
   mutation UpsertProductList(

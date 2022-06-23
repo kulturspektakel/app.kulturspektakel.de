@@ -1,0 +1,27 @@
+.root :global(.ant-table),
+.root :global(.ant-table-tbody > tr.ant-table-placeholder:hover > td),
+.root :global(.ant-table-tbody > tr.ant-table-row > td),
+.root :global(.ant-table-tbody > tr > td.ant-table-cell-row-hover) {
+    background-color: #fafafa;
+}
+
+.cashout, .topup, .charge {
+    font-weight: 500;
+}
+
+.cashout {
+    color: #1890ff;
+}
+
+.topup {
+    color: #389e0d;
+}
+
+.charge {
+    color: #f5222d;
+}
+
+.loading {
+    padding: 50px;
+    text-align: center;
+}

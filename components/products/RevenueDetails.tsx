@@ -3,6 +3,7 @@ import {Spin, Table} from 'antd';
 import {TimeGrouping, useRevenueDetailsQuery} from '../../types/graphql';
 import styles from './RevenueDetails.module.css';
 import {Line} from '@ant-design/plots';
+import currencyFormatter from '../../utils/currencyFormatter';
 
 gql`
   query RevenueDetails(
@@ -30,11 +31,6 @@ gql`
     }
   }
 `;
-
-const formatter = new Intl.NumberFormat('de-DE', {
-  style: 'currency',
-  currency: 'EUR',
-});
 
 export default function RevenueDetails({
   productListId,
@@ -87,7 +83,7 @@ export default function RevenueDetails({
           {
             title: 'Umsatz',
             align: 'right',
-            render: (r) => formatter.format(r.salesNumbers.total),
+            render: (r) => currencyFormatter.format(r.salesNumbers.total),
             sorter: (a, b) => a.salesNumbers.total - b.salesNumbers.total,
           },
         ]}
