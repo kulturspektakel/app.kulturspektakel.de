@@ -622,9 +622,13 @@
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "kind": "OBJECT",
-                "name": "SalesNumber",
-                "ofType": null
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "SalesNumber",
+                  "ofType": null
+                }
               }
             },
             "isDeprecated": false,
@@ -1411,9 +1415,13 @@
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "kind": "OBJECT",
-                "name": "SalesNumber",
-                "ofType": null
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "SalesNumber",
+                  "ofType": null
+                }
               }
             },
             "isDeprecated": false,
@@ -1770,9 +1778,13 @@
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "kind": "OBJECT",
-                "name": "SalesNumber",
-                "ofType": null
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "SalesNumber",
+                  "ofType": null
+                }
               }
             },
             "isDeprecated": false,
@@ -3326,9 +3338,13 @@
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "kind": "OBJECT",
-                "name": "SalesNumber",
-                "ofType": null
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "SalesNumber",
+                  "ofType": null
+                }
               }
             },
             "isDeprecated": false,
@@ -3523,9 +3539,13 @@
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "kind": "OBJECT",
-                "name": "SalesNumber",
-                "ofType": null
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "SalesNumber",
+                  "ofType": null
+                }
               }
             },
             "isDeprecated": false,
@@ -4203,6 +4223,18 @@
               "kind": "NON_NULL",
               "name": null,
               "ofType": {"kind": "SCALAR", "name": "Int", "ofType": null}
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "payment",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {"kind": "ENUM", "name": "OrderPayment", "ofType": null}
             },
             "isDeprecated": false,
             "deprecationReason": null

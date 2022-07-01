@@ -99,7 +99,7 @@ export type BandApplicationRating = {
 };
 
 export type Billable = {
-  salesNumbers: SalesNumber;
+  salesNumbers: Array<Maybe<SalesNumber>>;
 };
 
 export type BillableSalesNumbersArgs = {
@@ -189,7 +189,7 @@ export type Device = Billable &
     lastSeen?: Maybe<Scalars['DateTime']>;
     productList?: Maybe<ProductList>;
     recentTransactions: Array<CardTransaction>;
-    salesNumbers: SalesNumber;
+    salesNumbers: Array<Maybe<SalesNumber>>;
     softwareVersion?: Maybe<Scalars['String']>;
   };
 
@@ -244,7 +244,7 @@ export type HistoricalProduct = Billable & {
   __typename?: 'HistoricalProduct';
   name: Scalars['String'];
   productListId: Scalars['Int'];
-  salesNumbers: SalesNumber;
+  salesNumbers: Array<Maybe<SalesNumber>>;
 };
 
 export type HistoricalProductSalesNumbersArgs = {
@@ -459,7 +459,7 @@ export type Product = Billable & {
   price: Scalars['Int'];
   productListId: Scalars['Int'];
   requiresDeposit: Scalars['Boolean'];
-  salesNumbers: SalesNumber;
+  salesNumbers: Array<Maybe<SalesNumber>>;
 };
 
 export type ProductSalesNumbersArgs = {
@@ -481,7 +481,7 @@ export type ProductList = Billable & {
   id: Scalars['Int'];
   name: Scalars['String'];
   product: Array<Product>;
-  salesNumbers: SalesNumber;
+  salesNumbers: Array<Maybe<SalesNumber>>;
 };
 
 export type ProductListSalesNumbersArgs = {
@@ -580,6 +580,7 @@ export enum ReservationStatus {
 export type SalesNumber = {
   __typename?: 'SalesNumber';
   count: Scalars['Int'];
+  payment: OrderPayment;
   timeSeries: Array<TimeSeries>;
   total: Scalars['Float'];
 };
@@ -827,14 +828,19 @@ export type RevenueDetailsQuery = {
     __typename?: 'ProductList';
     id: number;
     name: string;
-    salesNumbers: {
+    salesNumbers: Array<{
       __typename?: 'SalesNumber';
+      payment: OrderPayment;
       timeSeries: Array<{__typename?: 'TimeSeries'; time: Date; value: number}>;
-    };
+    } | null>;
     historicalProducts: Array<{
       __typename?: 'HistoricalProduct';
       name: string;
-      salesNumbers: {__typename?: 'SalesNumber'; count: number; total: number};
+      salesNumbers: Array<{
+        __typename?: 'SalesNumber';
+        count: number;
+        total: number;
+      } | null>;
     }>;
   } | null;
 };
@@ -1418,7 +1424,12 @@ export type RevenueQuery = {
     __typename?: 'ProductList';
     id: number;
     name: string;
-    salesNumbers: {__typename?: 'SalesNumber'; count: number; total: number};
+    salesNumbers: Array<{
+      __typename?: 'SalesNumber';
+      count: number;
+      total: number;
+      payment: OrderPayment;
+    } | null>;
   }>;
 };
 
@@ -2005,6 +2016,7 @@ export const RevenueDetailsDocument = gql`
           time
           value
         }
+        payment
       }
       historicalProducts {
         name
@@ -2997,6 +3009,7 @@ export const RevenueDocument = gql`
       salesNumbers(after: $after, before: $before) {
         count
         total
+        payment
       }
     }
   }

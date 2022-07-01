@@ -1,9 +1,16 @@
 import {gql} from '@apollo/client';
 import {Spin, Table} from 'antd';
-import {TimeGrouping, useRevenueDetailsQuery} from '../../types/graphql';
+import {
+  OrderPayment,
+  TimeGrouping,
+  useRevenueDetailsQuery,
+} from '../../types/graphql';
 import styles from './RevenueDetails.module.css';
-import {Line} from '@ant-design/plots';
-import currencyFormatter from '../../utils/currencyFormatter';
+import {Column} from '@ant-design/plots';
+import {useMemo} from 'react';
+import {paymentName} from '../../utils/payments';
+import {salesColumns} from './RevenueTable';
+import {ColumnType} from 'antd/lib/table';
 
 gql`
   query RevenueDetails(
@@ -20,6 +27,7 @@ gql`
           time
           value
         }
+        payment
       }
       historicalProducts {
         name
@@ -50,6 +58,23 @@ export default function RevenueDetails({
     },
   });
 
+  const chartData = useMemo(
+    () =>
+      data?.productList.salesNumbers.flatMap(({payment, timeSeries}) =>
+        timeSeries.map(({time, value}) => ({
+          payment,
+          value,
+          time: time.toLocaleDateString('de', {
+            hour: '2-digit',
+            minute: '2-digit',
+            weekday: 'short',
+            timeZone: 'Europe/Berlin',
+          }),
+        })),
+      ),
+    [data?.productList.salesNumbers],
+  );
+
   if (loading) {
     return (
       <div className={styles.loading}>
@@ -65,41 +90,27 @@ export default function RevenueDetails({
         size="small"
         pagination={false}
         rowClassName={styles.row}
-        bordered
         rowKey="name"
+        showHeader={false}
+        className={styles.innerTable}
         columns={[
-          {
-            title: 'Produkt',
-            dataIndex: 'name',
-          },
-
-          {
-            title: 'Anzahl',
-            align: 'right',
-            render: (r) => r.salesNumbers.count,
-            sorter: (a, b) => a.salesNumbers.count - b.salesNumbers.count,
-          },
-
-          {
-            title: 'Umsatz',
-            align: 'right',
-            render: (r) => currencyFormatter.format(r.salesNumbers.total),
-            sorter: (a, b) => a.salesNumbers.total - b.salesNumbers.total,
-          },
+          {title: 'Name', dataIndex: 'name', className: styles.productName},
+          ...(salesColumns as Array<ColumnType<any>>),
         ]}
       />
-      <Line
-        data={data.productList.salesNumbers.timeSeries.map(({value, time}) => ({
-          value,
-          time: time.toLocaleDateString('de', {
-            hour: '2-digit',
-            minute: '2-digit',
-            weekday: 'short',
-            timeZone: 'Europe/Berlin',
-          }),
-        }))}
+      <Column
+        className={styles.chart}
+        isStack
+        seriesField="payment"
+        data={chartData}
         xField="time"
         yField="value"
+        legend={{
+          position: 'bottom',
+          itemName: {
+            formatter: (t) => paymentName(t as OrderPayment),
+          },
+        }}
       />
     </div>
   );

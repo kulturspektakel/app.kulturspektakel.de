@@ -3,6 +3,26 @@
   text-align: center;
 }
 
-.row td {
+.innerTable :global(.ant-table) {
   background-color: transparent;
+}
+
+.innerTable :global(.ant-table) .row td:global(.ant-table-cell),
+.innerTable :global(.ant-table) .row:hover td:global(.ant-table-cell) {
+  background-color: transparent;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.chart {
+  margin-top: 20px;
+  padding: 20px;
+  padding-left: 64px;
+  padding-right: 16px;
+}
+
+
+.innerTable :global(.ant-table) .row td:first-child,
+.innerTable :global(.ant-table) .row:hover td:first-child {
+  padding-left: 64px;
 }

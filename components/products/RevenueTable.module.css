@@ -1,0 +1,7 @@
+.table :global(.ant-table-expanded-row-level-1) td {
+    padding: 0;
+}
+
+.title {
+    font-weight: 500;
+}

@@ -1,16 +1,15 @@
-import {ConfigProvider, DatePicker, PageHeader, Select, Table} from 'antd';
+import {ConfigProvider, DatePicker, PageHeader, Select} from 'antd';
 import React, {useState} from 'react';
 import Page from '../../components/shared/Page';
 import {gql} from '@apollo/client';
 import {useRevenueQuery} from '../../types/graphql';
 import moment from 'moment';
-import RevenueDetails from '../../components/products/RevenueDetails';
 import {useEffect} from 'react';
 import {useRouter} from 'next/router';
 import de_DE from 'antd/lib/locale-provider/de_DE';
-import {isEqual} from 'date-fns';
+import {isEqual, endOfDay, startOfDay} from 'date-fns';
 import {RangeValue} from 'rc-picker/lib/interface';
-import currencyFormatter from '../../utils/currencyFormatter';
+import RevenueTable from '../../components/products/RevenueTable';
 
 const {RangePicker} = DatePicker;
 
@@ -28,6 +27,7 @@ gql`
       salesNumbers(after: $after, before: $before) {
         count
         total
+        payment
       }
     }
   }
@@ -36,8 +36,8 @@ gql`
 export default function Revenue() {
   const router = useRouter();
   const [range, setRange] = useState<RangeValue<moment.Moment>>([
-    moment(router.query.after),
-    moment(router.query.before),
+    moment(router.query.after ?? startOfDay(new Date())),
+    moment(router.query.before ?? endOfDay(new Date())),
   ]);
 
   useEffect(() => {
@@ -80,12 +80,16 @@ export default function Revenue() {
                   setRange([moment(event.start), moment(event.end)]);
                 }
               }}
+              dropdownMatchSelectWidth={false}
               value={eventPickerValue?.id ?? 'Veranstaltung auswählen'}
             >
               {data?.events.map((e) => (
-                <Select.Option value={e.id}>{e.name}</Select.Option>
+                <Select.Option value={e.id} key={e.id}>
+                  {e.name}
+                </Select.Option>
               ))}
             </Select>
+            &nbsp;
             <RangePicker
               format="DD.MM.YYYY HH:mm"
               allowEmpty={[true, true]}
@@ -96,33 +100,10 @@ export default function Revenue() {
           </ConfigProvider>
         }
       ></PageHeader>
-      <Table
+      <RevenueTable
         loading={loading}
-        pagination={false}
-        columns={[
-          {title: 'Name', dataIndex: 'name'},
-          {
-            title: 'Verkäufe',
-            align: 'right',
-            render: (r) => r.salesNumbers.count,
-          },
-          {
-            title: 'Umsatz',
-            align: 'right',
-            render: (r) => currencyFormatter.format(r.salesNumbers.total),
-          },
-        ]}
-        dataSource={data?.productLists}
-        rowKey="id"
-        expandable={{
-          expandedRowRender: (record) => (
-            <RevenueDetails
-              productListId={record.id}
-              before={range[1].toDate()}
-              after={range[0].toDate()}
-            />
-          ),
-        }}
+        productLists={data?.productLists}
+        range={range as any}
       />
     </Page>
   );
