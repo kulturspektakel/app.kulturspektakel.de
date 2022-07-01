@@ -840,6 +840,7 @@ export type RevenueDetailsQuery = {
         __typename?: 'SalesNumber';
         count: number;
         total: number;
+        payment: OrderPayment;
       } | null>;
     }>;
   } | null;
@@ -2023,6 +2024,7 @@ export const RevenueDetailsDocument = gql`
         salesNumbers(after: $after, before: $before) {
           count
           total
+          payment
         }
       }
     }

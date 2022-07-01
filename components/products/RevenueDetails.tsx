@@ -11,6 +11,7 @@ import {useMemo} from 'react';
 import {paymentName} from '../../utils/payments';
 import {salesColumns} from './RevenueTable';
 import {ColumnType} from 'antd/lib/table';
+import {differenceInHours} from 'date-fns';
 
 gql`
   query RevenueDetails(
@@ -34,6 +35,7 @@ gql`
         salesNumbers(after: $after, before: $before) {
           count
           total
+          payment
         }
       }
     }
@@ -54,7 +56,10 @@ export default function RevenueDetails({
       after,
       before,
       id: productListId,
-      grouping: TimeGrouping.Hour,
+      grouping:
+        differenceInHours(before, after) < 100
+          ? TimeGrouping.Hour
+          : TimeGrouping.Day,
     },
   });
 
@@ -86,7 +91,7 @@ export default function RevenueDetails({
   return (
     <div>
       <Table
-        dataSource={data.productList?.historicalProducts}
+        dataSource={data?.productList?.historicalProducts}
         size="small"
         pagination={false}
         rowClassName={styles.row}
@@ -98,20 +103,28 @@ export default function RevenueDetails({
           ...(salesColumns as Array<ColumnType<any>>),
         ]}
       />
-      <Column
-        className={styles.chart}
-        isStack
-        seriesField="payment"
-        data={chartData}
-        xField="time"
-        yField="value"
-        legend={{
-          position: 'bottom',
-          itemName: {
-            formatter: (t) => paymentName(t as OrderPayment),
-          },
-        }}
-      />
+      {chartData && (
+        <Column
+          className={styles.chart}
+          isStack
+          seriesField="payment"
+          data={chartData}
+          xField="time"
+          yField="value"
+          tooltip={{
+            formatter: (datum) => ({
+              name: paymentName(datum.payment as OrderPayment),
+              value: datum.value,
+            }),
+          }}
+          legend={{
+            position: 'bottom',
+            itemName: {
+              formatter: (t) => paymentName(t as OrderPayment),
+            },
+          }}
+        />
+      )}
     </div>
   );
 }

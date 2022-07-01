@@ -8,6 +8,8 @@ export function paymentName(payment: OrderPayment): string {
       return 'KultCard';
     case 'VOUCHER':
       return 'Gutschein';
+    case 'FREE_BAND':
+      return 'Band';
     case 'FREE_CREW':
       return 'Crew';
     case 'BON':
