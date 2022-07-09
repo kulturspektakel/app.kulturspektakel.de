@@ -118,6 +118,21 @@ export type Board = {
   treasurer: Scalars['String'];
 };
 
+export type Card = Node &
+  Transactionable & {
+    __typename?: 'Card';
+    /** Unique identifier for the resource */
+    id: Scalars['ID'];
+    transactions: CardTransactionConnection;
+  };
+
+export type CardTransactionsArgs = {
+  after?: InputMaybe<Scalars['DateTime']>;
+  before?: InputMaybe<Scalars['DateTime']>;
+  limit?: InputMaybe<Scalars['Int']>;
+  type?: InputMaybe<CardTransactionType>;
+};
+
 export type CardStatus = {
   __typename?: 'CardStatus';
   balance: Scalars['Int'];
@@ -139,6 +154,17 @@ export type CardTransaction = Transaction & {
   depositBefore: Scalars['Int'];
   deviceTime: Scalars['DateTime'];
   transactionType: CardTransactionType;
+};
+
+export type CardTransactionConnection = {
+  __typename?: 'CardTransactionConnection';
+  /** This includes money made from deposit */
+  balanceTotal: Scalars['Int'];
+  data: Array<CardTransaction>;
+  depositIn: Scalars['Int'];
+  depositOut: Scalars['Int'];
+  totalCount: Scalars['Int'];
+  uniqueCards: Scalars['Int'];
 };
 
 export type CardTransactionInput = {
@@ -182,24 +208,28 @@ export type CreateBandApplicationInput = {
 };
 
 export type Device = Billable &
-  Node & {
+  Node &
+  Transactionable & {
     __typename?: 'Device';
     /** Unique identifier for the resource */
     id: Scalars['ID'];
     lastSeen?: Maybe<Scalars['DateTime']>;
     productList?: Maybe<ProductList>;
-    recentTransactions: Array<CardTransaction>;
     salesNumbers: Array<Maybe<SalesNumber>>;
     softwareVersion?: Maybe<Scalars['String']>;
+    transactions: CardTransactionConnection;
   };
-
-export type DeviceRecentTransactionsArgs = {
-  limit?: InputMaybe<Scalars['Int']>;
-};
 
 export type DeviceSalesNumbersArgs = {
   after: Scalars['DateTime'];
   before: Scalars['DateTime'];
+};
+
+export type DeviceTransactionsArgs = {
+  after?: InputMaybe<Scalars['DateTime']>;
+  before?: InputMaybe<Scalars['DateTime']>;
+  limit?: InputMaybe<Scalars['Int']>;
+  type?: InputMaybe<CardTransactionType>;
 };
 
 export enum DeviceType {
@@ -489,7 +519,7 @@ export type ProductListSalesNumbersArgs = {
   before: Scalars['DateTime'];
 };
 
-export type Query = {
+export type Query = Transactionable & {
   __typename?: 'Query';
   areas: Array<Area>;
   availableCapacity: Scalars['Int'];
@@ -505,6 +535,7 @@ export type Query = {
   productLists: Array<ProductList>;
   reservationForToken?: Maybe<Reservation>;
   reservationsByPerson: Array<ReservationByPerson>;
+  transactions: CardTransactionConnection;
   viewer?: Maybe<Viewer>;
 };
 
@@ -542,6 +573,13 @@ export type QueryProductListArgs = {
 
 export type QueryReservationForTokenArgs = {
   token: Scalars['String'];
+};
+
+export type QueryTransactionsArgs = {
+  after?: InputMaybe<Scalars['DateTime']>;
+  before?: InputMaybe<Scalars['DateTime']>;
+  limit?: InputMaybe<Scalars['Int']>;
+  type?: InputMaybe<CardTransactionType>;
 };
 
 export type Reservation = {
@@ -633,6 +671,17 @@ export type Transaction = {
   depositBefore: Scalars['Int'];
 };
 
+export type Transactionable = {
+  transactions: CardTransactionConnection;
+};
+
+export type TransactionableTransactionsArgs = {
+  after?: InputMaybe<Scalars['DateTime']>;
+  before?: InputMaybe<Scalars['DateTime']>;
+  limit?: InputMaybe<Scalars['Int']>;
+  type?: InputMaybe<CardTransactionType>;
+};
+
 export type Viewer = Node & {
   __typename?: 'Viewer';
   displayName: Scalars['String'];
@@ -680,6 +729,7 @@ export type ApplicationDetailsQuery = {
           };
         }>;
       }
+    | {__typename?: 'Card'}
     | {__typename?: 'Device'}
     | {__typename?: 'Event'}
     | {__typename?: 'Table'}
@@ -747,18 +797,22 @@ export type DeviceTransactionsQuery = {
   node?:
     | {__typename?: 'Area'}
     | {__typename?: 'BandApplication'}
+    | {__typename?: 'Card'}
     | {
         __typename?: 'Device';
-        recentTransactions: Array<{
-          __typename?: 'CardTransaction';
-          deviceTime: Date;
-          balanceAfter: number;
-          balanceBefore: number;
-          depositBefore: number;
-          depositAfter: number;
-          cardId: string;
-          transactionType: CardTransactionType;
-        }>;
+        transactions: {
+          __typename?: 'CardTransactionConnection';
+          data: Array<{
+            __typename?: 'CardTransaction';
+            deviceTime: Date;
+            balanceAfter: number;
+            balanceBefore: number;
+            depositBefore: number;
+            depositAfter: number;
+            cardId: string;
+            transactionType: CardTransactionType;
+          }>;
+        };
       }
     | {__typename?: 'Event'}
     | {__typename?: 'Table'}
@@ -905,6 +959,7 @@ export type CreateModalQuery = {
   node?:
     | {__typename?: 'Area'}
     | {__typename?: 'BandApplication'}
+    | {__typename?: 'Card'}
     | {__typename?: 'Device'}
     | {__typename?: 'Event'}
     | {
@@ -1269,6 +1324,7 @@ export type BandApplcationsQuery = {
   node?:
     | {__typename?: 'Area'}
     | {__typename?: 'BandApplication'}
+    | {__typename?: 'Card'}
     | {__typename?: 'Device'}
     | {
         __typename?: 'Event';
@@ -1310,6 +1366,54 @@ export type EventsQueryVariables = Exact<{[key: string]: never}>;
 export type EventsQuery = {
   __typename?: 'Query';
   events: Array<{__typename?: 'Event'; id: string; name: string}>;
+};
+
+export type CardInfoQueryVariables = Exact<{
+  cardID: Scalars['ID'];
+}>;
+
+export type CardInfoQuery = {
+  __typename?: 'Query';
+  config?: {__typename?: 'Config'; depositValue: number} | null;
+  node?:
+    | {__typename?: 'Area'}
+    | {__typename?: 'BandApplication'}
+    | {
+        __typename?: 'Card';
+        id: string;
+        transactions: {
+          __typename?: 'CardTransactionConnection';
+          balanceTotal: number;
+          data: Array<{
+            __typename?: 'CardTransaction';
+            transactionType: CardTransactionType;
+            balanceAfter: number;
+            balanceBefore: number;
+            depositAfter: number;
+            depositBefore: number;
+            deviceTime: Date;
+            Order: Array<{
+              __typename?: 'Order';
+              total?: number | null;
+              items: Array<{
+                __typename?: 'OrderItem';
+                amount: number;
+                name: string;
+                productList?: {
+                  __typename?: 'ProductList';
+                  emoji?: string | null;
+                  name: string;
+                } | null;
+              }>;
+            }>;
+          }>;
+        };
+      }
+    | {__typename?: 'Device'}
+    | {__typename?: 'Event'}
+    | {__typename?: 'Table'}
+    | {__typename?: 'Viewer'}
+    | null;
 };
 
 export type DevicesQueryVariables = Exact<{[key: string]: never}>;
@@ -1414,6 +1518,7 @@ export type RevenueQueryVariables = Exact<{
 
 export type RevenueQuery = {
   __typename?: 'Query';
+  config?: {__typename?: 'Config'; depositValue: number} | null;
   events: Array<{
     __typename?: 'Event';
     id: string;
@@ -1432,6 +1537,33 @@ export type RevenueQuery = {
       payment: OrderPayment;
     } | null>;
   }>;
+  topUps: {
+    __typename?: 'CardTransactionConnection';
+    balanceTotal: number;
+    totalCount: number;
+    depositIn: number;
+    depositOut: number;
+  };
+  cashouts: {
+    __typename?: 'CardTransactionConnection';
+    balanceTotal: number;
+    totalCount: number;
+    depositIn: number;
+    depositOut: number;
+  };
+  charges: {
+    __typename?: 'CardTransactionConnection';
+    balanceTotal: number;
+    totalCount: number;
+    depositIn: number;
+    depositOut: number;
+  };
+  transactions: {
+    __typename?: 'CardTransactionConnection';
+    depositIn: number;
+    depositOut: number;
+    uniqueCards: number;
+  };
 };
 
 export type StationerySearchQueryVariables = Exact<{
@@ -1532,6 +1664,7 @@ export type OverviewQuery = {
         }>;
       }
     | {__typename?: 'BandApplication'}
+    | {__typename?: 'Card'}
     | {__typename?: 'Device'}
     | {__typename?: 'Event'}
     | {__typename?: 'Table'}
@@ -1871,14 +2004,16 @@ export const DeviceTransactionsDocument = gql`
   query DeviceTransactions($deviceID: ID!) {
     node(id: $deviceID) {
       ... on Device {
-        recentTransactions {
-          deviceTime
-          balanceAfter
-          balanceBefore
-          depositBefore
-          depositAfter
-          cardId
-          transactionType
+        transactions(limit: 25) {
+          data {
+            deviceTime
+            balanceAfter
+            balanceBefore
+            depositBefore
+            depositAfter
+            cardId
+            transactionType
+          }
         }
       }
     }
@@ -2702,6 +2837,86 @@ export type EventsQueryResult = Apollo.QueryResult<
   EventsQuery,
   EventsQueryVariables
 >;
+export const CardInfoDocument = gql`
+  query CardInfo($cardID: ID!) {
+    config {
+      depositValue
+    }
+    node(id: $cardID) {
+      ... on Card {
+        id
+        transactions {
+          balanceTotal
+          data {
+            transactionType
+            balanceAfter
+            balanceBefore
+            depositAfter
+            depositBefore
+            deviceTime
+            Order {
+              total
+              items {
+                amount
+                name
+                productList {
+                  emoji
+                  name
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+/**
+ * __useCardInfoQuery__
+ *
+ * To run a query within a React component, call `useCardInfoQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCardInfoQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCardInfoQuery({
+ *   variables: {
+ *      cardID: // value for 'cardID'
+ *   },
+ * });
+ */
+export function useCardInfoQuery(
+  baseOptions: Apollo.QueryHookOptions<CardInfoQuery, CardInfoQueryVariables>,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useQuery<CardInfoQuery, CardInfoQueryVariables>(
+    CardInfoDocument,
+    options,
+  );
+}
+export function useCardInfoLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    CardInfoQuery,
+    CardInfoQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useLazyQuery<CardInfoQuery, CardInfoQueryVariables>(
+    CardInfoDocument,
+    options,
+  );
+}
+export type CardInfoQueryHookResult = ReturnType<typeof useCardInfoQuery>;
+export type CardInfoLazyQueryHookResult = ReturnType<
+  typeof useCardInfoLazyQuery
+>;
+export type CardInfoQueryResult = Apollo.QueryResult<
+  CardInfoQuery,
+  CardInfoQueryVariables
+>;
 export const DevicesDocument = gql`
   query Devices {
     devices(type: CONTACTLESS_TERMINAL) {
@@ -2999,6 +3214,9 @@ export type ProductPrintQueryResult = Apollo.QueryResult<
 >;
 export const RevenueDocument = gql`
   query Revenue($after: DateTime!, $before: DateTime!) {
+    config {
+      depositValue
+    }
     events {
       id
       name
@@ -3013,6 +3231,29 @@ export const RevenueDocument = gql`
         total
         payment
       }
+    }
+    topUps: transactions(after: $after, before: $before, type: TopUp) {
+      balanceTotal
+      totalCount
+      depositIn
+      depositOut
+    }
+    cashouts: transactions(after: $after, before: $before, type: Cashout) {
+      balanceTotal
+      totalCount
+      depositIn
+      depositOut
+    }
+    charges: transactions(after: $after, before: $before, type: Charge) {
+      balanceTotal
+      totalCount
+      depositIn
+      depositOut
+    }
+    transactions(after: $after, before: $before) {
+      depositIn
+      depositOut
+      uniqueCards
     }
   }
 `;

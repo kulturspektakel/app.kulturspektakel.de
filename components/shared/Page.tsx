@@ -69,6 +69,9 @@ export default function Page({
             <Menu.Item key="revenue">
               <Link href={`/products/revenue`}>Umsätze</Link>
             </Menu.Item>
+            <Menu.Item key="card">
+              <Link href={`/products/card`}>Karten-Details</Link>
+            </Menu.Item>
             <Menu.Item key="card-token">
               <Link href={`/products/card-token`}>Token-Generator</Link>
             </Menu.Item>

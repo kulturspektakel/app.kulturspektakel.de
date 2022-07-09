@@ -17,14 +17,16 @@ gql`
   query DeviceTransactions($deviceID: ID!) {
     node(id: $deviceID) {
       ... on Device {
-        recentTransactions {
-          deviceTime
-          balanceAfter
-          balanceBefore
-          depositBefore
-          depositAfter
-          cardId
-          transactionType
+        transactions(limit: 25) {
+          data {
+            deviceTime
+            balanceAfter
+            balanceBefore
+            depositBefore
+            depositAfter
+            cardId
+            transactionType
+          }
         }
       }
     }
@@ -53,7 +55,7 @@ export default function DeviceTransactions(props: {deviceID: string}) {
       className={styles.root}
       size="small"
       pagination={false}
-      dataSource={data.node.recentTransactions}
+      dataSource={data.node.transactions.data}
       scroll={{y: 255}}
       columns={[
         {
