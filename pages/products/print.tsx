@@ -10,6 +10,7 @@ gql`
       id
       emoji
       name
+      active
       product {
         id
         name
@@ -39,37 +40,39 @@ export default function Lists() {
           <br />
           Preisliste
         </span>
-        <img src="/menu.svg" />
       </h1>
       <Head>
         <title>Preisliste</title>
       </Head>
       <div className={styles.content}>
-        {data?.productLists.map((list) => (
-          <div className={styles.list} key={list.id}>
-            <h2>
-              <span className={styles.emoji}>{list.emoji}</span>&nbsp;
-              {list.name}
-            </h2>
-            <ul>
-              {list.product.map((p) => (
-                <li key={p.id}>
-                  <span className={styles.product}>{p.name}</span>
-                  <span className={styles.spacer} />
-                  <span className={styles.price}>
-                    {p.requiresDeposit ? <>*&nbsp;</> : ''}
-                    {formatter.format(p.price / 100)}&nbsp;&euro;
-                  </span>
-                </li>
-              ))}
-            </ul>
-            {list.product.some((p) => p.requiresDeposit) && (
-              <p className={styles.token}>
-                *&nbsp;zuzüglich {formatter.format(200 / 100)}&nbsp;&euro; Pfand
-              </p>
-            )}
-          </div>
-        ))}
+        {data?.productLists
+          .filter((l) => l.active)
+          .map((list) => (
+            <div className={styles.list} key={list.id}>
+              <h2>
+                <span className={styles.emoji}>{list.emoji}</span>&nbsp;
+                {list.name}
+              </h2>
+              <ul>
+                {list.product.map((p) => (
+                  <li key={p.id}>
+                    <span className={styles.product}>{p.name}</span>
+                    <span className={styles.spacer} />
+                    <span className={styles.price}>
+                      {p.requiresDeposit ? <>*&nbsp;</> : ''}
+                      {formatter.format(p.price / 100)}&nbsp;&euro;
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              {list.product.some((p) => p.requiresDeposit) && (
+                <p className={styles.token}>
+                  *&nbsp;zuzüglich {formatter.format(200 / 100)}&nbsp;&euro;
+                  Pfand
+                </p>
+              )}
+            </div>
+          ))}
       </div>
     </div>
   );

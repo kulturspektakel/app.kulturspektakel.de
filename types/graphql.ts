@@ -1500,6 +1500,7 @@ export type ProductPrintQuery = {
     id: number;
     emoji?: string | null;
     name: string;
+    active: boolean;
     product: Array<{
       __typename?: 'Product';
       id: number;
@@ -3150,6 +3151,7 @@ export const ProductPrintDocument = gql`
       id
       emoji
       name
+      active
       product {
         id
         name
