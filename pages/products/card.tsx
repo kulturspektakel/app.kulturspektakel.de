@@ -45,7 +45,7 @@ export default function CardInfo() {
   const router = useRouter();
   const {id} = router.query;
   const {data, loading} = useCardInfoQuery({
-    variables: {cardID: `Card:${String(id).toUpperCase().replaceAll(':', '')}`},
+    variables: {cardID: `Card:${String(id).toUpperCase().replace(/:/g, '')}`},
     skip: !id,
   });
 
