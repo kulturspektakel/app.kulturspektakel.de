@@ -60,7 +60,7 @@ export default function Demo({demo}: {demo: string}) {
         <iframe
           src={embed}
           width="400"
-          height={height}
+          height={height ?? 0}
           frameBorder="0"
           style={{margin: -24, marginBottom: 10}}
         />

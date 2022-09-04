@@ -49,7 +49,7 @@ export default function CardInfo() {
     skip: !id,
   });
 
-  const card = data?.node.__typename === 'Card' ? data.node : undefined;
+  const card = data?.node?.__typename === 'Card' ? data.node : undefined;
 
   return (
     <Page>
@@ -120,7 +120,7 @@ export default function CardInfo() {
                   (r.balanceAfter -
                     r.balanceBefore +
                     (r.depositAfter - r.depositBefore) *
-                      data.config.depositValue) /
+                      data!.config.depositValue) /
                     100,
                 ),
             },

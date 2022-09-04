@@ -28,7 +28,7 @@ gql`
     }
   }
 
-  mutation UpdateDeviceList($productListId: Int, $deviceId: ID!) {
+  mutation UpdateDeviceList($productListId: ID!, $deviceId: ID!) {
     updateDeviceProductList(
       productListId: $productListId
       deviceId: $deviceId
@@ -60,6 +60,7 @@ export default function Devices() {
             dataIndex: 'id',
             width: '20%',
             sorter: (a, b) => a.id.localeCompare(b.id),
+            render: (id) => id.replace(/Device:/, ''),
           },
           {
             title: 'Software',
@@ -105,7 +106,7 @@ export default function Devices() {
                 placeholder="Liste auswählen..."
               >
                 <Select.Option value={null}>(keine Liste)</Select.Option>
-                {data.productLists.map((l) => (
+                {data?.productLists.map((l) => (
                   <Select.Option value={l.id} key={l.id}>
                     {l.name}
                   </Select.Option>

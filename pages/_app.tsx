@@ -15,7 +15,7 @@ import {useRouter} from 'next/router';
 import absoluteUrl from 'next-absolute-url';
 
 type Props = {
-  initialApolloState: NormalizedCacheObject;
+  initialApolloState: NormalizedCacheObject | undefined;
 };
 
 const App = ({Component, pageProps, initialApolloState}: AppProps & Props) => {
@@ -58,7 +58,7 @@ App.getInitialProps = async (
   };
 };
 
-function LoginProvider({children}) {
+function LoginProvider({children}: {children: React.ReactNode}) {
   const {data, loading} = useViewerContextProviderQuery();
   const router = useRouter();
   if (loading) {

@@ -21,7 +21,7 @@ export function initializeApolloClient(
     link: ApolloLink.from([
       withScalars({
         schema: buildClientSchema(
-          (introspectionResult as unknown) as IntrospectionQuery,
+          introspectionResult as unknown as IntrospectionQuery,
         ),
         typesMap: {
           DateTime: GraphQLDateTime,
@@ -34,7 +34,9 @@ export function initializeApolloClient(
         headers: {cookie},
       }),
     ]),
-    cache: new InMemoryCache().restore(initialState),
+    cache: initialState
+      ? new InMemoryCache().restore(initialState)
+      : new InMemoryCache(),
   });
 }
 

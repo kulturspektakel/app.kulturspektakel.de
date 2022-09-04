@@ -109,9 +109,9 @@ export default function Booking() {
             <MemoizedTable
               loading={loading}
               dataSource={
-                data?.node.__typename === 'Event'
+                data?.node?.__typename === 'Event'
                   ? data.node.bandApplication
-                  : null
+                  : []
               }
               setSelected={setSelected}
               height={height - 40}
@@ -119,10 +119,12 @@ export default function Booking() {
           </div>
         )}
       </AutoSizer>
-      <BandApplicationDetails
-        bandApplicationId={selected}
-        onClose={() => setSelected(null)}
-      />
+      {selected && (
+        <BandApplicationDetails
+          bandApplicationId={selected}
+          onClose={() => setSelected(null)}
+        />
+      )}
     </Page>
   );
 }
@@ -177,9 +179,9 @@ const MemoizedTable = React.memo(
             width: 50,
             dataIndex: 'genreCategory',
             filterMultiple: true,
-            filters: Array.from(
-              GENRE_CATEGORIES.entries(),
-            ).map(([value, text]) => ({text, value})),
+            filters: Array.from(GENRE_CATEGORIES.entries()).map(
+              ([value, text]) => ({text, value}),
+            ),
             onFilter: (value, {genreCategory}) => value === genreCategory,
             render: (_, {genreCategory}) => (
               <Tooltip
@@ -214,7 +216,7 @@ const MemoizedTable = React.memo(
             title: 'Ort',
             width: 300,
             dataIndex: 'city',
-            sorter: (a, b) => a.distance - b.distance,
+            sorter: (a, b) => (a.distance ?? 0) - (b.distance ?? 0),
             render: (_, {city, distance}) => (
               <>
                 {city}
@@ -234,7 +236,7 @@ const MemoizedTable = React.memo(
             title: 'Bewertung',
             width: 150,
             dataIndex: 'rating',
-            sorter: (a, b) => a.rating - b.rating,
+            sorter: (a, b) => (a.rating ?? 0) - (b.rating ?? 0),
             align: 'right',
             render: (_, {rating, bandApplicationRating}) =>
               rating ? (
@@ -254,7 +256,7 @@ const MemoizedTable = React.memo(
                 bandApplicationId={id}
                 defaultValue={
                   bandApplicationRating.find(
-                    ({viewer: {id}}) => id === viewer.id,
+                    ({viewer: {id}}) => id === viewer?.id,
                   )?.rating
                 }
               />

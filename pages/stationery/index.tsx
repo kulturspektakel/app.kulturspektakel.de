@@ -28,10 +28,12 @@ gql`
     }
   }
   query StationeryPage($id: ID!) {
-    nuclinoPage(id: $id) {
-      id
-      title
-      content
+    nuclinoPage: node(id: $id) {
+      ... on NuclinoPage {
+        id
+        title
+        content
+      }
     }
   }
 `;
@@ -49,6 +51,11 @@ export default function Stationery() {
   const [address, setAddress] = useState('');
   const [showDate, setShowDate] = useState(false);
 
+  const nuclinoPage =
+    pageData?.nuclinoPage?.__typename === 'NuclinoPage'
+      ? pageData?.nuclinoPage
+      : null;
+
   return (
     <Page title="Briefpapier">
       <Layout>
@@ -59,7 +66,7 @@ export default function Stationery() {
             placeholder="Nuclino-Seiten suchen..."
             optionFilterProp="children"
             loading={loadingSearch}
-            value={pageData?.nuclinoPage?.title}
+            value={nuclinoPage?.title}
             onChange={(id) =>
               router.push({
                 pathname: router.pathname,
@@ -144,7 +151,7 @@ export default function Stationery() {
                         remarkPlugins={[remarkGfm]}
                         skipHtml
                       >
-                        {pageData?.nuclinoPage?.content}
+                        {nuclinoPage?.content ?? ''}
                       </ReactMarkdown>
                     </td>
                   </tr>

@@ -14,7 +14,7 @@ export default function ProductListContainer({
     <>
       {title && <h3 className={styles.heading}>{title}</h3>}
       <div className={styles.root}>
-        {data.map((list) => (
+        {data?.map((list) => (
           <ProductList key={list.id} list={list} />
         ))}
       </div>

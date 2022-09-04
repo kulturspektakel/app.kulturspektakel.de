@@ -1,8 +1,0 @@
-.now {
-  position: absolute;
-  border-right: 1px solid #de3c39;
-  z-index: 3;
-  top: 0;
-  bottom: 0;
-  pointer-events: none;
-}

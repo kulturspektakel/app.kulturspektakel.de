@@ -12,30 +12,33 @@ import {paymentName} from '../../utils/payments';
 import {salesColumns} from './RevenueTable';
 import {ColumnType} from 'antd/lib/table';
 import {differenceInHours} from 'date-fns';
+import {Datum} from '@ant-design/charts';
 
 gql`
   query RevenueDetails(
-    $id: Int!
+    $id: ID!
     $after: DateTime!
     $before: DateTime!
     $grouping: TimeGrouping!
   ) {
-    productList(id: $id) {
-      id
-      name
-      salesNumbers(after: $after, before: $before) {
-        timeSeries(grouping: $grouping) {
-          time
-          value
-        }
-        payment
-      }
-      historicalProducts {
+    productList: node(id: $id) {
+      ... on ProductList {
+        id
         name
         salesNumbers(after: $after, before: $before) {
-          count
-          total
+          timeSeries(grouping: $grouping) {
+            time
+            value
+          }
           payment
+        }
+        historicalProducts {
+          name
+          salesNumbers(after: $after, before: $before) {
+            count
+            total
+            payment
+          }
         }
       }
     }
@@ -47,7 +50,7 @@ export default function RevenueDetails({
   before,
   after,
 }: {
-  productListId: number;
+  productListId: string;
   before: Date;
   after: Date;
 }) {
@@ -63,9 +66,12 @@ export default function RevenueDetails({
     },
   });
 
+  const productList =
+    data?.productList?.__typename === 'ProductList' ? data?.productList : null;
+
   const chartData = useMemo(
     () =>
-      data?.productList.salesNumbers.flatMap(({payment, timeSeries}) =>
+      productList?.salesNumbers.flatMap(({payment, timeSeries}) =>
         timeSeries.map(({time, value}) => ({
           payment,
           value,
@@ -77,7 +83,7 @@ export default function RevenueDetails({
           }),
         })),
       ),
-    [data?.productList.salesNumbers],
+    [productList?.salesNumbers],
   );
 
   if (loading) {
@@ -91,7 +97,7 @@ export default function RevenueDetails({
   return (
     <div>
       <Table
-        dataSource={data?.productList?.historicalProducts}
+        dataSource={productList?.historicalProducts}
         size="small"
         pagination={false}
         rowClassName={styles.row}
@@ -112,7 +118,8 @@ export default function RevenueDetails({
           xField="time"
           yField="value"
           tooltip={{
-            formatter: (datum) => ({
+            // @ts-ignore: https://github.com/ant-design/ant-design-charts/issues/1474
+            formatter: (datum: Datum) => ({
               name: paymentName(datum.payment as OrderPayment),
               value: datum.value,
             }),

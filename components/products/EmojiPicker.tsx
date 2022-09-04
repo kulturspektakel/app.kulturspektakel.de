@@ -11,12 +11,13 @@ export default function EmojiPicker({
   onChange: (emoji: string | null) => void;
 }) {
   const [pickerVisible, setPickerVisible] = useState(false);
-  const ref = useRef();
+  const ref = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (pickerVisible) {
       import('emoji-mart').then((EmojiMart) => {
         new EmojiMart.Picker({
+          // @ts-ignore
           data,
           ref,
           onEmojiSelect: ({native}: any) => {

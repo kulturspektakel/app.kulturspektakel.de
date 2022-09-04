@@ -20,7 +20,7 @@ BookingIndex.getInitialProps = async ({res, pathname}: NextPageContext) => {
       }
     `,
   });
-  const path = `${pathname}/${data.events[0].id}`;
+  const path = `${pathname}/${data.events[0].id.replace('Event:', '')}`;
   if (res) {
     res
       .writeHead(302, {

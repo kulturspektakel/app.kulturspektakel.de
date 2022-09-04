@@ -5,7 +5,6 @@ import EmojiPicker from './EmojiPicker';
 import {Card, Button, message, Modal} from 'antd';
 import {
   CheckCircleOutlined,
-  DeleteOutlined,
   ExclamationCircleOutlined,
   PlusCircleOutlined,
   PoweroffOutlined,
@@ -28,7 +27,7 @@ function reorder<T>(list: T[], startIndex: number, endIndex: number): T[] {
 
 function generateRow(data: Partial<ProductRowFragment>): ProductRowFragment {
   return {
-    id: data.id ?? Math.random(),
+    id: data.id ?? Math.random().toString(36),
     name: '',
     price: 0,
     requiresDeposit: false,
@@ -49,7 +48,7 @@ gql`
   }
 
   mutation UpsertProductList(
-    $id: Int
+    $id: ID
     $emoji: String
     $name: String
     $products: [ProductInput!]
@@ -131,7 +130,7 @@ export default function ProductList({list}: {list: ProductListFragment}) {
         <Button
           icon={<PlusCircleOutlined />}
           type="link"
-          style={{color: products.length >= 30 ? null : '#52c41a'}}
+          style={{color: products.length >= 30 ? undefined : '#52c41a'}}
           disabled={products.length >= 30}
           onClick={() => {
             setProducts([...products, generateRow({})]);
@@ -143,7 +142,7 @@ export default function ProductList({list}: {list: ProductListFragment}) {
           icon={<PoweroffOutlined />}
           type="link"
           danger={list.active}
-          style={list.active ? null : {color: '#52c41a'}}
+          style={list.active ? undefined : {color: '#52c41a'}}
           onClick={() => {
             if (list.active) {
               return Modal.confirm({
@@ -172,7 +171,7 @@ export default function ProductList({list}: {list: ProductListFragment}) {
         avatar={
           <EmojiPicker
             key={list.id}
-            value={list.emoji}
+            value={list.emoji ?? null}
             onChange={async (emoji) => {
               await mutate({
                 variables: {

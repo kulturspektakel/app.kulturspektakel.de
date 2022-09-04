@@ -1,5 +1,5 @@
 import {gql} from '@apollo/client';
-import {Col, Drawer, message, Popconfirm, Row, Statistic, Tooltip} from 'antd';
+import {Col, Drawer, message, Popconfirm, Row, Statistic} from 'antd';
 import React, {useState} from 'react';
 import {
   useApplicationDetailsQuery,
@@ -66,7 +66,7 @@ export default function BandApplicationDetails({
 }) {
   const {data} = useApplicationDetailsQuery({
     variables: {
-      id: `BandApplication:${bandApplicationId}`,
+      id: bandApplicationId,
     },
   });
 
@@ -98,7 +98,7 @@ function DrawerContent(
   const viewer = useViewerContext();
   return (
     <>
-      <Demo demo={props.demo} />
+      {props.demo && <Demo demo={props.demo} />}
       <Row>
         {props.website && (
           <Col span={8}>
@@ -143,7 +143,7 @@ function DrawerContent(
             bandApplicationId={props.id}
             defaultValue={
               props.bandApplicationRating.find(
-                ({viewer: {id}}) => id === viewer.id,
+                ({viewer: {id}}) => id === viewer?.id,
               )?.rating
             }
           />
@@ -165,17 +165,19 @@ function DrawerContent(
           {PreviouslyPlayedText(props.hasPreviouslyPlayed)}
         </div>
       )}
-      <div style={{display: 'flex'}}>
-        <h4>Bandgröße:</h4>&nbsp;{props.numberOfArtists} Personen (
-        {(
-          (props.numberOfArtists - props.numberOfNonMaleArtists) /
-          props.numberOfArtists
-        ).toLocaleString(undefined, {
-          style: 'percent',
-          maximumFractionDigits: 1,
-        })}
-        &nbsp;männlich)
-      </div>
+      {props.numberOfArtists && props.numberOfNonMaleArtists && (
+        <div style={{display: 'flex'}}>
+          <h4>Bandgröße:</h4>&nbsp;{props.numberOfArtists} Personen (
+          {(
+            (props.numberOfArtists - props.numberOfNonMaleArtists) /
+            props.numberOfArtists
+          ).toLocaleString(undefined, {
+            style: 'percent',
+            maximumFractionDigits: 1,
+          })}
+          &nbsp;männlich)
+        </div>
+      )}
 
       {props.knowsKultFrom && (
         <>
@@ -241,7 +243,7 @@ function DrawerContent(
 
 function EllipsisText(props: {children?: string}) {
   const [expanded, setExpanded] = useState(false);
-  const words = props.children.split(' ');
+  const words = props.children?.split(' ') ?? [];
 
   return expanded || words.length < 60 ? (
     <p>{props.children}</p>

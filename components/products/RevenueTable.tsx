@@ -42,8 +42,8 @@ export default function RevenueTable({
         expandedRowRender: (record) => (
           <RevenueDetails
             productListId={record.id}
-            before={range[1].toDate()}
-            after={range[0].toDate()}
+            before={range?.[1]?.toDate() ?? new Date()}
+            after={range?.[0]?.toDate() ?? new Date()}
           />
         ),
       }}

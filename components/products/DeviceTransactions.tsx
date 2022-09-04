@@ -47,8 +47,8 @@ export default function DeviceTransactions(props: {deviceID: string}) {
       </div>
     );
   }
-  if (data.node?.__typename !== 'Device') {
-    throw new Error('');
+  if (data?.node?.__typename !== 'Device') {
+    throw new Error('wrong __typename');
   }
   return (
     <Table

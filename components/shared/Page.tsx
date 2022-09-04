@@ -5,7 +5,6 @@ import React from 'react';
 const {Header} = Layout;
 import Link from 'next/link';
 import {useRouter} from 'next/dist/client/router';
-import {DAYS} from '../../pages/tables/[...day]';
 import useViewerContext from '../../utils/useViewerContext';
 
 export const HEADER_HEIGHT = 64;
@@ -42,23 +41,6 @@ export default function Page({
           mode="horizontal"
           selectedKeys={asPath.split('/').filter(Boolean)}
         >
-          <Menu.SubMenu key="tables" title="Reservierungen">
-            {DAYS.map((d) => (
-              <Menu.Item key={d.toISOString().substr(0, 10)}>
-                <Link href={`/tables/${d.toISOString().substr(0, 10)}`}>
-                  {d.toLocaleDateString('de', {
-                    weekday: 'long',
-                  })}
-                </Link>
-              </Menu.Item>
-            ))}
-            <Menu.Item key="overlap">
-              <Link href="/tables/overlap">Überlappungen</Link>
-            </Menu.Item>
-            <Menu.Item key="overview">
-              <Link href="/tables/overview">Übersicht</Link>
-            </Menu.Item>
-          </Menu.SubMenu>
           <Menu.SubMenu key="products" title="Verkauf">
             <Menu.Item key="lists">
               <Link href={`/products/lists`}>Preislisten</Link>
@@ -96,12 +78,14 @@ export default function Page({
             </Menu>
           }
         >
-          <Avatar src={viewer.profilePicture}>
-            {viewer.displayName
-              .split(' ')
-              .map((n) => n.substr(0, 1).toLocaleUpperCase())
-              .join('')}
-          </Avatar>
+          {viewer && (
+            <Avatar src={viewer.profilePicture}>
+              {viewer.displayName
+                .split(' ')
+                .map((n) => n.substr(0, 1).toLocaleUpperCase())
+                .join('')}
+            </Avatar>
+          )}
         </Dropdown>
       </Header>
       {children}

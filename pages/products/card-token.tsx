@@ -35,7 +35,7 @@ export default function CardToken() {
   const [balance, setBalance] = useState(0);
   const [deposit, setDeposit] = useState(0);
   const [count, setCount] = useState(0);
-  const [payloadError, setPayloadError] = useState<string>(null);
+  const [payloadError, setPayloadError] = useState<string | null>(null);
   const [id, setID] = useState('');
   const [payload, setPayload] = useState('');
   const [salt, setSalt] = useState(window.localStorage.getItem('salt'));
@@ -113,7 +113,7 @@ export default function CardToken() {
       offset += DEPOSIT_LENGTH;
       data.set(numberToUint8(balance), offset); // balance
 
-      const saltUint8 = new TextEncoder().encode(salt);
+      const saltUint8 = new TextEncoder().encode(salt ?? '');
       const sig = await crypto.subtle.digest(
         'SHA-1',
         new Uint8Array([...data, ...saltUint8]),
@@ -176,7 +176,7 @@ export default function CardToken() {
           >
             <Form.Item label="Salt">
               <Input
-                value={salt}
+                value={salt ?? ''}
                 onChange={(e) => setSalt(e.target.value)}
                 onBlur={(e) =>
                   window.localStorage.setItem('salt', e.target.value)
