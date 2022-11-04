@@ -177,8 +177,8 @@ export type CreateBandApplicationInput = {
   heardAboutBookingFrom?: InputMaybe<HeardAboutBookingFrom>;
   instagram?: InputMaybe<Scalars['String']>;
   knowsKultFrom?: InputMaybe<Scalars['String']>;
-  numberOfArtists: Scalars['Int'];
-  numberOfNonMaleArtists: Scalars['Int'];
+  numberOfArtists?: InputMaybe<Scalars['Int']>;
+  numberOfNonMaleArtists?: InputMaybe<Scalars['Int']>;
   website?: InputMaybe<Scalars['String']>;
 };
 
@@ -217,6 +217,7 @@ export type Event = Node & {
   bandApplicationEnd?: Maybe<Scalars['DateTime']>;
   bandApplicationStart?: Maybe<Scalars['DateTime']>;
   bandsPlaying: Array<BandPlaying>;
+  djApplicationEnd?: Maybe<Scalars['DateTime']>;
   end: Scalars['DateTime'];
   id: Scalars['ID'];
   name: Scalars['String'];
@@ -225,6 +226,7 @@ export type Event = Node & {
 
 export enum GenreCategory {
   BluesFunkJazzSoul = 'Blues_Funk_Jazz_Soul',
+  Dj = 'DJ',
   ElektroHipHop = 'Elektro_HipHop',
   FolkSingerSongwriterCountry = 'Folk_SingerSongwriter_Country',
   HardrockMetalPunk = 'Hardrock_Metal_Punk',
@@ -324,7 +326,7 @@ export type NuclinoPage = Node & {
 
 export type NuclinoSearchResult = {
   __typename?: 'NuclinoSearchResult';
-  highlight: Scalars['String'];
+  highlight?: Maybe<Scalars['String']>;
   page: NuclinoPage;
 };
 
@@ -1043,7 +1045,7 @@ export type StationerySearchQuery = {
   __typename?: 'Query';
   nuclinoPages: Array<{
     __typename?: 'NuclinoSearchResult';
-    highlight: string;
+    highlight?: string | null;
     page: {__typename?: 'NuclinoPage'; id: string; title: string};
   }>;
 };

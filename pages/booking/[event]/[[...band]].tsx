@@ -66,6 +66,7 @@ const GENRE_ICONS: Map<GenreCategory, string> = new Map([
   [GenreCategory.ElektroHipHop, 'hip_hop.svg'],
   [GenreCategory.BluesFunkJazzSoul, 'jazz.svg'],
   [GenreCategory.ReggaeSka, 'hippie.svg'],
+  [GenreCategory.Dj, 'disco.svg'],
   [GenreCategory.Other, 'vocal.svg'],
 ]);
 
@@ -81,6 +82,7 @@ const GENRE_CATEGORIES: Map<GenreCategory, string> = new Map([
   [GenreCategory.ElektroHipHop, 'Elektro / Hip-Hop'],
   [GenreCategory.BluesFunkJazzSoul, 'Blues / Funk / Jazz / Soul'],
   [GenreCategory.ReggaeSka, 'Reggae / Ska'],
+  [GenreCategory.Dj, 'DJ'],
   [GenreCategory.Other, 'andere Musikrichtung'],
 ]);
 
