@@ -79,7 +79,7 @@ export default function BandApplicationDetails({
       width={400}
       closable={true}
       onClose={onClose}
-      visible={Boolean(bandApplicationId)}
+      open={Boolean(bandApplicationId)}
     >
       {data?.node?.__typename === 'BandApplication' ? (
         <DrawerContent {...data.node} />

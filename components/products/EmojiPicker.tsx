@@ -35,8 +35,8 @@ export default function EmojiPicker({
     <Popover
       className={styles.root}
       placement="topLeft"
-      visible={pickerVisible}
-      onVisibleChange={setPickerVisible}
+      open={pickerVisible}
+      onOpenChange={setPickerVisible}
       overlayClassName={styles.overlay}
       destroyTooltipOnHide
       content={<div ref={ref} style={{width: 300, height: 300}} />}

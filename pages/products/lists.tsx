@@ -7,6 +7,7 @@ import {
   useProductListQuery,
 } from '../../types/graphql';
 import ProductListContainer from '../../components/products/ProductListContainer';
+import {Content} from 'antd/es/layout/layout';
 
 gql`
   query ProductList {
@@ -48,7 +49,7 @@ export default function Lists() {
     <Page>
       <Modal
         title="Neue Preisliste erstellen"
-        visible={createModalVisible}
+        open={createModalVisible}
         okText="Erstellen"
         cancelText="Abbrechen"
         onCancel={() => setCreateModalVisible(false)}
@@ -72,39 +73,41 @@ export default function Lists() {
           />
         </form>
       </Modal>
-      <Button key="1" href="/products/print" target="_blank">
-        Drucken
-      </Button>
-      <Button
-        key="2"
-        type="primary"
-        onClick={() => setCreateModalVisible(true)}
-      >
-        Neue Preisliste
-      </Button>
-      {data?.productLists.length === 0 && (
-        <Empty description="Keine Preislisten" />
-      )}
-      {data?.productLists ? (
-        <>
-          <ProductListContainer
-            data={data?.productLists.filter((p) => p.active)}
-          />
-          <ProductListContainer
-            title="Deaktivierte Listen"
-            data={data?.productLists.filter((p) => !p.active)}
-          />
-        </>
-      ) : (
-        <div
-          style={{
-            textAlign: 'center',
-            padding: 50,
-          }}
+      <Content spa>
+        <Button key="1" href="/products/print" target="_blank">
+          Drucken
+        </Button>
+        <Button
+          key="2"
+          type="primary"
+          onClick={() => setCreateModalVisible(true)}
         >
-          <Spin size="large" />
-        </div>
-      )}
+          Neue Preisliste
+        </Button>
+        {data?.productLists.length === 0 && (
+          <Empty description="Keine Preislisten" />
+        )}
+        {data?.productLists ? (
+          <>
+            <ProductListContainer
+              data={data?.productLists.filter((p) => p.active)}
+            />
+            <ProductListContainer
+              title="Deaktivierte Listen"
+              data={data?.productLists.filter((p) => !p.active)}
+            />
+          </>
+        ) : (
+          <div
+            style={{
+              textAlign: 'center',
+              padding: 50,
+            }}
+          >
+            <Spin size="large" />
+          </div>
+        )}
+      </Content>
     </Page>
   );
 }
