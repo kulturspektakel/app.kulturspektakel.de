@@ -1,24 +1,16 @@
-import {
-  Col,
-  ConfigProvider,
-  DatePicker,
-  PageHeader,
-  Row,
-  Select,
-  Statistic,
-} from 'antd';
+import {Col, ConfigProvider, DatePicker, Row, Select, Statistic} from 'antd';
 import React, {useMemo, useState} from 'react';
 import Page from '../../components/shared/Page';
 import {gql} from '@apollo/client';
 import {RevenueQuery, useRevenueQuery} from '../../types/graphql';
-import moment from 'moment';
 import {useEffect} from 'react';
 import {useRouter} from 'next/router';
-import de_DE from 'antd/lib/locale-provider/de_DE';
+import de_DE from 'antd/locale/de_DE';
 import {isEqual, endOfDay, startOfDay} from 'date-fns';
 import RevenueTable from '../../components/products/RevenueTable';
 import currencyFormatter from '../../utils/currencyFormatter';
 import {RangeValue} from 'rc-picker/lib/interface';
+import dayjs from 'dayjs';
 
 const {RangePicker} = DatePicker;
 
@@ -72,9 +64,9 @@ gql`
 
 export default function Revenue() {
   const router = useRouter();
-  const [range, setRange] = useState<RangeValue<moment.Moment>>([
-    moment(router.query.after ?? startOfDay(new Date())),
-    moment(router.query.before ?? endOfDay(new Date())),
+  const [range, setRange] = useState<RangeValue<dayjs.Dayjs>>([
+    dayjs(router.query.after?.toString() || startOfDay(new Date())),
+    dayjs(router.query.before?.toString() || endOfDay(new Date())),
   ]);
 
   useEffect(() => {
@@ -111,43 +103,38 @@ export default function Revenue() {
 
   return (
     <Page>
-      <PageHeader
-        title="Umsätze"
-        extra={
-          <ConfigProvider locale={de_DE}>
-            <Select
-              onChange={(id) => {
-                const event = data?.events.find((e) => e.id === id);
-                if (event) {
-                  setRange([moment(event.start), moment(event.end)]);
-                }
-              }}
-              dropdownMatchSelectWidth={false}
-              value={eventPickerValue?.id ?? 'Veranstaltung auswählen'}
-            >
-              {data?.events.map((e) => (
-                <Select.Option value={e.id} key={e.id}>
-                  {e.name}
-                </Select.Option>
-              ))}
-            </Select>
-            &nbsp;
-            <RangePicker
-              format="DD.MM.YYYY HH:mm"
-              allowEmpty={[true, true]}
-              showTime
-              onChange={(e) => {
-                const a = e?.[0];
-                const b = e?.[1];
-                if (a && b) {
-                  setRange([a, b]);
-                }
-              }}
-              value={range as any}
-            />
-          </ConfigProvider>
-        }
-      ></PageHeader>
+      <ConfigProvider locale={de_DE}>
+        <Select
+          onChange={(id) => {
+            const event = data?.events.find((e) => e.id === id);
+            if (event) {
+              setRange([dayjs(event.start), dayjs(event.end)]);
+            }
+          }}
+          dropdownMatchSelectWidth={false}
+          value={eventPickerValue?.id ?? 'Veranstaltung auswählen'}
+        >
+          {data?.events.map((e) => (
+            <Select.Option value={e.id} key={e.id}>
+              {e.name}
+            </Select.Option>
+          ))}
+        </Select>
+        &nbsp;
+        <RangePicker
+          format="DD.MM.YYYY HH:mm"
+          allowEmpty={[true, true]}
+          showTime
+          onChange={(e) => {
+            const a = e?.[0];
+            const b = e?.[1];
+            if (a && b) {
+              setRange([a, b]);
+            }
+          }}
+          value={range}
+        />
+      </ConfigProvider>
       <Row
         gutter={16}
         style={{paddingLeft: 24, paddingRight: 24, paddingBottom: 12}}

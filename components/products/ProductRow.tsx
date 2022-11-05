@@ -1,7 +1,6 @@
 import styles from './ProductRow.module.css';
-import {Input, Tooltip} from 'antd';
+import {Checkbox, Input, Tooltip} from 'antd';
 import React, {useRef} from 'react';
-import Checkbox from 'antd/lib/checkbox/Checkbox';
 import {gql} from '@apollo/client';
 import {ProductRowFragment} from '../../types/graphql';
 

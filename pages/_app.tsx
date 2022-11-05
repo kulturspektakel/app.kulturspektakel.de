@@ -1,5 +1,4 @@
 import '../styles/globals.css';
-import 'antd/dist/antd.css';
 import React from 'react';
 import NextApp, {AppContext, AppInitialProps, AppProps} from 'next/app';
 import {ApolloProvider, NormalizedCacheObject} from '@apollo/client';
@@ -13,6 +12,12 @@ import {
 } from '../types/graphql';
 import {useRouter} from 'next/router';
 import absoluteUrl from 'next-absolute-url';
+import dayjs from 'dayjs';
+import weekday from 'dayjs/plugin/weekday';
+import localeData from 'dayjs/plugin/localeData';
+
+dayjs.extend(weekday);
+dayjs.extend(localeData);
 
 type Props = {
   initialApolloState: NormalizedCacheObject | undefined;

@@ -1,4 +1,4 @@
-import {Badge, message, PageHeader, Select, Table} from 'antd';
+import {Badge, message, Select, Table} from 'antd';
 import React from 'react';
 import Page from '../../components/shared/Page';
 import {gql} from '@apollo/client';
@@ -50,7 +50,6 @@ export default function Devices() {
 
   return (
     <Page>
-      <PageHeader title="Geräte"></PageHeader>
       <Table
         loading={loading}
         pagination={false}

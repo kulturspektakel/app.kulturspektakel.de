@@ -1,4 +1,4 @@
-import {Button, Form, Input, PageHeader, Spin, Table, Tooltip} from 'antd';
+import {Button, Input, Spin, Table, Tooltip} from 'antd';
 import {useRouter} from 'next/router';
 import Page from '../../components/shared/Page';
 import {gql} from '@apollo/client';
@@ -53,17 +53,16 @@ export default function CardInfo() {
 
   return (
     <Page>
-      <PageHeader title={`Karte ${id ?? ''}`}>
-        {loading && <Spin />}
-        {!id && (
-          <form name="horizontal_login" method="GET" action="">
-            <Input placeholder="Karten-ID" name="id" id="id" width="50%" />
-            <Button type="primary" htmlType="submit">
-              Anzeigen
-            </Button>
-          </form>
-        )}
-      </PageHeader>
+      <h2>{`Karte ${id ?? ''}`}</h2>
+      {loading && <Spin />}
+      {!id && (
+        <form name="horizontal_login" method="GET" action="">
+          <Input placeholder="Karten-ID" name="id" id="id" width="50%" />
+          <Button type="primary" htmlType="submit">
+            Anzeigen
+          </Button>
+        </form>
+      )}
       {card && (
         <Table
           pagination={false}

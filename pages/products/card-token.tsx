@@ -1,4 +1,4 @@
-import {Col, Form, Input, InputNumber, PageHeader, Row, Space} from 'antd';
+import {Col, Form, Input, InputNumber, Row} from 'antd';
 import {useEffect} from 'react';
 import {ChangeEvent, useCallback, useState} from 'react';
 import Page from '../../components/shared/Page';
@@ -167,92 +167,86 @@ export default function CardToken() {
 
   return (
     <Page>
-      <PageHeader title="Token">
-        <>
-          <Form
-            labelCol={{span: 4}}
-            wrapperCol={{span: 14}}
-            layout="horizontal"
-          >
-            <Form.Item label="Salt">
-              <Input
-                value={salt ?? ''}
-                onChange={(e) => setSalt(e.target.value)}
-                onBlur={(e) =>
-                  window.localStorage.setItem('salt', e.target.value)
-                }
-              />
-            </Form.Item>
-            <Form.Item label="Card ID">
-              <Input
-                placeholder="00:00:00:00:00:00:00 (7 bytes)"
-                value={id}
-                onChange={(e) => onChange(e.target.value, 'id')}
-                maxLength={20}
-                status={id.length > 1 && id.length !== 20 ? 'error' : undefined}
-              />
-            </Form.Item>
-            <Row>
-              <Col span={8}>
-                <Form.Item label="Balance">
-                  <InputNumber
-                    value={balance}
-                    onChange={(e) => onChange(e, 'balance')}
-                    min={0}
-                    max={65535}
-                  />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item label="Deposit">
-                  <InputNumber
-                    value={deposit}
-                    onChange={(e) => onChange(e, 'deposit')}
-                    min={0}
-                    max={255}
-                  />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item label="Count">
-                  <InputNumber
-                    value={count}
-                    onChange={(e) => onChange(e, 'count')}
-                    min={0}
-                    max={65535}
-                  />
-                </Form.Item>
-              </Col>
-            </Row>
-          </Form>
-          <pre>
-            <>
-              {buf2hex(data)}
-              {'\n'}
-              └──────cardID──────┘ └cnt┘ └┘ └bal┘ └──signature─┘
-            </>
-          </pre>
-          <pre>
-            <>
-              {buf2hex(password).substring(42)}
-              {'\n'}
-              └PAK┘ └─password┘
-            </>
-          </pre>
-
-          <Form.Item
-            hasFeedback={!!payloadError}
-            validateStatus={payloadError ? 'error' : undefined}
-            help={payloadError}
-          >
+      <>
+        <Form labelCol={{span: 4}} wrapperCol={{span: 14}} layout="horizontal">
+          <Form.Item label="Salt">
             <Input
-              prefix="https://kult.cash/$$/"
-              value={payload}
-              onChange={onPayloadChange}
+              value={salt ?? ''}
+              onChange={(e) => setSalt(e.target.value)}
+              onBlur={(e) =>
+                window.localStorage.setItem('salt', e.target.value)
+              }
             />
           </Form.Item>
-        </>
-      </PageHeader>
+          <Form.Item label="Card ID">
+            <Input
+              placeholder="00:00:00:00:00:00:00 (7 bytes)"
+              value={id}
+              onChange={(e) => onChange(e.target.value, 'id')}
+              maxLength={20}
+              status={id.length > 1 && id.length !== 20 ? 'error' : undefined}
+            />
+          </Form.Item>
+          <Row>
+            <Col span={8}>
+              <Form.Item label="Balance">
+                <InputNumber
+                  value={balance}
+                  onChange={(e) => onChange(e, 'balance')}
+                  min={0}
+                  max={65535}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label="Deposit">
+                <InputNumber
+                  value={deposit}
+                  onChange={(e) => onChange(e, 'deposit')}
+                  min={0}
+                  max={255}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label="Count">
+                <InputNumber
+                  value={count}
+                  onChange={(e) => onChange(e, 'count')}
+                  min={0}
+                  max={65535}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+        </Form>
+        <pre>
+          <>
+            {buf2hex(data)}
+            {'\n'}
+            └──────cardID──────┘ └cnt┘ └┘ └bal┘ └──signature─┘
+          </>
+        </pre>
+        <pre>
+          <>
+            {buf2hex(password).substring(42)}
+            {'\n'}
+            └PAK┘ └─password┘
+          </>
+        </pre>
+
+        <Form.Item
+          hasFeedback={!!payloadError}
+          validateStatus={payloadError ? 'error' : undefined}
+          help={payloadError}
+        >
+          <Input
+            prefix="https://kult.cash/$$/"
+            value={payload}
+            onChange={onPayloadChange}
+          />
+        </Form.Item>
+      </>
     </Page>
   );
 }
