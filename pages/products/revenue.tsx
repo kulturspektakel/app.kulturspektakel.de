@@ -1,11 +1,10 @@
-import {Col, ConfigProvider, DatePicker, Row, Select, Statistic} from 'antd';
+import {Col, Row, Select, Statistic, DatePicker} from 'antd';
 import React, {useMemo, useState} from 'react';
 import Page from '../../components/shared/Page';
 import {gql} from '@apollo/client';
 import {RevenueQuery, useRevenueQuery} from '../../types/graphql';
 import {useEffect} from 'react';
 import {useRouter} from 'next/router';
-import de_DE from 'antd/locale/de_DE';
 import {isEqual, endOfDay, startOfDay} from 'date-fns';
 import RevenueTable from '../../components/products/RevenueTable';
 import currencyFormatter from '../../utils/currencyFormatter';
@@ -102,39 +101,43 @@ export default function Revenue() {
   );
 
   return (
-    <Page>
-      <ConfigProvider locale={de_DE}>
-        <Select
-          onChange={(id) => {
-            const event = data?.events.find((e) => e.id === id);
-            if (event) {
-              setRange([dayjs(event.start), dayjs(event.end)]);
-            }
-          }}
-          dropdownMatchSelectWidth={false}
-          value={eventPickerValue?.id ?? 'Veranstaltung auswählen'}
-        >
-          {data?.events.map((e) => (
-            <Select.Option value={e.id} key={e.id}>
-              {e.name}
-            </Select.Option>
-          ))}
-        </Select>
-        &nbsp;
-        <RangePicker
-          format="DD.MM.YYYY HH:mm"
-          allowEmpty={[true, true]}
-          showTime
-          onChange={(e) => {
-            const a = e?.[0];
-            const b = e?.[1];
-            if (a && b) {
-              setRange([a, b]);
-            }
-          }}
-          value={range}
-        />
-      </ConfigProvider>
+    <Page
+      title="Umsätze"
+      accessory={
+        <>
+          <Select
+            onChange={(id) => {
+              const event = data?.events.find((e) => e.id === id);
+              if (event) {
+                setRange([dayjs(event.start), dayjs(event.end)]);
+              }
+            }}
+            dropdownMatchSelectWidth={false}
+            value={eventPickerValue?.id ?? 'Veranstaltung auswählen'}
+          >
+            {data?.events.map((e) => (
+              <Select.Option value={e.id} key={e.id}>
+                {e.name}
+              </Select.Option>
+            ))}
+          </Select>
+          &nbsp;
+          <RangePicker
+            format="DD.MM.YYYY HH:mm"
+            allowEmpty={[true, true]}
+            showTime
+            onChange={(e) => {
+              const a = e?.[0];
+              const b = e?.[1];
+              if (a && b) {
+                setRange([a, b]);
+              }
+            }}
+            value={range}
+          />
+        </>
+      }
+    >
       <Row
         gutter={16}
         style={{paddingLeft: 24, paddingRight: 24, paddingBottom: 12}}

@@ -121,12 +121,10 @@ export default function Booking() {
           </div>
         )}
       </AutoSizer>
-      {selected && (
-        <BandApplicationDetails
-          bandApplicationId={selected}
-          onClose={() => setSelected(null)}
-        />
-      )}
+      <BandApplicationDetails
+        bandApplicationId={selected}
+        onClose={() => setSelected(null)}
+      />
     </Page>
   );
 }

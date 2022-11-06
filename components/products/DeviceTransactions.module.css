@@ -3,6 +3,8 @@
 .root :global(.ant-table-tbody > tr.ant-table-row > td),
 .root :global(.ant-table-tbody > tr > td.ant-table-cell-row-hover) {
     background-color: #fafafa;
+    border-top-color: rgba(5, 5, 5, 0.06) !important;
+    border-bottom-color: rgba(5, 5, 5, 0.06) !important;
 }
 
 .cashout, .topup, .charge {

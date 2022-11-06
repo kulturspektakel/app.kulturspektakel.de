@@ -17,6 +17,7 @@ gql`
         transactions {
           balanceTotal
           data {
+            clientId
             transactionType
             balanceAfter
             balanceBefore
@@ -52,21 +53,30 @@ export default function CardInfo() {
   const card = data?.node?.__typename === 'Card' ? data.node : undefined;
 
   return (
-    <Page>
-      <h2>{`Karte ${id ?? ''}`}</h2>
+    <Page
+      title={`Karte ${id ?? ''}`}
+      accessory={
+        !id && (
+          <form
+            name="horizontal_login"
+            method="GET"
+            action=""
+            style={{display: 'flex'}}
+          >
+            <Input placeholder="Karten-ID" name="id" id="id" width="50%" />
+            <Button type="primary" htmlType="submit">
+              Anzeigen
+            </Button>
+          </form>
+        )
+      }
+    >
       {loading && <Spin />}
-      {!id && (
-        <form name="horizontal_login" method="GET" action="">
-          <Input placeholder="Karten-ID" name="id" id="id" width="50%" />
-          <Button type="primary" htmlType="submit">
-            Anzeigen
-          </Button>
-        </form>
-      )}
       {card && (
         <Table
           pagination={false}
           size="small"
+          rowKey={(r) => String(r.clientId)}
           columns={[
             {
               title: 'Bude',

@@ -73,16 +73,14 @@ export default function Devices() {
             sorter: (a, b) =>
               (b.lastSeen?.getTime() ?? 0) - (a.lastSeen?.getTime() ?? 0),
             render: (lastSeen) => (
-              <span>
-                <Badge
-                  status={
-                    differenceInMinutes(new Date(), lastSeen) < 15
-                      ? 'success'
-                      : 'default'
-                  }
-                />
-                <RelativeDate date={lastSeen} />
-              </span>
+              <Badge
+                status={
+                  differenceInMinutes(new Date(), lastSeen) < 15
+                    ? 'success'
+                    : 'default'
+                }
+                text={<RelativeDate date={lastSeen} />}
+              />
             ),
           },
           {

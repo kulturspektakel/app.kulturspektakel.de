@@ -39,7 +39,7 @@ export default function EmojiPicker({
       onOpenChange={setPickerVisible}
       overlayClassName={styles.overlay}
       destroyTooltipOnHide
-      content={<div ref={ref} style={{width: 300, height: 300}} />}
+      content={<div ref={ref} />}
       trigger="click"
     >
       <Button

@@ -12,6 +12,7 @@ import Demo from './Demo';
 import Rater from './Rater';
 import Rating from './Rating';
 import {GlobalOutlined} from '@ant-design/icons';
+import styles from './BandApplicationDetails.module.css';
 
 gql`
   query ApplicationDetails($id: ID!) {
@@ -61,13 +62,14 @@ export default function BandApplicationDetails({
   bandApplicationId,
   onClose,
 }: {
-  bandApplicationId: string;
+  bandApplicationId: string | null;
   onClose: () => void;
 }) {
   const {data} = useApplicationDetailsQuery({
     variables: {
-      id: bandApplicationId,
+      id: bandApplicationId!,
     },
+    skip: !bandApplicationId,
   });
 
   return (
@@ -136,7 +138,7 @@ function DrawerContent(
         )}
       </Row>
       <br />
-      <h4>Bewertung</h4>
+      <h4 className={styles.h4}>Bewertung</h4>
       <Row>
         <Col span={8}>
           <Rater
@@ -160,39 +162,41 @@ function DrawerContent(
       <br />
 
       {props.hasPreviouslyPlayed && (
-        <div style={{display: 'flex'}}>
-          <h4>Schonmal gespielt:</h4>&nbsp;
+        <div className={styles.row}>
+          <h4 className={styles.h4}>Schonmal gespielt:</h4>&nbsp;
           {PreviouslyPlayedText(props.hasPreviouslyPlayed)}
         </div>
       )}
-      {props.numberOfArtists && props.numberOfNonMaleArtists && (
-        <div style={{display: 'flex'}}>
-          <h4>Bandgröße:</h4>&nbsp;{props.numberOfArtists} Personen (
-          {(
-            (props.numberOfArtists - props.numberOfNonMaleArtists) /
-            props.numberOfArtists
-          ).toLocaleString(undefined, {
-            style: 'percent',
-            maximumFractionDigits: 1,
-          })}
-          &nbsp;männlich)
-        </div>
-      )}
+      {(props.numberOfArtists ?? 0) > 0 &&
+        (props.numberOfNonMaleArtists ?? 0) > 0 && (
+          <div className={styles.row}>
+            <h4 className={styles.h4}>Bandgröße:</h4>&nbsp;
+            {props.numberOfArtists} Personen (
+            {(
+              (props.numberOfArtists! - props.numberOfNonMaleArtists!) /
+              props.numberOfArtists!
+            ).toLocaleString(undefined, {
+              style: 'percent',
+              maximumFractionDigits: 1,
+            })}
+            &nbsp;männlich)
+          </div>
+        )}
 
       {props.knowsKultFrom && (
         <>
-          <h4>Woher kennt ihr das Kult?</h4>
+          <h4 className={styles.h4}>Woher kennt ihr das Kult?</h4>
           <EllipsisText>{props.knowsKultFrom}</EllipsisText>
         </>
       )}
 
       {props.description && (
         <>
-          <h4>Bandbeschreibung</h4>
+          <h4 className={styles.h4}>Bandbeschreibung</h4>
           <EllipsisText>{props.description}</EllipsisText>
         </>
       )}
-      <h4>Kontakt</h4>
+      <h4 className={styles.h4}>Kontakt</h4>
       <p>
         {props.contactName}
         <br />

@@ -14,6 +14,12 @@
   z-index: 1000;
 }
 
+.title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .logo {
   padding: 15px;
 }
@@ -32,6 +38,14 @@
   align-self: center;
   margin-right: 15px;
   cursor: pointer;
+}
+
+.padded {
+  padding: 15px;
+}
+
+.accessory > *{
+  margin-left: 12px;
 }
 
 @media print {

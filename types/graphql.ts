@@ -654,6 +654,7 @@ export type DeviceTransactionsQuery = {
             depositAfter: number;
             cardId: string;
             transactionType: CardTransactionType;
+            clientId: string;
           }>;
         };
       }
@@ -851,6 +852,7 @@ export type CardInfoQuery = {
           balanceTotal: number;
           data: Array<{
             __typename?: 'CardTransaction';
+            clientId: string;
             transactionType: CardTransactionType;
             balanceAfter: number;
             balanceBefore: number;
@@ -1324,6 +1326,7 @@ export const DeviceTransactionsDocument = gql`
             depositAfter
             cardId
             transactionType
+            clientId
           }
         }
       }
@@ -1668,6 +1671,7 @@ export const CardInfoDocument = gql`
         transactions {
           balanceTotal
           data {
+            clientId
             transactionType
             balanceAfter
             balanceBefore

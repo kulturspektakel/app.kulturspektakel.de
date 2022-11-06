@@ -6,14 +6,15 @@ import {isRevenue} from '../../utils/payments';
 import RevenueDetails from './RevenueDetails';
 import styles from './RevenueTable.module.css';
 import {RangeValue} from 'rc-picker/lib/interface';
-import {ColumnType} from 'antd/lib/table';
+import {ColumnType} from 'antd/es/table';
+import dayjs from 'dayjs';
 
 export default function RevenueTable({
   loading,
   productLists,
   range,
 }: {
-  range: RangeValue<moment.Moment>;
+  range: RangeValue<dayjs.Dayjs>;
   loading: boolean;
   productLists: RevenueQuery['productLists'];
 }) {

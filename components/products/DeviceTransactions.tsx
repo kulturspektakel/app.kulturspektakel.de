@@ -26,6 +26,7 @@ gql`
             depositAfter
             cardId
             transactionType
+            clientId
           }
         }
       }
@@ -33,10 +34,10 @@ gql`
   }
 `;
 
-export default function DeviceTransactions(props: {deviceID: string}) {
+export default function DeviceTransactions({deviceID}: {deviceID: string}) {
   const {loading, data} = useDeviceTransactionsQuery({
     variables: {
-      deviceID: `Device:${props.deviceID}`,
+      deviceID: deviceID,
     },
   });
 
@@ -47,6 +48,7 @@ export default function DeviceTransactions(props: {deviceID: string}) {
       </div>
     );
   }
+  console.log(data, loading);
   if (data?.node?.__typename !== 'Device') {
     throw new Error('wrong __typename');
   }
@@ -57,6 +59,7 @@ export default function DeviceTransactions(props: {deviceID: string}) {
       pagination={false}
       dataSource={data.node.transactions.data}
       scroll={{y: 255}}
+      rowKey={(r) => String(r.clientId)}
       columns={[
         {
           title: 'Zeit',

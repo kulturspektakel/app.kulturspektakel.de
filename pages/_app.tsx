@@ -1,4 +1,5 @@
 import '../styles/globals.css';
+
 import React from 'react';
 import NextApp, {AppContext, AppInitialProps, AppProps} from 'next/app';
 import {ApolloProvider, NormalizedCacheObject} from '@apollo/client';
@@ -12,10 +13,14 @@ import {
 } from '../types/graphql';
 import {useRouter} from 'next/router';
 import absoluteUrl from 'next-absolute-url';
-import dayjs from 'dayjs';
 import weekday from 'dayjs/plugin/weekday';
 import localeData from 'dayjs/plugin/localeData';
+import dayjs from 'dayjs';
+import de from 'dayjs/locale/de';
+import {ConfigProvider} from 'antd';
+import deDE from 'antd/locale/de_DE';
 
+dayjs.locale(de);
 dayjs.extend(weekday);
 dayjs.extend(localeData);
 
@@ -29,7 +34,9 @@ const App = ({Component, pageProps, initialApolloState}: AppProps & Props) => {
   return (
     <ApolloProvider client={client}>
       <LoginProvider>
-        <Component {...pageProps} />
+        <ConfigProvider locale={deDE}>
+          <Component {...pageProps} />
+        </ConfigProvider>
       </LoginProvider>
     </ApolloProvider>
   );

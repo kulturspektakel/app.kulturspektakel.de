@@ -1,5 +1,5 @@
-.table :global(.ant-table-expanded-row-level-1) td {
-    padding: 0;
+.table :global(.ant-table-expanded-row-level-1) > td {
+    padding: 0 !important;
 }
 
 .title {

@@ -67,7 +67,16 @@ export default function Demo({demo}: {demo: string}) {
       )}
       <p>
         {!embed && <h4>Demo</h4>}
-        <a href={demo} target="_blank">
+        <a
+          style={{
+            whiteSpace: 'nowrap',
+            textOverflow: 'ellipsis',
+            overflow: 'hidden',
+            display: 'block',
+          }}
+          href={demo}
+          target="_blank"
+        >
           {demo}
         </a>
       </p>
