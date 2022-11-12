@@ -1,5 +1,5 @@
 import {Button, Popover} from 'antd';
-import {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import styles from './EmojiPicker.module.css';
 import data from '@emoji-mart/data';
 

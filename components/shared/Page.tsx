@@ -84,18 +84,16 @@ export default function Page({
           className={styles.profileMenu}
           placement="bottomRight"
           arrow
-          overlay={
-            <Menu
-              items={[
-                {
-                  label: (
-                    <a href="https://api.kulturspektakel.de/logout">Logout</a>
-                  ),
-                  key: 'logout',
-                },
-              ]}
-            />
-          }
+          menu={{
+            items: [
+              {
+                label: (
+                  <a href="https://api.kulturspektakel.de/logout">Logout</a>
+                ),
+                key: 'logout',
+              },
+            ],
+          }}
         >
           {viewer && (
             <Avatar src={viewer.profilePicture}>
