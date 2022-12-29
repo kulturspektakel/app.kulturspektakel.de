@@ -125,7 +125,7 @@ function DrawerContent(
         )}
         {props.instagram && (
           <Col span={8}>
-            <a href={`https://instagram.com/${props.instagram}`}>
+            <a href={`https://instagram.com/${props.instagram}`} target="_blank">
               <Statistic
                 valueStyle={{color: '#1890ff'}}
                 value={props.instagramFollower ?? '?'}
