@@ -165,7 +165,7 @@ function DrawerContent(
           {PreviouslyPlayedText(props.hasPreviouslyPlayed)}
         </div>
       )}
-      {props.numberOfArtists && props.numberOfNonMaleArtists && (
+      {(props.numberOfArtists && props.numberOfNonMaleArtists) ? (
         <div style={{display: 'flex'}}>
           <h4>Bandgröße:</h4>&nbsp;{props.numberOfArtists} Personen (
           {(
@@ -177,7 +177,7 @@ function DrawerContent(
           })}
           &nbsp;männlich)
         </div>
-      )}
+      ): undefined }
 
       {props.knowsKultFrom && (
         <>
