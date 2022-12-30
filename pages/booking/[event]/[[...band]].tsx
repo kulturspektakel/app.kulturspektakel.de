@@ -256,7 +256,7 @@ const MemoizedTable = React.memo(
             render: (_, {id, bandApplicationRating}) => (
               <Rater
                 bandApplicationId={id}
-                defaultValue={
+                value={
                   bandApplicationRating.find(
                     ({viewer: {id}}) => id === viewer?.id,
                   )?.rating

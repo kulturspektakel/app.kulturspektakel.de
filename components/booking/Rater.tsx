@@ -14,17 +14,17 @@ gql`
 
 export default function Rater({
   bandApplicationId,
-  defaultValue,
+  value,
 }: {
   bandApplicationId: string;
-  defaultValue?: number;
+  value?: number;
 }) {
   const [rate] = useBandApplicationRatingMutation();
   return (
     <>
       <Rate
         count={4}
-        defaultValue={defaultValue}
+        value={value}
         style={{color: '#1890ff'}}
         onChange={(rating) =>
           rate({

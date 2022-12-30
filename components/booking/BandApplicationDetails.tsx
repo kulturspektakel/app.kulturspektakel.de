@@ -141,7 +141,7 @@ function DrawerContent(
         <Col span={8}>
           <Rater
             bandApplicationId={props.id}
-            defaultValue={
+            value={
               props.bandApplicationRating.find(
                 ({viewer: {id}}) => id === viewer?.id,
               )?.rating
