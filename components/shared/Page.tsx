@@ -13,10 +13,14 @@ export default function Page({
   children,
   title,
   className,
+  padded,
+  accessory,
 }: {
   children: any;
   title?: string;
   className?: string;
+  padded?: boolean;
+  accessory?: React.ReactNode;
 }) {
   const {asPath} = useRouter();
   const viewer = useViewerContext();
@@ -32,51 +36,64 @@ export default function Page({
       </Head>
       <Header className={styles.header} style={{height: HEADER_HEIGHT}}>
         <Link href="/">
-          <a className={styles.logo}>
-            <img src="/logo.svg" />
-          </a>
+          <span className={styles.logo}>
+            <img src="/logo.svg" alt="Logo" />
+          </span>
         </Link>
         <Menu
           theme="dark"
           mode="horizontal"
           selectedKeys={asPath.split('/').filter(Boolean)}
-        >
-          <Menu.SubMenu key="products" title="Verkauf">
-            <Menu.Item key="lists">
-              <Link href={`/products/lists`}>Preislisten</Link>
-            </Menu.Item>
-            <Menu.Item key="devices">
-              <Link href={`/products/devices`}>Geräte</Link>
-            </Menu.Item>
-            <Menu.Item key="revenue">
-              <Link href={`/products/revenue`}>Umsätze</Link>
-            </Menu.Item>
-            <Menu.Item key="card">
-              <Link href={`/products/card`}>Karten-Details</Link>
-            </Menu.Item>
-            <Menu.Item key="card-token">
-              <Link href={`/products/card-token`}>Token-Generator</Link>
-            </Menu.Item>
-          </Menu.SubMenu>
-          <Menu.Item key="booking">
-            <Link href="/booking">Booking</Link>
-          </Menu.Item>
-          <Menu.Item key="stationery">
-            <Link href="/stationery">Briefpapier</Link>
-          </Menu.Item>
-        </Menu>
+          items={[
+            {
+              label: 'Verkauf',
+              key: 'products',
+              children: [
+                {
+                  label: <Link href={`/products/lists`}>Preislisten</Link>,
+                  key: 'lists',
+                },
+                {
+                  label: <Link href={`/products/devices`}>Geräte</Link>,
+                  key: 'devices',
+                },
+                {
+                  label: <Link href={`/products/revenue`}>Umsätze</Link>,
+                  key: 'revenue',
+                },
+                {
+                  label: <Link href={`/products/card`}>Karten-Details</Link>,
+                  key: 'card',
+                },
+                {
+                  label: (
+                    <Link href={`/products/card-token`}>Token-Generator</Link>
+                  ),
+                  key: 'card-token',
+                },
+              ],
+            },
+            {
+              key: 'booking',
+              label: <Link href="/booking">Booking</Link>,
+            },
+          ]}
+        />
         <div className={styles.spacer} />
         <Dropdown
           className={styles.profileMenu}
           placement="bottomRight"
           arrow
-          overlay={
-            <Menu>
-              <Menu.Item>
-                <a href="https://api.kulturspektakel.de/logout">Logout</a>
-              </Menu.Item>
-            </Menu>
-          }
+          menu={{
+            items: [
+              {
+                label: (
+                  <a href="https://api.kulturspektakel.de/logout">Logout</a>
+                ),
+                key: 'logout',
+              },
+            ],
+          }}
         >
           {viewer && (
             <Avatar src={viewer.profilePicture}>
@@ -88,7 +105,15 @@ export default function Page({
           )}
         </Dropdown>
       </Header>
-      {children}
+      <Layout.Content className={padded ? styles.padded : undefined}>
+        {(title || accessory) && (
+          <div className={`${styles.title} ${!padded ? styles.padded : ''}`}>
+            <h2>{title}</h2>
+            <div className={styles.accessory}>{accessory}</div>
+          </div>
+        )}
+        {children}
+      </Layout.Content>
     </Layout>
   );
 }

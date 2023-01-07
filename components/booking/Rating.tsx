@@ -12,7 +12,7 @@ export default function Rating(props: {
   return (
     <Tooltip
       title={props.bandApplicationRating.map((r) => (
-        <div>
+        <div key={r.viewer.displayName}>
           {Array.apply(null, Array(4)).map((_, i) =>
             r.rating > i ? '★' : '☆',
           )}

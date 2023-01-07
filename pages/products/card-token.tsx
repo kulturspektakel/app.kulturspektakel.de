@@ -1,4 +1,4 @@
-import {Col, Form, Input, InputNumber, PageHeader, Row, Space} from 'antd';
+import {Col, Form, Input, InputNumber, Row} from 'antd';
 import {useEffect} from 'react';
 import {ChangeEvent, useCallback, useState} from 'react';
 import Page from '../../components/shared/Page';
@@ -50,51 +50,6 @@ export default function CardToken() {
   );
   const [password, setPassword] = useState(new Uint8Array(0));
 
-  // useEffect(() => {
-
-  // }, [balance, deposit, count, id, salt, setPassword, setData]);
-
-  const onChange = useCallback(
-    async (value, field: 'id' | 'balance' | 'deposit' | 'count') => {
-      let _id = id;
-      let _count = count;
-      let _balance = balance;
-      let _deposit = deposit;
-
-      switch (field) {
-        case 'id': {
-          _id =
-            value
-              .toUpperCase()
-              .replace(/[^A-F0-9]/g, '')
-              .match(/.{1,2}/g)
-              ?.join(':') ?? '';
-          setID(_id);
-          break;
-        }
-        case 'balance': {
-          _balance = value;
-          setBalance(_balance);
-          break;
-        }
-        case 'deposit': {
-          _deposit = value;
-          setDeposit(_deposit);
-          break;
-        }
-        case 'count': {
-          _count = value;
-          setCount(_count);
-          break;
-        }
-        default: {
-          console.error(`Unknown field: ${field}`);
-        }
-      }
-    },
-    [salt, deposit, count, balance],
-  );
-
   useEffect(() => {
     (async () => {
       // calculate signature
@@ -140,7 +95,7 @@ export default function CardToken() {
       );
       setPassword(new Uint8Array(password));
     })();
-  }, [salt, deposit, count, balance]);
+  }, [salt, deposit, count, balance, id]);
 
   const onPayloadChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
@@ -166,93 +121,91 @@ export default function CardToken() {
   );
 
   return (
-    <Page>
-      <PageHeader title="Token">
+    <Page padded title="Token-Generator">
+      <Form labelCol={{span: 4}} wrapperCol={{span: 14}} layout="horizontal">
+        <Form.Item label="Salt">
+          <Input
+            value={salt ?? ''}
+            onChange={(e) => setSalt(e.target.value)}
+            onBlur={(e) => window.localStorage.setItem('salt', e.target.value)}
+          />
+        </Form.Item>
+        <Form.Item label="Card ID">
+          <Input
+            placeholder="00:00:00:00:00:00:00 (7 bytes)"
+            value={id}
+            onChange={(e) =>
+              setID(
+                e.target.value
+                  .toUpperCase()
+                  .replace(/[^A-F0-9]/g, '')
+                  .match(/.{1,2}/g)
+                  ?.join(':') ?? '',
+              )
+            }
+            maxLength={20}
+            status={id.length > 1 && id.length !== 20 ? 'error' : undefined}
+          />
+        </Form.Item>
+        <Row>
+          <Col span={8}>
+            <Form.Item label="Balance">
+              <InputNumber
+                value={balance}
+                onChange={(e) => setBalance(e ?? 0)}
+                min={0}
+                max={65535}
+              />
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item label="Deposit">
+              <InputNumber
+                value={deposit}
+                onChange={(e) => setDeposit(e ?? 0)}
+                min={0}
+                max={255}
+              />
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item label="Count">
+              <InputNumber
+                value={count}
+                onChange={(e) => setCount(e ?? 0)}
+                min={0}
+                max={65535}
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+      </Form>
+      <pre>
         <>
-          <Form
-            labelCol={{span: 4}}
-            wrapperCol={{span: 14}}
-            layout="horizontal"
-          >
-            <Form.Item label="Salt">
-              <Input
-                value={salt ?? ''}
-                onChange={(e) => setSalt(e.target.value)}
-                onBlur={(e) =>
-                  window.localStorage.setItem('salt', e.target.value)
-                }
-              />
-            </Form.Item>
-            <Form.Item label="Card ID">
-              <Input
-                placeholder="00:00:00:00:00:00:00 (7 bytes)"
-                value={id}
-                onChange={(e) => onChange(e.target.value, 'id')}
-                maxLength={20}
-                status={id.length > 1 && id.length !== 20 ? 'error' : undefined}
-              />
-            </Form.Item>
-            <Row>
-              <Col span={8}>
-                <Form.Item label="Balance">
-                  <InputNumber
-                    value={balance}
-                    onChange={(e) => onChange(e, 'balance')}
-                    min={0}
-                    max={65535}
-                  />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item label="Deposit">
-                  <InputNumber
-                    value={deposit}
-                    onChange={(e) => onChange(e, 'deposit')}
-                    min={0}
-                    max={255}
-                  />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item label="Count">
-                  <InputNumber
-                    value={count}
-                    onChange={(e) => onChange(e, 'count')}
-                    min={0}
-                    max={65535}
-                  />
-                </Form.Item>
-              </Col>
-            </Row>
-          </Form>
-          <pre>
-            <>
-              {buf2hex(data)}
-              {'\n'}
-              └──────cardID──────┘ └cnt┘ └┘ └bal┘ └──signature─┘
-            </>
-          </pre>
-          <pre>
-            <>
-              {buf2hex(password).substring(42)}
-              {'\n'}
-              └PAK┘ └─password┘
-            </>
-          </pre>
-
-          <Form.Item
-            hasFeedback={!!payloadError}
-            validateStatus={payloadError ? 'error' : undefined}
-            help={payloadError}
-          >
-            <Input
-              prefix="https://kult.cash/$$/"
-              value={payload}
-              onChange={onPayloadChange}
-            />
-          </Form.Item>
+          {buf2hex(data)}
+          {'\n'}
+          └──────cardID──────┘ └cnt┘ └┘ └bal┘ └──signature─┘
         </>
-      </PageHeader>
+      </pre>
+      <pre>
+        <>
+          {buf2hex(password).substring(42)}
+          {'\n'}
+          └PAK┘ └─password┘
+        </>
+      </pre>
+
+      <Form.Item
+        hasFeedback={!!payloadError}
+        validateStatus={payloadError ? 'error' : undefined}
+        help={payloadError}
+      >
+        <Input
+          prefix="https://kult.cash/$$/"
+          value={payload}
+          onChange={onPayloadChange}
+        />
+      </Form.Item>
     </Page>
   );
 }

@@ -167,7 +167,7 @@ export type CreateBandApplicationInput = {
   city: Scalars['String'];
   contactName: Scalars['String'];
   contactPhone: Scalars['String'];
-  demo: Scalars['String'];
+  demo?: InputMaybe<Scalars['String']>;
   description: Scalars['String'];
   email: Scalars['String'];
   facebook?: InputMaybe<Scalars['String']>;
@@ -654,6 +654,7 @@ export type DeviceTransactionsQuery = {
             depositAfter: number;
             cardId: string;
             transactionType: CardTransactionType;
+            clientId: string;
           }>;
         };
       }
@@ -851,6 +852,7 @@ export type CardInfoQuery = {
           balanceTotal: number;
           data: Array<{
             __typename?: 'CardTransaction';
+            clientId: string;
             transactionType: CardTransactionType;
             balanceAfter: number;
             balanceBefore: number;
@@ -1035,39 +1037,6 @@ export type RevenueQuery = {
       uniqueCards: number;
     };
   };
-};
-
-export type StationerySearchQueryVariables = Exact<{
-  query: Scalars['String'];
-}>;
-
-export type StationerySearchQuery = {
-  __typename?: 'Query';
-  nuclinoPages: Array<{
-    __typename?: 'NuclinoSearchResult';
-    highlight?: string | null;
-    page: {__typename?: 'NuclinoPage'; id: string; title: string};
-  }>;
-};
-
-export type StationeryPageQueryVariables = Exact<{
-  id: Scalars['ID'];
-}>;
-
-export type StationeryPageQuery = {
-  __typename?: 'Query';
-  nuclinoPage?:
-    | {__typename?: 'Area'}
-    | {__typename?: 'BandApplication'}
-    | {__typename?: 'BandPlaying'}
-    | {__typename?: 'Card'}
-    | {__typename?: 'Device'}
-    | {__typename?: 'Event'}
-    | {__typename?: 'NuclinoPage'; id: string; title: string; content: string}
-    | {__typename?: 'Product'}
-    | {__typename?: 'ProductList'}
-    | {__typename?: 'Viewer'}
-    | null;
 };
 
 export type ViewerContextProviderQueryVariables = Exact<{[key: string]: never}>;
@@ -1324,6 +1293,7 @@ export const DeviceTransactionsDocument = gql`
             depositAfter
             cardId
             transactionType
+            clientId
           }
         }
       }
@@ -1668,6 +1638,7 @@ export const CardInfoDocument = gql`
         transactions {
           balanceTotal
           data {
+            clientId
             transactionType
             balanceAfter
             balanceBefore
@@ -2124,130 +2095,6 @@ export type RevenueLazyQueryHookResult = ReturnType<typeof useRevenueLazyQuery>;
 export type RevenueQueryResult = Apollo.QueryResult<
   RevenueQuery,
   RevenueQueryVariables
->;
-export const StationerySearchDocument = gql`
-  query StationerySearch($query: String!) {
-    nuclinoPages(query: $query) {
-      highlight
-      page {
-        id
-        title
-      }
-    }
-  }
-`;
-
-/**
- * __useStationerySearchQuery__
- *
- * To run a query within a React component, call `useStationerySearchQuery` and pass it any options that fit your needs.
- * When your component renders, `useStationerySearchQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useStationerySearchQuery({
- *   variables: {
- *      query: // value for 'query'
- *   },
- * });
- */
-export function useStationerySearchQuery(
-  baseOptions: Apollo.QueryHookOptions<
-    StationerySearchQuery,
-    StationerySearchQueryVariables
-  >,
-) {
-  const options = {...defaultOptions, ...baseOptions};
-  return Apollo.useQuery<StationerySearchQuery, StationerySearchQueryVariables>(
-    StationerySearchDocument,
-    options,
-  );
-}
-export function useStationerySearchLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    StationerySearchQuery,
-    StationerySearchQueryVariables
-  >,
-) {
-  const options = {...defaultOptions, ...baseOptions};
-  return Apollo.useLazyQuery<
-    StationerySearchQuery,
-    StationerySearchQueryVariables
-  >(StationerySearchDocument, options);
-}
-export type StationerySearchQueryHookResult = ReturnType<
-  typeof useStationerySearchQuery
->;
-export type StationerySearchLazyQueryHookResult = ReturnType<
-  typeof useStationerySearchLazyQuery
->;
-export type StationerySearchQueryResult = Apollo.QueryResult<
-  StationerySearchQuery,
-  StationerySearchQueryVariables
->;
-export const StationeryPageDocument = gql`
-  query StationeryPage($id: ID!) {
-    nuclinoPage: node(id: $id) {
-      ... on NuclinoPage {
-        id
-        title
-        content
-      }
-    }
-  }
-`;
-
-/**
- * __useStationeryPageQuery__
- *
- * To run a query within a React component, call `useStationeryPageQuery` and pass it any options that fit your needs.
- * When your component renders, `useStationeryPageQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useStationeryPageQuery({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useStationeryPageQuery(
-  baseOptions: Apollo.QueryHookOptions<
-    StationeryPageQuery,
-    StationeryPageQueryVariables
-  >,
-) {
-  const options = {...defaultOptions, ...baseOptions};
-  return Apollo.useQuery<StationeryPageQuery, StationeryPageQueryVariables>(
-    StationeryPageDocument,
-    options,
-  );
-}
-export function useStationeryPageLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    StationeryPageQuery,
-    StationeryPageQueryVariables
-  >,
-) {
-  const options = {...defaultOptions, ...baseOptions};
-  return Apollo.useLazyQuery<StationeryPageQuery, StationeryPageQueryVariables>(
-    StationeryPageDocument,
-    options,
-  );
-}
-export type StationeryPageQueryHookResult = ReturnType<
-  typeof useStationeryPageQuery
->;
-export type StationeryPageLazyQueryHookResult = ReturnType<
-  typeof useStationeryPageLazyQuery
->;
-export type StationeryPageQueryResult = Apollo.QueryResult<
-  StationeryPageQuery,
-  StationeryPageQueryVariables
 >;
 export const ViewerContextProviderDocument = gql`
   query ViewerContextProvider {

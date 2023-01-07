@@ -1,7 +1,7 @@
-import {Button, Popover} from 'antd';
-import {useEffect, useRef, useState} from 'react';
+import {Button, Popover, Spin} from 'antd';
+import React, {useState} from 'react';
 import styles from './EmojiPicker.module.css';
-import data from '@emoji-mart/data';
+import dynamic from 'next/dynamic';
 
 export default function EmojiPicker({
   value,
@@ -11,35 +11,22 @@ export default function EmojiPicker({
   onChange: (emoji: string | null) => void;
 }) {
   const [pickerVisible, setPickerVisible] = useState(false);
-  const ref = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    if (pickerVisible) {
-      import('emoji-mart').then((EmojiMart) => {
-        new EmojiMart.Picker({
-          // @ts-ignore
-          data,
-          ref,
-          onEmojiSelect: ({native}: any) => {
-            setPickerVisible(false);
-            onChange(native ?? null);
-          },
-        });
-      });
-    } else {
-      ref.current = null;
-    }
-  }, [pickerVisible]);
 
   return (
     <Popover
       className={styles.root}
       placement="topLeft"
-      visible={pickerVisible}
-      onVisibleChange={setPickerVisible}
+      open={pickerVisible}
+      onOpenChange={setPickerVisible}
       overlayClassName={styles.overlay}
-      destroyTooltipOnHide
-      content={<div ref={ref} style={{width: 300, height: 300}} />}
+      content={
+        <EmojiPickerContent
+          onSelect={({native}: any) => {
+            setPickerVisible(false);
+            onChange(native ?? null);
+          }}
+        />
+      }
       trigger="click"
     >
       <Button
@@ -51,3 +38,11 @@ export default function EmojiPicker({
     </Popover>
   );
 }
+
+const EmojiPickerContent = dynamic(() => import('./LazyEmojiPicker'), {
+  loading: () => (
+    <div className={styles.spin}>
+      <Spin />
+    </div>
+  ),
+});

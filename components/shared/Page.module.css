@@ -6,11 +6,18 @@
   display: flex;
   flex-direction: row;
   padding: 0;
+  padding-inline: 0 !important;
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 1000;
+}
+
+.title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .logo {
@@ -31,6 +38,14 @@
   align-self: center;
   margin-right: 15px;
   cursor: pointer;
+}
+
+.padded {
+  padding: 15px;
+}
+
+.accessory > *{
+  margin-left: 12px;
 }
 
 @media print {

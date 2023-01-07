@@ -101,7 +101,7 @@ export default function Booking() {
       pathname: router.pathname,
       query: {...router.query, band: selected},
     });
-  }, [selected]);
+  }, [router, selected]);
 
   return (
     <Page>
@@ -121,12 +121,10 @@ export default function Booking() {
           </div>
         )}
       </AutoSizer>
-      {selected && (
-        <BandApplicationDetails
-          bandApplicationId={selected}
-          onClose={() => setSelected(null)}
-        />
-      )}
+      <BandApplicationDetails
+        bandApplicationId={selected}
+        onClose={() => setSelected(null)}
+      />
     </Page>
   );
 }
@@ -193,6 +191,7 @@ const MemoizedTable = React.memo(
                 <img
                   src={`/genre/${GENRE_ICONS.get(genreCategory)}`}
                   width="30px"
+                  alt="Genre"
                 />
               </Tooltip>
             ),
@@ -326,3 +325,5 @@ const MemoizedTable = React.memo(
     );
   },
 );
+
+MemoizedTable.displayName = 'MemoizedTable';

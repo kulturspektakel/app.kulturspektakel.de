@@ -32,7 +32,7 @@ function useRelativeDate(date: Date) {
       setRes(relativeDate(date));
     }, 10000);
     return clearInterval(interval);
-  }, [res, setRes]);
+  }, [date, res, setRes]);
 
   return res;
 }

@@ -10,9 +10,9 @@ import {Column} from '@ant-design/plots';
 import {useMemo} from 'react';
 import {paymentName} from '../../utils/payments';
 import {salesColumns} from './RevenueTable';
-import {ColumnType} from 'antd/lib/table';
 import {differenceInHours} from 'date-fns';
 import {Datum} from '@ant-design/charts';
+import {ColumnType} from 'antd/es/table';
 
 gql`
   query RevenueDetails(

@@ -1,4 +1,4 @@
-import {Button, Form, Input, PageHeader, Spin, Table, Tooltip} from 'antd';
+import {Button, Input, Spin, Table, Tooltip} from 'antd';
 import {useRouter} from 'next/router';
 import Page from '../../components/shared/Page';
 import {gql} from '@apollo/client';
@@ -17,6 +17,7 @@ gql`
         transactions {
           balanceTotal
           data {
+            clientId
             transactionType
             balanceAfter
             balanceBefore
@@ -52,22 +53,30 @@ export default function CardInfo() {
   const card = data?.node?.__typename === 'Card' ? data.node : undefined;
 
   return (
-    <Page>
-      <PageHeader title={`Karte ${id ?? ''}`}>
-        {loading && <Spin />}
-        {!id && (
-          <form name="horizontal_login" method="GET" action="">
+    <Page
+      title={`Karte ${id ?? ''}`}
+      accessory={
+        !id && (
+          <form
+            name="horizontal_login"
+            method="GET"
+            action=""
+            style={{display: 'flex'}}
+          >
             <Input placeholder="Karten-ID" name="id" id="id" width="50%" />
             <Button type="primary" htmlType="submit">
               Anzeigen
             </Button>
           </form>
-        )}
-      </PageHeader>
+        )
+      }
+    >
+      {loading && <Spin />}
       {card && (
         <Table
           pagination={false}
           size="small"
+          rowKey={(r) => String(r.clientId)}
           columns={[
             {
               title: 'Bude',
@@ -77,7 +86,7 @@ export default function CardInfo() {
                   return (
                     <Tooltip
                       title={r.Order[0].items.map((i) => (
-                        <div>
+                        <div key={i.name}>
                           {i.amount}× {i.name}
                         </div>
                       ))}

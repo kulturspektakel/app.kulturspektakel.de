@@ -1,4 +1,4 @@
-import {Modal, PageHeader, Button, Input, Spin, Empty} from 'antd';
+import {Modal, Button, Input, Spin, Empty, Layout} from 'antd';
 import React, {useState, useCallback} from 'react';
 import Page from '../../components/shared/Page';
 import {gql} from '@apollo/client';
@@ -45,10 +45,27 @@ export default function Lists() {
   }, [setNewListName, setCreateModalVisible, newListName, create]);
 
   return (
-    <Page>
+    <Page
+      title="Preislisten"
+      padded
+      accessory={
+        <>
+          <Button key="1" href="/products/print" target="_blank">
+            Drucken
+          </Button>
+          <Button
+            key="2"
+            type="primary"
+            onClick={() => setCreateModalVisible(true)}
+          >
+            Neue Preisliste
+          </Button>
+        </>
+      }
+    >
       <Modal
         title="Neue Preisliste erstellen"
-        visible={createModalVisible}
+        open={createModalVisible}
         okText="Erstellen"
         cancelText="Abbrechen"
         onCancel={() => setCreateModalVisible(false)}
@@ -72,45 +89,30 @@ export default function Lists() {
           />
         </form>
       </Modal>
-      <PageHeader
-        title="Preislisten"
-        extra={[
-          <Button key="1" href="/products/print" target="_blank">
-            Drucken
-          </Button>,
-          <Button
-            key="2"
-            type="primary"
-            onClick={() => setCreateModalVisible(true)}
-          >
-            Neue Preisliste
-          </Button>,
-        ]}
-      >
-        {data?.productLists.length === 0 && (
-          <Empty description="Keine Preislisten" />
-        )}
-        {data?.productLists ? (
-          <>
-            <ProductListContainer
-              data={data?.productLists.filter((p) => p.active)}
-            />
-            <ProductListContainer
-              title="Deaktivierte Listen"
-              data={data?.productLists.filter((p) => !p.active)}
-            />
-          </>
-        ) : (
-          <div
-            style={{
-              textAlign: 'center',
-              padding: 50,
-            }}
-          >
-            <Spin size="large" />
-          </div>
-        )}
-      </PageHeader>
+
+      {data?.productLists.length === 0 && (
+        <Empty description="Keine Preislisten" />
+      )}
+      {data?.productLists ? (
+        <>
+          <ProductListContainer
+            data={data?.productLists.filter((p) => p.active)}
+          />
+          <ProductListContainer
+            title="Deaktivierte Listen"
+            data={data?.productLists.filter((p) => !p.active)}
+          />
+        </>
+      ) : (
+        <div
+          style={{
+            textAlign: 'center',
+            padding: 50,
+          }}
+        >
+          <Spin size="large" />
+        </div>
+      )}
     </Page>
   );
 }

@@ -12,6 +12,7 @@ import Demo from './Demo';
 import Rater from './Rater';
 import Rating from './Rating';
 import {GlobalOutlined} from '@ant-design/icons';
+import styles from './BandApplicationDetails.module.css';
 
 gql`
   query ApplicationDetails($id: ID!) {
@@ -61,13 +62,14 @@ export default function BandApplicationDetails({
   bandApplicationId,
   onClose,
 }: {
-  bandApplicationId: string;
+  bandApplicationId: string | null;
   onClose: () => void;
 }) {
   const {data} = useApplicationDetailsQuery({
     variables: {
-      id: bandApplicationId,
+      id: bandApplicationId!,
     },
+    skip: !bandApplicationId,
   });
 
   return (
@@ -79,7 +81,7 @@ export default function BandApplicationDetails({
       width={400}
       closable={true}
       onClose={onClose}
-      visible={Boolean(bandApplicationId)}
+      open={Boolean(bandApplicationId)}
     >
       {data?.node?.__typename === 'BandApplication' ? (
         <DrawerContent {...data.node} />
@@ -102,7 +104,7 @@ function DrawerContent(
       <Row>
         {props.website && (
           <Col span={8}>
-            <a href={props.website} target="_blank">
+            <a href={props.website} target="_blank" rel="noreferrer">
               <Statistic
                 valueStyle={{color: '#1890ff'}}
                 value={' '}
@@ -114,7 +116,7 @@ function DrawerContent(
         )}
         {props.facebook && (
           <Col span={8}>
-            <a href={props.facebook} target="_blank">
+            <a href={props.facebook} target="_blank" rel="noreferrer">
               <Statistic
                 valueStyle={{color: '#1890ff'}}
                 value={props.facebookLikes ?? '?'}
@@ -125,7 +127,11 @@ function DrawerContent(
         )}
         {props.instagram && (
           <Col span={8}>
-            <a href={`https://instagram.com/${props.instagram}`} target="_blank">
+            <a
+              href={`https://instagram.com/${props.instagram}`}
+              target="_blank"
+              rel="noreferrer"
+            >
               <Statistic
                 valueStyle={{color: '#1890ff'}}
                 value={props.instagramFollower ?? '?'}
@@ -136,7 +142,7 @@ function DrawerContent(
         )}
       </Row>
       <br />
-      <h4>Bewertung</h4>
+      <h4 className={styles.h4}>Bewertung</h4>
       <Row>
         <Col span={8}>
           <Rater
@@ -160,39 +166,41 @@ function DrawerContent(
       <br />
 
       {props.hasPreviouslyPlayed && (
-        <div style={{display: 'flex'}}>
-          <h4>Schonmal gespielt:</h4>&nbsp;
+        <div className={styles.row}>
+          <h4 className={styles.h4}>Schonmal gespielt:</h4>&nbsp;
           {PreviouslyPlayedText(props.hasPreviouslyPlayed)}
         </div>
       )}
-      {(props.numberOfArtists && props.numberOfNonMaleArtists) ? (
-        <div style={{display: 'flex'}}>
-          <h4>Bandgröße:</h4>&nbsp;{props.numberOfArtists} Personen (
-          {(
-            (props.numberOfArtists - props.numberOfNonMaleArtists) /
-            props.numberOfArtists
-          ).toLocaleString(undefined, {
-            style: 'percent',
-            maximumFractionDigits: 1,
-          })}
-          &nbsp;männlich)
-        </div>
-      ): undefined }
+      {(props.numberOfArtists ?? 0) > 0 &&
+        (props.numberOfNonMaleArtists ?? 0) > 0 && (
+          <div className={styles.row}>
+            <h4 className={styles.h4}>Bandgröße:</h4>&nbsp;
+            {props.numberOfArtists} Personen (
+            {(
+              (props.numberOfArtists! - props.numberOfNonMaleArtists!) /
+              props.numberOfArtists!
+            ).toLocaleString(undefined, {
+              style: 'percent',
+              maximumFractionDigits: 1,
+            })}
+            &nbsp;männlich)
+          </div>
+        )}
 
       {props.knowsKultFrom && (
         <>
-          <h4>Woher kennt ihr das Kult?</h4>
+          <h4 className={styles.h4}>Woher kennt ihr das Kult?</h4>
           <EllipsisText>{props.knowsKultFrom}</EllipsisText>
         </>
       )}
 
       {props.description && (
         <>
-          <h4>Bandbeschreibung</h4>
+          <h4 className={styles.h4}>Bandbeschreibung</h4>
           <EllipsisText>{props.description}</EllipsisText>
         </>
       )}
-      <h4>Kontakt</h4>
+      <h4 className={styles.h4}>Kontakt</h4>
       <p>
         {props.contactName}
         <br />

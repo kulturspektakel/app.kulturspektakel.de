@@ -1,5 +1,10 @@
 import ProductRow from './ProductRow';
-import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+  OnDragEndResponder,
+} from 'react-beautiful-dnd';
 import React, {useState, useCallback, useEffect} from 'react';
 import EmojiPicker from './EmojiPicker';
 import {Card, Button, message, Modal} from 'antd';
@@ -77,7 +82,7 @@ export default function ProductList({list}: {list: ProductListFragment}) {
 
   const [mutate] = useUpsertProductListMutation({});
 
-  const onDragEnd = useCallback(
+  const onDragEnd = useCallback<OnDragEndResponder>(
     (result) => {
       if (!result.destination) {
         return;
@@ -109,6 +114,7 @@ export default function ProductList({list}: {list: ProductListFragment}) {
       size="small"
       actions={[
         <Button
+          key="save"
           icon={<CheckCircleOutlined />}
           type="link"
           disabled={!dirty}
@@ -128,6 +134,7 @@ export default function ProductList({list}: {list: ProductListFragment}) {
           Speichern
         </Button>,
         <Button
+          key="product"
           icon={<PlusCircleOutlined />}
           type="link"
           style={{color: products.length >= 30 ? undefined : '#52c41a'}}
@@ -139,6 +146,7 @@ export default function ProductList({list}: {list: ProductListFragment}) {
           Produkt
         </Button>,
         <Button
+          key="disable"
           icon={<PoweroffOutlined />}
           type="link"
           danger={list.active}

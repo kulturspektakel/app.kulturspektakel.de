@@ -1,7 +1,6 @@
 import styles from './ProductRow.module.css';
-import {Input, Tooltip} from 'antd';
+import {Checkbox, Input, Tooltip} from 'antd';
 import React, {useRef} from 'react';
-import Checkbox from 'antd/lib/checkbox/Checkbox';
 import {gql} from '@apollo/client';
 import {ProductRowFragment} from '../../types/graphql';
 
@@ -26,7 +25,7 @@ const formatter = new Intl.NumberFormat('de-DE', {
   maximumFractionDigits: 2,
 });
 
-export default React.forwardRef<Ref, Props>(
+const ProductRow = React.forwardRef<Ref, Props>(
   ({data, index, onChange, ...props}: Props, ref) => {
     const inputRef = useRef(null);
     return (
@@ -76,3 +75,7 @@ export default React.forwardRef<Ref, Props>(
     );
   },
 );
+
+ProductRow.displayName = 'ProductRow';
+
+export default ProductRow;
