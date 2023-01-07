@@ -171,21 +171,20 @@ function DrawerContent(
           {PreviouslyPlayedText(props.hasPreviouslyPlayed)}
         </div>
       )}
-      {(props.numberOfArtists ?? 0) > 0 &&
-        (props.numberOfNonMaleArtists ?? 0) > 0 && (
-          <div className={styles.row}>
-            <h4 className={styles.h4}>Bandgröße:</h4>&nbsp;
-            {props.numberOfArtists} Personen (
-            {(
-              (props.numberOfArtists! - props.numberOfNonMaleArtists!) /
-              props.numberOfArtists!
-            ).toLocaleString(undefined, {
-              style: 'percent',
-              maximumFractionDigits: 1,
-            })}
-            &nbsp;männlich)
-          </div>
-        )}
+      {props.numberOfArtists != null && props.numberOfNonMaleArtists != null && (
+        <div className={styles.row}>
+          <h4 className={styles.h4}>Bandgröße:</h4>&nbsp;
+          {props.numberOfArtists} Personen (
+          {(
+            (props.numberOfArtists! - props.numberOfNonMaleArtists!) /
+            props.numberOfArtists!
+          ).toLocaleString(undefined, {
+            style: 'percent',
+            maximumFractionDigits: 1,
+          })}
+          &nbsp;männlich)
+        </div>
+      )}
 
       {props.knowsKultFrom && (
         <>
