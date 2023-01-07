@@ -11,25 +11,6 @@ export default function EmojiPicker({
   onChange: (emoji: string | null) => void;
 }) {
   const [pickerVisible, setPickerVisible] = useState(false);
-  const ref = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    if (pickerVisible) {
-      import('emoji-mart').then((EmojiMart) => {
-        new EmojiMart.Picker({
-          // @ts-ignore
-          data,
-          ref,
-          onEmojiSelect: ({native}: any) => {
-            setPickerVisible(false);
-            onChange(native ?? null);
-          },
-        });
-      });
-    } else {
-      ref.current = null;
-    }
-  }, [pickerVisible]);
 
   return (
     <Popover
@@ -38,8 +19,14 @@ export default function EmojiPicker({
       open={pickerVisible}
       onOpenChange={setPickerVisible}
       overlayClassName={styles.overlay}
-      destroyTooltipOnHide
-      content={<div ref={ref} />}
+      content={
+        <EmojiPickerContent
+          onSelect={({native}: any) => {
+            setPickerVisible(false);
+            onChange(native ?? null);
+          }}
+        />
+      }
       trigger="click"
     >
       <Button
@@ -50,4 +37,19 @@ export default function EmojiPicker({
       />
     </Popover>
   );
+}
+
+function EmojiPickerContent(props: {onSelect: (e: any) => void}) {
+  const ref = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    import('emoji-mart').then((EmojiMart) => {
+      new EmojiMart.Picker({
+        // @ts-ignore
+        data,
+        ref,
+        onEmojiSelect: props.onSelect,
+      });
+    });
+  }, [ref]);
+  return <div ref={ref} />;
 }
