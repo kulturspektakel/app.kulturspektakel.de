@@ -1,5 +1,5 @@
 import {gql} from '@apollo/client';
-import {Col, Drawer, message, Popconfirm, Row, Statistic} from 'antd';
+import {Col, Drawer, message, Popconfirm, Row, Skeleton, Statistic} from 'antd';
 import React, {useState} from 'react';
 import {
   useApplicationDetailsQuery,
@@ -75,7 +75,16 @@ export default function BandApplicationDetails({
   return (
     <Drawer
       title={
-        data?.node?.__typename === 'BandApplication' ? data.node.bandname : ''
+        data?.node?.__typename === 'BandApplication' ? (
+          data.node.bandname
+        ) : (
+          <Skeleton
+            title={true}
+            paragraph={false}
+            active={true}
+            className={styles.skeletonTitle}
+          />
+        )
       }
       placement="right"
       width={400}
@@ -85,7 +94,12 @@ export default function BandApplicationDetails({
     >
       {data?.node?.__typename === 'BandApplication' ? (
         <DrawerContent {...data.node} />
-      ) : null}
+      ) : (
+        <>
+          <Skeleton.Image active={true} className={styles.skeletonImage} />
+          <Skeleton active={true} />
+        </>
+      )}
     </Drawer>
   );
 }
