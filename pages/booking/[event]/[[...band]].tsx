@@ -101,7 +101,8 @@ export default function Booking() {
       pathname: router.pathname,
       query: {...router.query, band: selected},
     });
-  }, [router, selected]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selected]);
 
   return (
     <Page>

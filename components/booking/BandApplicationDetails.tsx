@@ -1,6 +1,6 @@
 import {gql} from '@apollo/client';
 import {Col, Drawer, message, Popconfirm, Row, Skeleton, Statistic} from 'antd';
-import React, {useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   useApplicationDetailsQuery,
   ApplicationDetailsQuery,
@@ -72,11 +72,24 @@ export default function BandApplicationDetails({
     skip: !bandApplicationId,
   });
 
+  const val = useRef(data?.node);
+  useEffect(() => {
+    if (data?.node) {
+      val.current = data.node;
+    } else {
+      setTimeout(() => {
+        if (!data?.node) {
+          val.current = null;
+        }
+      }, 500);
+    }
+  }, [data?.node]);
+
   return (
     <Drawer
       title={
-        data?.node?.__typename === 'BandApplication' ? (
-          data.node.bandname
+        val.current?.__typename === 'BandApplication' ? (
+          val.current.bandname
         ) : (
           <Skeleton
             title={true}
@@ -90,10 +103,11 @@ export default function BandApplicationDetails({
       width={400}
       closable={true}
       onClose={onClose}
+      destroyOnClose={true}
       open={Boolean(bandApplicationId)}
     >
-      {data?.node?.__typename === 'BandApplication' ? (
-        <DrawerContent {...data.node} />
+      {val.current?.__typename === 'BandApplication' ? (
+        <DrawerContent {...val.current} />
       ) : (
         <>
           <Skeleton.Image active={true} className={styles.skeletonImage} />
