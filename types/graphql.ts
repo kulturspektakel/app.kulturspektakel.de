@@ -536,9 +536,9 @@ export type ApplicationDetailsQueryVariables = Exact<{
 export type ApplicationDetailsQuery = {
   __typename?: 'Query';
   node?:
-    | {__typename?: 'Area'}
+    | {__typename: 'Area'}
     | {
-        __typename?: 'BandApplication';
+        __typename: 'BandApplication';
         id: string;
         bandname: string;
         instagram?: string | null;
@@ -568,14 +568,14 @@ export type ApplicationDetailsQuery = {
           };
         }>;
       }
-    | {__typename?: 'BandPlaying'}
-    | {__typename?: 'Card'}
-    | {__typename?: 'Device'}
-    | {__typename?: 'Event'}
-    | {__typename?: 'NuclinoPage'}
-    | {__typename?: 'Product'}
-    | {__typename?: 'ProductList'}
-    | {__typename?: 'Viewer'}
+    | {__typename: 'BandPlaying'}
+    | {__typename: 'Card'}
+    | {__typename: 'Device'}
+    | {__typename: 'Event'}
+    | {__typename: 'NuclinoPage'}
+    | {__typename: 'Product'}
+    | {__typename: 'ProductList'}
+    | {__typename: 'Viewer'}
     | null;
 };
 
@@ -1096,6 +1096,7 @@ export const RatingFragmentDoc = gql`
 export const ApplicationDetailsDocument = gql`
   query ApplicationDetails($id: ID!) {
     node(id: $id) {
+      __typename
       ... on BandApplication {
         id
         bandname

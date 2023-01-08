@@ -97,10 +97,14 @@ export default function Booking() {
     router.query.band ? String(router.query.band) : null,
   );
   useEffect(() => {
-    router.push({
-      pathname: router.pathname,
-      query: {...router.query, band: selected},
-    });
+    router.push(
+      {
+        pathname: router.pathname,
+        query: {...router.query, band: selected},
+      },
+      undefined,
+      {shallow: true},
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selected]);
 

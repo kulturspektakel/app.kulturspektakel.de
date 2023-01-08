@@ -17,6 +17,7 @@ import styles from './BandApplicationDetails.module.css';
 gql`
   query ApplicationDetails($id: ID!) {
     node(id: $id) {
+      __typename
       ... on BandApplication {
         id
         bandname

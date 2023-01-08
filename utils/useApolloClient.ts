@@ -43,6 +43,7 @@ function useApolloClient(
   initialState: NormalizedCacheObject | null = null,
   cookie?: string,
 ) {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const store = useMemo(() => initializeApolloClient(initialState, cookie), []);
   return store;
 }
