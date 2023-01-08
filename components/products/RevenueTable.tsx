@@ -1,13 +1,22 @@
-import {Table} from 'antd';
+import {Spin, Table} from 'antd';
 import {useMemo} from 'react';
 import {Billable, RevenueQuery} from '../../types/graphql';
 import currencyFormatter from '../../utils/currencyFormatter';
 import {isRevenue} from '../../utils/payments';
-import RevenueDetails from './RevenueDetails';
 import styles from './RevenueTable.module.css';
 import {RangeValue} from 'rc-picker/lib/interface';
 import {ColumnType} from 'antd/es/table';
 import dayjs from 'dayjs';
+import dynamic from 'next/dynamic';
+
+const LazyRevenueDetails = dynamic(() => import('./RevenueDetails'), {
+  loading: () => (
+    <div className={styles.spin}>
+      <Spin />
+    </div>
+  ),
+  ssr: false,
+});
 
 export default function RevenueTable({
   loading,
@@ -41,7 +50,7 @@ export default function RevenueTable({
       rowKey="id"
       expandable={{
         expandedRowRender: (record) => (
-          <RevenueDetails
+          <LazyRevenueDetails
             productListId={record.id}
             before={range?.[1]?.toDate() ?? new Date()}
             after={range?.[0]?.toDate() ?? new Date()}

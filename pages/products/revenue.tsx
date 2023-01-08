@@ -122,21 +122,19 @@ export default function Revenue() {
             ))}
           </Select>
           &nbsp;
-          <React.StrictMode>
-            <RangePicker
-              format="DD.MM.YYYY HH:mm"
-              allowEmpty={[true, true]}
-              showTime
-              onChange={(e) => {
-                const a = e?.[0];
-                const b = e?.[1];
-                if (a && b) {
-                  setRange([a, b]);
-                }
-              }}
-              value={range}
-            />
-          </React.StrictMode>
+          <RangePicker
+            format="DD.MM.YYYY HH:mm"
+            allowEmpty={[true, true]}
+            showTime
+            onChange={(e) => {
+              const a = e?.[0];
+              const b = e?.[1];
+              if (a && b) {
+                setRange([a, b]);
+              }
+            }}
+            value={range}
+          />
         </>
       }
     >
