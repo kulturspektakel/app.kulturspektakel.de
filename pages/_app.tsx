@@ -45,24 +45,27 @@ const App = ({Component, pageProps, initialApolloState}: AppProps & Props) => {
 App.getInitialProps = async (
   app: AppContext,
 ): Promise<AppInitialProps & Props> => {
-  const apolloClient = initializeApolloClient(
-    null,
-    app.router.query.token
-      ? `token=${app.router.query.token}`
-      : app.ctx.req?.headers.cookie,
-  );
+  const cookie = app.router.query.token
+    ? `token=${app.router.query.token}`
+    : app.ctx.req?.headers.cookie;
+
   const appProps = await NextApp.getInitialProps(app);
 
-  const initialApolloState = await apolloClient
-    .query<ViewerContextProviderQuery>({
-      query: ViewerQ,
-    })
-    .then(({data}) => {
-      if (data.viewer) {
-        return apolloClient.cache.extract();
-      }
-    })
-    .catch(() => undefined);
+  let initialApolloState: NormalizedCacheObject | undefined;
+
+  if (cookie && typeof window === 'undefined') {
+    const apolloClient = initializeApolloClient(null, cookie);
+    initialApolloState = await apolloClient
+      .query<ViewerContextProviderQuery>({
+        query: ViewerQ,
+      })
+      .then(({data}) => {
+        if (data.viewer) {
+          return apolloClient.cache.extract();
+        }
+      })
+      .catch(() => undefined);
+  }
 
   return {
     ...appProps,
