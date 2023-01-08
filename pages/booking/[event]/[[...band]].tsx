@@ -254,6 +254,7 @@ const MemoizedTable = React.memo(
             width: 150,
             render: (_, {id, bandApplicationRating}) => (
               <Rater
+                bandApplicationRating={bandApplicationRating}
                 bandApplicationId={id}
                 value={
                   bandApplicationRating.find(

@@ -146,6 +146,7 @@ function DrawerContent(
       <Row>
         <Col span={8}>
           <Rater
+            bandApplicationRating={props.bandApplicationRating}
             bandApplicationId={props.id}
             value={
               props.bandApplicationRating.find(
