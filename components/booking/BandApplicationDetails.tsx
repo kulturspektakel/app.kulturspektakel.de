@@ -1,4 +1,4 @@
-import {gql} from '@apollo/client';
+import {gql, useApolloClient} from '@apollo/client';
 import {Col, Drawer, message, Popconfirm, Row, Skeleton, Statistic} from 'antd';
 import React, {useEffect, useRef, useState} from 'react';
 import {
@@ -14,7 +14,7 @@ import Rating from './Rating';
 import {GlobalOutlined} from '@ant-design/icons';
 import styles from './BandApplicationDetails.module.css';
 
-gql`
+const ApplicationDetails = gql`
   query ApplicationDetails($id: ID!) {
     node(id: $id) {
       __typename
@@ -40,7 +40,9 @@ gql`
       }
     }
   }
+`;
 
+gql`
   fragment ContactedBy on BandApplication {
     contactedByViewer {
       id
@@ -66,31 +68,27 @@ export default function BandApplicationDetails({
   bandApplicationId: string | null;
   onClose: () => void;
 }) {
+  const previousId = useRef(bandApplicationId);
+  // using previous ID, during leave animation
+  const id = bandApplicationId ?? previousId?.current;
   const {data} = useApplicationDetailsQuery({
     variables: {
-      id: bandApplicationId!,
+      id: id!,
     },
-    skip: !bandApplicationId,
+    skip: !id,
   });
 
-  const val = useRef(data?.node);
   useEffect(() => {
-    if (data?.node) {
-      val.current = data.node;
-    } else {
-      setTimeout(() => {
-        if (!data?.node) {
-          val.current = null;
-        }
-      }, 500);
+    if (bandApplicationId) {
+      previousId.current = bandApplicationId;
     }
-  }, [data?.node]);
+  }, [bandApplicationId]);
 
   return (
     <Drawer
       title={
-        val.current?.__typename === 'BandApplication' ? (
-          val.current.bandname
+        data?.node?.__typename === 'BandApplication' ? (
+          data?.node.bandname
         ) : (
           <Skeleton
             title={true}
@@ -107,8 +105,8 @@ export default function BandApplicationDetails({
       destroyOnClose={true}
       open={Boolean(bandApplicationId)}
     >
-      {val.current?.__typename === 'BandApplication' ? (
-        <DrawerContent {...val.current} />
+      {data?.node?.__typename === 'BandApplication' ? (
+        <DrawerContent {...data?.node} />
       ) : (
         <>
           <Skeleton.Image active={true} className={styles.skeletonImage} />

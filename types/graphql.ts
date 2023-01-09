@@ -50,6 +50,7 @@ export type BandApplication = Node & {
   description?: Maybe<Scalars['String']>;
   distance?: Maybe<Scalars['Float']>;
   email: Scalars['String'];
+  eventId: Scalars['ID'];
   facebook?: Maybe<Scalars['String']>;
   facebookLikes?: Maybe<Scalars['Int']>;
   genre?: Maybe<Scalars['String']>;
@@ -62,6 +63,7 @@ export type BandApplication = Node & {
   knowsKultFrom?: Maybe<Scalars['String']>;
   numberOfArtists?: Maybe<Scalars['Int']>;
   numberOfNonMaleArtists?: Maybe<Scalars['Int']>;
+  otherApplications: Array<BandApplication>;
   rating?: Maybe<Scalars['Float']>;
   website?: Maybe<Scalars['String']>;
 };
