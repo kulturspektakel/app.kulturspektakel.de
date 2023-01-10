@@ -50,6 +50,7 @@ export type BandApplication = Node & {
   description?: Maybe<Scalars['String']>;
   distance?: Maybe<Scalars['Float']>;
   email: Scalars['String'];
+  event: Event;
   eventId: Scalars['ID'];
   facebook?: Maybe<Scalars['String']>;
   facebookLikes?: Maybe<Scalars['Int']>;
@@ -63,7 +64,8 @@ export type BandApplication = Node & {
   knowsKultFrom?: Maybe<Scalars['String']>;
   numberOfArtists?: Maybe<Scalars['Int']>;
   numberOfNonMaleArtists?: Maybe<Scalars['Int']>;
-  otherApplications: Array<BandApplication>;
+  pastApplications: Array<BandApplication>;
+  pastPerformances: Array<BandPlaying>;
   rating?: Maybe<Scalars['Float']>;
   website?: Maybe<Scalars['String']>;
 };
@@ -76,8 +78,11 @@ export type BandApplicationRating = {
 
 export type BandPlaying = Node & {
   __typename?: 'BandPlaying';
+  area: Area;
   description?: Maybe<Scalars['String']>;
   endTime: Scalars['DateTime'];
+  event: Event;
+  eventId: Scalars['ID'];
   genre?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
   name: Scalars['String'];
@@ -559,9 +564,15 @@ export type ApplicationDetailsQuery = {
         hasPreviouslyPlayed?: PreviouslyPlayed | null;
         website?: string | null;
         rating?: number | null;
-        otherApplications: Array<{
+        pastApplications: Array<{
           __typename?: 'BandApplication';
-          eventId: string;
+          event: {__typename?: 'Event'; id: string; start: Date};
+        }>;
+        pastPerformances: Array<{
+          __typename?: 'BandPlaying';
+          startTime: Date;
+          event: {__typename?: 'Event'; id: string; start: Date};
+          area: {__typename?: 'Area'; displayName: string};
         }>;
         bandApplicationRating: Array<{
           __typename?: 'BandApplicationRating';
@@ -1121,8 +1132,21 @@ export const ApplicationDetailsDocument = gql`
         numberOfNonMaleArtists
         hasPreviouslyPlayed
         website
-        otherApplications {
-          eventId
+        pastApplications {
+          event {
+            id
+            start
+          }
+        }
+        pastPerformances {
+          startTime
+          event {
+            id
+            start
+          }
+          area {
+            displayName
+          }
         }
         ...Rating
       }

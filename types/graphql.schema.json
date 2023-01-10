@@ -243,6 +243,18 @@
             "deprecationReason": null
           },
           {
+            "name": "event",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {"kind": "OBJECT", "name": "Event", "ofType": null}
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "eventId",
             "description": null,
             "args": [],
@@ -371,7 +383,7 @@
             "deprecationReason": null
           },
           {
-            "name": "otherApplications",
+            "name": "pastApplications",
             "description": null,
             "args": [],
             "type": {
@@ -386,6 +398,30 @@
                   "ofType": {
                     "kind": "OBJECT",
                     "name": "BandApplication",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "pastPerformances",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "BandPlaying",
                     "ofType": null
                   }
                 }
@@ -457,6 +493,18 @@
         "description": null,
         "fields": [
           {
+            "name": "area",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {"kind": "OBJECT", "name": "Area", "ofType": null}
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "description",
             "description": null,
             "args": [],
@@ -472,6 +520,30 @@
               "kind": "NON_NULL",
               "name": null,
               "ofType": {"kind": "SCALAR", "name": "DateTime", "ofType": null}
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "event",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {"kind": "OBJECT", "name": "Event", "ofType": null}
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "eventId",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {"kind": "SCALAR", "name": "ID", "ofType": null}
             },
             "isDeprecated": false,
             "deprecationReason": null

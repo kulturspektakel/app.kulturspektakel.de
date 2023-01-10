@@ -10,7 +10,7 @@ import {
   Tag,
   Tooltip,
 } from 'antd';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {
   useApplicationDetailsQuery,
   ApplicationDetailsQuery,
@@ -47,8 +47,21 @@ gql`
         numberOfNonMaleArtists
         hasPreviouslyPlayed
         website
-        otherApplications {
-          eventId
+        pastApplications {
+          event {
+            id
+            start
+          }
+        }
+        pastPerformances {
+          startTime
+          event {
+            id
+            start
+          }
+          area {
+            displayName
+          }
         }
         ...Rating
       }
@@ -129,15 +142,30 @@ export default function BandApplicationDetails({
   );
 }
 
-function DrawerContent(
-  props: Extract<
-    ApplicationDetailsQuery['node'],
-    {__typename?: 'BandApplication'}
-  >,
-) {
+type Props = Extract<
+  ApplicationDetailsQuery['node'],
+  {__typename?: 'BandApplication'}
+>;
+
+function DrawerContent(props: Props) {
   const [contacted] = useMarkAsContextedMutation();
   const viewer = useViewerContext();
   const {query} = useRouter();
+
+  const history = useMemo<
+    Array<Props['pastApplications'][number] | Props['pastPerformances'][number]>
+  >(
+    () =>
+      [
+        ...props.pastApplications.filter(
+          (a) =>
+            !props.pastPerformances.every((p) => p.event.id === a.event.id),
+        ),
+        ...props.pastPerformances,
+      ].sort((a, b) => a.event.start.getTime() - b.event.start.getTime()),
+    [props.pastApplications, props.pastPerformances],
+  );
+
   return (
     <>
       {props.demo && <Demo demo={props.demo} />}
@@ -213,13 +241,31 @@ function DrawerContent(
         </div>
       )}
 
-      {props.otherApplications.length > 0 && (
+      {history.length > 0 && (
         <div className={styles.row}>
           <h4 className={styles.h4}>Frühere Bewerbungen/Auftritte:</h4>
           <p>
-            {props.otherApplications.map((o) => (
-              <Tooltip key={o.eventId} title="Bewerbung">
-                <Tag>{o.eventId}</Tag>
+            {history.map((o) => (
+              <Tooltip
+                key={o.event.id}
+                title={
+                  o.__typename === 'BandPlaying'
+                    ? `${o.area.displayName}, ${o.startTime.toLocaleString(
+                        'de-DE',
+                        {
+                          weekday: 'short',
+                          minute: '2-digit',
+                          hour: '2-digit',
+                        },
+                      )}`
+                    : 'Bewerbung'
+                }
+              >
+                <Tag
+                  color={o.__typename === 'BandPlaying' ? 'blue' : undefined}
+                >
+                  {o.event.start.getFullYear()}
+                </Tag>
               </Tooltip>
             ))}
           </p>
