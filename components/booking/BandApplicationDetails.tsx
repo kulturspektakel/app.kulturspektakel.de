@@ -1,5 +1,15 @@
 import {gql, useApolloClient} from '@apollo/client';
-import {Col, Drawer, message, Popconfirm, Row, Skeleton, Statistic} from 'antd';
+import {
+  Col,
+  Drawer,
+  message,
+  Popconfirm,
+  Row,
+  Skeleton,
+  Statistic,
+  Tag,
+  Tooltip,
+} from 'antd';
 import React, {useEffect, useRef, useState} from 'react';
 import {
   useApplicationDetailsQuery,
@@ -13,8 +23,9 @@ import Rater from './Rater';
 import Rating from './Rating';
 import {GlobalOutlined} from '@ant-design/icons';
 import styles from './BandApplicationDetails.module.css';
+import {useRouter} from 'next/router';
 
-const ApplicationDetails = gql`
+gql`
   query ApplicationDetails($id: ID!) {
     node(id: $id) {
       __typename
@@ -36,13 +47,14 @@ const ApplicationDetails = gql`
         numberOfNonMaleArtists
         hasPreviouslyPlayed
         website
+        otherApplications {
+          eventId
+        }
         ...Rating
       }
     }
   }
-`;
 
-gql`
   fragment ContactedBy on BandApplication {
     contactedByViewer {
       id
@@ -125,6 +137,7 @@ function DrawerContent(
 ) {
   const [contacted] = useMarkAsContextedMutation();
   const viewer = useViewerContext();
+  const {query} = useRouter();
   return (
     <>
       {props.demo && <Demo demo={props.demo} />}
@@ -199,20 +212,35 @@ function DrawerContent(
           {PreviouslyPlayedText(props.hasPreviouslyPlayed)}
         </div>
       )}
-      {props.numberOfArtists != null && props.numberOfNonMaleArtists != null && (
+
+      {props.otherApplications.length > 0 && (
         <div className={styles.row}>
-          <h4 className={styles.h4}>Bandgröße:</h4>&nbsp;
-          {props.numberOfArtists} Personen (
-          {(
-            (props.numberOfArtists! - props.numberOfNonMaleArtists!) /
-            props.numberOfArtists!
-          ).toLocaleString(undefined, {
-            style: 'percent',
-            maximumFractionDigits: 1,
-          })}
-          &nbsp;männlich)
+          <h4 className={styles.h4}>Frühere Bewerbungen/Auftritte:</h4>
+          <p>
+            {props.otherApplications.map((o) => (
+              <Tooltip key={o.eventId} title="Bewerbung">
+                <Tag>{o.eventId}</Tag>
+              </Tooltip>
+            ))}
+          </p>
         </div>
       )}
+
+      {props.numberOfArtists != null &&
+        props.numberOfNonMaleArtists != null && (
+          <div className={styles.row}>
+            <h4 className={styles.h4}>Bandgröße:</h4>&nbsp;
+            {props.numberOfArtists} Personen (
+            {(
+              (props.numberOfArtists! - props.numberOfNonMaleArtists!) /
+              props.numberOfArtists!
+            ).toLocaleString(undefined, {
+              style: 'percent',
+              maximumFractionDigits: 1,
+            })}
+            &nbsp;männlich)
+          </div>
+        )}
 
       {props.knowsKultFrom && (
         <>

@@ -559,6 +559,10 @@ export type ApplicationDetailsQuery = {
         hasPreviouslyPlayed?: PreviouslyPlayed | null;
         website?: string | null;
         rating?: number | null;
+        otherApplications: Array<{
+          __typename?: 'BandApplication';
+          eventId: string;
+        }>;
         bandApplicationRating: Array<{
           __typename?: 'BandApplicationRating';
           rating: number;
@@ -1117,6 +1121,9 @@ export const ApplicationDetailsDocument = gql`
         numberOfNonMaleArtists
         hasPreviouslyPlayed
         website
+        otherApplications {
+          eventId
+        }
         ...Rating
       }
     }
