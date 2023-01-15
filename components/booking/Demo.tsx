@@ -1,3 +1,5 @@
+import {LinkOutlined} from '@ant-design/icons';
+import {Typography} from 'antd';
 import React from 'react';
 
 export default function Demo({demo}: {demo: string}) {
@@ -5,10 +7,13 @@ export default function Demo({demo}: {demo: string}) {
   const domain = url.hostname.toLowerCase().split('.').slice(-2).join('.');
   const path = url.pathname.split('/');
   let embed = null;
-  let height = null;
+  let height: string | number = 'auto';
+  let borderRadius: number | undefined = undefined;
+
   switch (domain) {
     case 'youtube.com':
-      height = 225;
+      height = 'auto';
+      borderRadius = 8;
       switch (path[1]) {
         case 'watch':
           embed = `https://www.youtube.com/embed/${url.searchParams.get(
@@ -32,7 +37,6 @@ export default function Demo({demo}: {demo: string}) {
 
       break;
     case 'youtu.be':
-      height = 225;
       embed = `https://www.youtube.com/embed/${path[1]}?autoplay=0&fs=0&iv_load_policy=3&showinfo=0&rel=0&cc_load_policy=0&start=0&end=0`;
       break;
     case 'bandcamp.com':
@@ -49,7 +53,7 @@ export default function Demo({demo}: {demo: string}) {
       break;
     case 'spotify.com':
       embed = `https://open.spotify.com/embed${url.pathname}`;
-      height = 300;
+      height = 352;
 
       break;
   }
@@ -59,28 +63,32 @@ export default function Demo({demo}: {demo: string}) {
       {embed && (
         <iframe
           src={embed}
-          width="400"
+          width="100%"
           height={height ?? 0}
           frameBorder="0"
-          style={{borderRadius: 10}}
+          style={{
+            borderRadius,
+            aspectRatio: height === 'auto' ? '16 / 9' : undefined,
+          }}
         />
       )}
-      <p>
-        {!embed && <h4>Demo</h4>}
-        <a
-          style={{
-            whiteSpace: 'nowrap',
-            textOverflow: 'ellipsis',
-            overflow: 'hidden',
-            display: 'block',
-          }}
-          href={demo}
-          target="_blank"
-          rel="noreferrer"
-        >
-          {demo}
-        </a>
-      </p>
+      {!embed && <Typography.Title level={5}>Demo</Typography.Title>}
+      <a
+        style={{
+          whiteSpace: 'nowrap',
+          textOverflow: 'ellipsis',
+          overflow: 'hidden',
+          display: 'block',
+          marginBottom: 24,
+        }}
+        href={demo}
+        target="_blank"
+        rel="noreferrer"
+      >
+        <LinkOutlined />
+        &nbsp;
+        {demo}
+      </a>
     </>
   );
 }

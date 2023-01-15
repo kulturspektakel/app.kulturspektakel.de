@@ -23,6 +23,7 @@ export default function Rating(props: {
       placement="topRight"
     >
       <Statistic
+        style={{display: 'inline-block'}}
         valueStyle={{color: '#1890ff', fontSize: '1.5em'}}
         precision={2}
         value={props.rating}

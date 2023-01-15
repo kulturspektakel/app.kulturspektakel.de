@@ -1,17 +1,14 @@
 import {gql} from '@apollo/client';
 import {
-  Button,
   Col,
-  message,
   Modal,
   Popconfirm,
   Row,
   Skeleton,
   Statistic,
-  Tooltip,
   Typography,
 } from 'antd';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef} from 'react';
 import {
   useApplicationDetailsQuery,
   ApplicationDetailsQuery,
@@ -25,6 +22,7 @@ import Rating from './Rating';
 import {GlobalOutlined} from '@ant-design/icons';
 import styles from './BandApplicationDetails.module.css';
 import BandApplicationTimeline from './BandApplicationTimeline';
+import Clipboard from '../shared/Clipboard';
 
 gql`
   query ApplicationDetails($id: ID!) {
@@ -113,6 +111,7 @@ export default function BandApplicationDetails({
         )
       }
       width="80%"
+      className={styles.modal}
       closable={true}
       onCancel={onClose}
       footer={null}
@@ -142,10 +141,10 @@ function DrawerContent(props: Props) {
 
   return (
     <>
-      <Row>
+      <Row gutter={24}>
         <Col span={12}>
           {props.demo && <Demo demo={props.demo} />}
-          <Row>
+          <Row className={styles.social}>
             {props.website && (
               <Col span={8}>
                 <a href={props.website} target="_blank" rel="noreferrer">
@@ -262,22 +261,13 @@ function DrawerContent(props: Props) {
             okText="Ja"
             cancelText="Nein"
           >
-            <Tooltip title="E-Mailadresse kopieren">
-              <Button
-                onClick={() => {
-                  message.info(`${props.email} in Zwischenablage kopiert`);
-                  navigator.clipboard.writeText(props.email);
-                }}
-                type="link"
-                size="small"
-              >
-                {props.email}
-              </Button>
-            </Tooltip>
+            <Clipboard>{props.email}</Clipboard>
           </Popconfirm>
         </Col>
         <Col span={12}>
-          <Typography.Title level={5}>Bewertung</Typography.Title>
+          <Typography.Title level={5} className={styles.firstHeading}>
+            Bewertung
+          </Typography.Title>
           <Row>
             <Col span={8}>
               <Rater

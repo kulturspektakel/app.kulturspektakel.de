@@ -26,3 +26,17 @@
     padding-bottom: 40px;
     text-align: center;
 }
+
+.copyEmail {
+    padding: 0 !important;
+    border: 0 !important;
+    height: auto !important;
+}
+
+.modal {
+    max-width: 1100px;
+}
+
+.firstHeading {
+    margin-top: 0;
+}

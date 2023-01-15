@@ -1,4 +1,4 @@
-import {DeleteOutlined, MailTwoTone} from '@ant-design/icons';
+import {DeleteOutlined, MailTwoTone, SendOutlined} from '@ant-design/icons';
 import {gql} from '@apollo/client';
 import {Button, Form, Input, Timeline, Tooltip, Typography} from 'antd';
 import React, {useCallback, useMemo, useState} from 'react';
@@ -25,13 +25,7 @@ gql`
       contactedByViewer {
         displayName
       }
-      comments {
-        edges {
-          node {
-            ...Comment
-          }
-        }
-      }
+      ...Comments
     }
     pastPerformances {
       startTime
@@ -44,32 +38,36 @@ gql`
         displayName
       }
     }
-    comments {
-      edges {
-        node {
-          ...Comment
-        }
-      }
-    }
+    ...Comments
   }
 
-  mutation BandApplicationComment($id: ID!, $comment: String!) {
-    createBandApplicationComment(bandApplicationId: $id, comment: $comment) {
-      ...Comment
+  mutation BandApplicationComment($input: BandApplicationCommentInput!) {
+    createBandApplicationComment(input: $input) {
+      ...Comments
     }
   }
 
   mutation BandApplicationCommentDelete($id: ID!) {
-    deleteBandApplicationComment(id: $id)
+    deleteBandApplicationComment(id: $id) {
+      ...Comments
+    }
   }
 
-  fragment Comment on BandApplicationComment {
+  fragment Comments on BandApplication {
     id
-    comment
-    createdAt
-    user {
-      displayName
-      profilePicture
+    comments {
+      totalCount
+      edges {
+        node {
+          id
+          comment
+          createdAt
+          user {
+            displayName
+            profilePicture
+          }
+        }
+      }
     }
   }
 `;
@@ -106,10 +104,11 @@ export default function BandApplicationTimeline(
     }
     await comment({
       variables: {
-        id: props.id,
-        comment: val,
+        input: {
+          bandApplicationId: props.id,
+          comment: val,
+        },
       },
-      optimisticResponse: () => {},
     });
     setVal('');
   }, [comment, props.id, val]);
@@ -117,23 +116,26 @@ export default function BandApplicationTimeline(
   return (
     <>
       <br />
-      <Timeline>
+      <br />
+      <Timeline style={{paddingLeft: 10}}>
         <Timeline.Item dot={<ViewerAvatar />}>
-          <Form onFinish={onSubmit}>
+          <Form onFinish={onSubmit} style={{position: 'relative'}}>
             <Input.TextArea
               onChange={(e) => setVal(e.target.value)}
               disabled={commentResult.loading}
               onPressEnter={onSubmit}
               placeholder="Kommentar schreiben..."
+              rows={3}
+              value={val}
             />
             <Button
+              style={{position: 'absolute', right: 8, bottom: 8}}
               loading={commentResult.loading}
               type="primary"
-              size="small"
               htmlType="submit"
-            >
-              Kommentieren
-            </Button>
+              shape="circle"
+              icon={<SendOutlined />}
+            />
           </Form>
         </Timeline.Item>
         {props.comments.edges?.map(({node}) => (
@@ -146,7 +148,7 @@ export default function BandApplicationTimeline(
             }
           >
             <Typography.Text type="secondary">
-              <RelativeDate date={new Date()} />
+              <RelativeDate date={node.createdAt} />
               &nbsp;
               {node.user.id === viewer!.id && (
                 <Tooltip title="Kommentar löschen">
@@ -155,11 +157,18 @@ export default function BandApplicationTimeline(
                     icon={<DeleteOutlined />}
                     size="small"
                     loading={deleteResult.loading}
+                    onClick={async () => {
+                      await del({
+                        variables: {
+                          id: node.id,
+                        },
+                      });
+                    }}
                   />
                 </Tooltip>
               )}
             </Typography.Text>
-            <p>{node.comment}</p>
+            <Typography.Paragraph>{node.comment}</Typography.Paragraph>
           </Timeline.Item>
         ))}
 
