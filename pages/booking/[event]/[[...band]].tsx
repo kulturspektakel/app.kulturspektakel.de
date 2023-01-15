@@ -1,4 +1,4 @@
-import {Avatar, Checkbox, Table, Tooltip} from 'antd';
+import {Avatar, Checkbox, Table, Tooltip, Typography} from 'antd';
 import React, {useMemo, useState} from 'react';
 import Page from '../../../components/shared/Page';
 import {gql} from '@apollo/client';
@@ -15,6 +15,7 @@ import {useRouter} from 'next/router';
 import {useEffect} from 'react';
 import useViewerContext from '../../../utils/useViewerContext';
 import Rating from '../../../components/booking/Rating';
+import {CommentOutlined} from '@ant-design/icons';
 
 gql`
   fragment Rating on BandApplication {
@@ -42,8 +43,9 @@ gql`
           genre
           genreCategory
           distance
-          facebookLikes
-          instagramFollower
+          comments {
+            totalCount
+          }
           ...ContactedBy
           ...Rating
         }
@@ -229,9 +231,9 @@ const MemoizedTable = React.memo(
                 {distance && (
                   <>
                     <br />
-                    <span style={{opacity: 0.5}}>
+                    <Typography.Text type="secondary">
                       {distance.toFixed()}&thinsp;km
-                    </span>
+                    </Typography.Text>
                   </>
                 )}
               </>
@@ -274,7 +276,7 @@ const MemoizedTable = React.memo(
             title: '',
             dataIndex: 'rating',
             width: 150,
-            render: (_, {id, bandApplicationRating}) => (
+            render: (_, {bandApplicationRating}) => (
               <Avatar.Group>
                 {bandApplicationRating.map((r) => (
                   <Tooltip
@@ -289,41 +291,57 @@ const MemoizedTable = React.memo(
             ),
           },
           {
-            key: 'contactedByViewer',
-            title: 'Kontakt',
-            dataIndex: 'contactedByViewer',
-            width: 80,
-            align: 'center',
-            render: (_, {contactedByViewer, id}) => (
-              <Tooltip
-                title={
-                  contactedByViewer
-                    ? `Kontaktiert von ${contactedByViewer.displayName}`
-                    : 'als kontaktiert markieren'
-                }
-                placement="topLeft"
-              >
-                <Checkbox
-                  checked={Boolean(contactedByViewer)}
-                  onChange={(e) =>
-                    markContacted({
-                      variables: {
-                        contacted: e.target.checked,
-                        id,
-                      },
-                      optimisticResponse: {
-                        markBandApplicationContacted: {
-                          __typename: 'BandApplication',
-                          id,
-                          contactedByViewer: e.target.checked ? viewer : null,
-                        },
-                      },
-                    })
-                  }
-                />
-              </Tooltip>
-            ),
+            key: 'comments',
+            dataIndex: 'comments',
+            width: 50,
+            render: (_, {comments}) =>
+              comments.totalCount > 0 ? (
+                <Tooltip
+                  title={`${comments.totalCount} Kommentar${
+                    comments.totalCount !== 1 ? 'e' : ''
+                  }`}
+                  placement="left"
+                >
+                  <CommentOutlined style={{fontSize: 20, color: '#1890ff'}} />
+                </Tooltip>
+              ) : null,
           },
+          // {
+          //   key: 'contactedByViewer',
+          //   title: 'Kontakt',
+          //   dataIndex: 'contactedByViewer',
+          //   width: 80,
+          //   align: 'center',
+          //   render: (_, {contactedByViewer, id}) => (
+          //     <Tooltip
+          //       title={
+          //         contactedByViewer
+          //           ? `Kontaktiert von ${contactedByViewer.displayName}`
+          //           : 'als kontaktiert markieren'
+          //       }
+          //       placement="topLeft"
+          //     >
+          //       <Checkbox
+          //         checked={Boolean(contactedByViewer)}
+          //         onChange={(e) =>
+          //           markContacted({
+          //             variables: {
+          //               contacted: e.target.checked,
+          //               id,
+          //             },
+          //             optimisticResponse: {
+          //               markBandApplicationContacted: {
+          //                 __typename: 'BandApplication',
+          //                 id,
+          //                 contactedByViewer: e.target.checked ? viewer : null,
+          //               },
+          //             },
+          //           })
+          //         }
+          //       />
+          //     </Tooltip>
+          //   ),
+          // },
         ]}
         dataSource={dataSource}
         rowKey="id"

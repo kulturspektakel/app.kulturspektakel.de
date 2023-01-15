@@ -43,9 +43,11 @@ export type BandApplication = Node & {
   bandApplicationRating: Array<BandApplicationRating>;
   bandname: Scalars['String'];
   city: Scalars['String'];
+  comments: BandApplicationCommentsConnection;
   contactName: Scalars['String'];
   contactPhone: Scalars['String'];
   contactedByViewer?: Maybe<Viewer>;
+  createdAt: Scalars['DateTime'];
   demo?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   distance?: Maybe<Scalars['Float']>;
@@ -68,6 +70,34 @@ export type BandApplication = Node & {
   pastPerformances: Array<BandPlaying>;
   rating?: Maybe<Scalars['Float']>;
   website?: Maybe<Scalars['String']>;
+};
+
+export type BandApplicationCommentsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+export type BandApplicationComment = {
+  __typename?: 'BandApplicationComment';
+  comment: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  id: Scalars['ID'];
+  user: Viewer;
+};
+
+export type BandApplicationCommentsConnection = {
+  __typename?: 'BandApplicationCommentsConnection';
+  edges: Array<Maybe<BandApplicationCommentsConnectionEdge>>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
+};
+
+export type BandApplicationCommentsConnectionEdge = {
+  __typename?: 'BandApplicationCommentsConnectionEdge';
+  cursor: Scalars['String'];
+  node: BandApplicationComment;
 };
 
 export type BandApplicationRating = {
@@ -277,7 +307,9 @@ export type MissingTransaction = Transaction & {
 export type Mutation = {
   __typename?: 'Mutation';
   createBandApplication: BandApplication;
+  createBandApplicationComment: BandApplicationComment;
   createOrder: Order;
+  deleteBandApplicationComment: Scalars['Boolean'];
   markBandApplicationContacted: BandApplication;
   rateBandApplication: BandApplication;
   updateDeviceProductList: Device;
@@ -288,11 +320,20 @@ export type MutationCreateBandApplicationArgs = {
   data: CreateBandApplicationInput;
 };
 
+export type MutationCreateBandApplicationCommentArgs = {
+  bandApplicationId: Scalars['ID'];
+  comment: Scalars['String'];
+};
+
 export type MutationCreateOrderArgs = {
   deposit: Scalars['Int'];
   deviceTime: Scalars['DateTime'];
   payment: OrderPayment;
   products: Array<OrderItemInput>;
+};
+
+export type MutationDeleteBandApplicationCommentArgs = {
+  id: Scalars['ID'];
 };
 
 export type MutationMarkBandApplicationContactedArgs = {
@@ -389,6 +430,14 @@ export enum OrderPayment {
   SumUp = 'SUM_UP',
   Voucher = 'VOUCHER',
 }
+
+export type PageInfo = {
+  __typename?: 'PageInfo';
+  endCursor?: Maybe<Scalars['String']>;
+  hasNextPage: Scalars['Boolean'];
+  hasPreviousPage: Scalars['Boolean'];
+  startCursor?: Maybe<Scalars['String']>;
+};
 
 export enum PreviouslyPlayed {
   No = 'No',
@@ -559,21 +608,14 @@ export type ApplicationDetailsQuery = {
         contactPhone: string;
         email: string;
         demo?: string | null;
+        distance?: number | null;
+        city: string;
         numberOfArtists?: number | null;
         numberOfNonMaleArtists?: number | null;
         hasPreviouslyPlayed?: PreviouslyPlayed | null;
         website?: string | null;
         rating?: number | null;
-        pastApplications: Array<{
-          __typename?: 'BandApplication';
-          event: {__typename?: 'Event'; id: string; start: Date};
-        }>;
-        pastPerformances: Array<{
-          __typename?: 'BandPlaying';
-          startTime: Date;
-          event: {__typename?: 'Event'; id: string; start: Date};
-          area: {__typename?: 'Area'; displayName: string};
-        }>;
+        createdAt: Date;
         bandApplicationRating: Array<{
           __typename?: 'BandApplicationRating';
           rating: number;
@@ -584,6 +626,55 @@ export type ApplicationDetailsQuery = {
             profilePicture?: string | null;
           };
         }>;
+        pastApplications: Array<{
+          __typename?: 'BandApplication';
+          rating?: number | null;
+          event: {__typename?: 'Event'; id: string; start: Date; name: string};
+          contactedByViewer?: {
+            __typename?: 'Viewer';
+            displayName: string;
+          } | null;
+          comments: {
+            __typename?: 'BandApplicationCommentsConnection';
+            edges: Array<{
+              __typename?: 'BandApplicationCommentsConnectionEdge';
+              node: {
+                __typename?: 'BandApplicationComment';
+                id: string;
+                comment: string;
+                createdAt: Date;
+                user: {
+                  __typename?: 'Viewer';
+                  displayName: string;
+                  profilePicture?: string | null;
+                };
+              };
+            } | null>;
+          };
+        }>;
+        pastPerformances: Array<{
+          __typename?: 'BandPlaying';
+          startTime: Date;
+          event: {__typename?: 'Event'; id: string; start: Date; name: string};
+          area: {__typename?: 'Area'; displayName: string};
+        }>;
+        comments: {
+          __typename?: 'BandApplicationCommentsConnection';
+          edges: Array<{
+            __typename?: 'BandApplicationCommentsConnectionEdge';
+            node: {
+              __typename?: 'BandApplicationComment';
+              id: string;
+              comment: string;
+              createdAt: Date;
+              user: {
+                __typename?: 'Viewer';
+                displayName: string;
+                profilePicture?: string | null;
+              };
+            };
+          } | null>;
+        };
       }
     | {__typename: 'BandPlaying'}
     | {__typename: 'Card'}
@@ -620,6 +711,99 @@ export type MarkAsContextedMutation = {
       id: string;
       displayName: string;
     } | null;
+  };
+};
+
+export type BandApplicationTimelineFragment = {
+  __typename?: 'BandApplication';
+  id: string;
+  createdAt: Date;
+  pastApplications: Array<{
+    __typename?: 'BandApplication';
+    rating?: number | null;
+    event: {__typename?: 'Event'; id: string; start: Date; name: string};
+    contactedByViewer?: {__typename?: 'Viewer'; displayName: string} | null;
+    comments: {
+      __typename?: 'BandApplicationCommentsConnection';
+      edges: Array<{
+        __typename?: 'BandApplicationCommentsConnectionEdge';
+        node: {
+          __typename?: 'BandApplicationComment';
+          id: string;
+          comment: string;
+          createdAt: Date;
+          user: {
+            __typename?: 'Viewer';
+            displayName: string;
+            profilePicture?: string | null;
+          };
+        };
+      } | null>;
+    };
+  }>;
+  pastPerformances: Array<{
+    __typename?: 'BandPlaying';
+    startTime: Date;
+    event: {__typename?: 'Event'; id: string; start: Date; name: string};
+    area: {__typename?: 'Area'; displayName: string};
+  }>;
+  comments: {
+    __typename?: 'BandApplicationCommentsConnection';
+    edges: Array<{
+      __typename?: 'BandApplicationCommentsConnectionEdge';
+      node: {
+        __typename?: 'BandApplicationComment';
+        id: string;
+        comment: string;
+        createdAt: Date;
+        user: {
+          __typename?: 'Viewer';
+          displayName: string;
+          profilePicture?: string | null;
+        };
+      };
+    } | null>;
+  };
+};
+
+export type BandApplicationCommentMutationVariables = Exact<{
+  id: Scalars['ID'];
+  comment: Scalars['String'];
+}>;
+
+export type BandApplicationCommentMutation = {
+  __typename?: 'Mutation';
+  createBandApplicationComment: {
+    __typename?: 'BandApplicationComment';
+    id: string;
+    comment: string;
+    createdAt: Date;
+    user: {
+      __typename?: 'Viewer';
+      displayName: string;
+      profilePicture?: string | null;
+    };
+  };
+};
+
+export type BandApplicationCommentDeleteMutationVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+export type BandApplicationCommentDeleteMutation = {
+  __typename?: 'Mutation';
+  deleteBandApplicationComment: boolean;
+};
+
+export type CommentFragment = {
+  __typename?: 'BandApplicationComment';
+  id: string;
+  comment: string;
+  createdAt: Date;
+  user: {
+    __typename?: 'Viewer';
+    displayName: string;
+    profilePicture?: string | null;
   };
 };
 
@@ -817,8 +1001,10 @@ export type BandApplcationsQuery = {
           genre?: string | null;
           genreCategory: GenreCategory;
           distance?: number | null;
-          facebookLikes?: number | null;
-          instagramFollower?: number | null;
+          comments: {
+            __typename?: 'BandApplicationCommentsConnection';
+            totalCount: number;
+          };
           contactedByViewer?: {
             __typename?: 'Viewer';
             id: string;
@@ -1076,6 +1262,60 @@ export const ContactedByFragmentDoc = gql`
     }
   }
 `;
+export const CommentFragmentDoc = gql`
+  fragment Comment on BandApplicationComment {
+    id
+    comment
+    createdAt
+    user {
+      displayName
+      profilePicture
+    }
+  }
+`;
+export const BandApplicationTimelineFragmentDoc = gql`
+  fragment BandApplicationTimeline on BandApplication {
+    id
+    createdAt
+    pastApplications {
+      event {
+        id
+        start
+        name
+      }
+      rating
+      contactedByViewer {
+        displayName
+      }
+      comments {
+        edges {
+          node {
+            ...Comment
+          }
+        }
+      }
+    }
+    pastPerformances {
+      startTime
+      event {
+        id
+        start
+        name
+      }
+      area {
+        displayName
+      }
+    }
+    comments {
+      edges {
+        node {
+          ...Comment
+        }
+      }
+    }
+  }
+  ${CommentFragmentDoc}
+`;
 export const ProductRowFragmentDoc = gql`
   fragment ProductRow on Product {
     id
@@ -1128,31 +1368,19 @@ export const ApplicationDetailsDocument = gql`
         contactPhone
         email
         demo
+        distance
+        city
         numberOfArtists
         numberOfNonMaleArtists
         hasPreviouslyPlayed
         website
-        pastApplications {
-          event {
-            id
-            start
-          }
-        }
-        pastPerformances {
-          startTime
-          event {
-            id
-            start
-          }
-          area {
-            displayName
-          }
-        }
         ...Rating
+        ...BandApplicationTimeline
       }
     }
   }
   ${RatingFragmentDoc}
+  ${BandApplicationTimelineFragmentDoc}
 `;
 
 /**
@@ -1261,6 +1489,107 @@ export type MarkAsContextedMutationOptions = Apollo.BaseMutationOptions<
   MarkAsContextedMutation,
   MarkAsContextedMutationVariables
 >;
+export const BandApplicationCommentDocument = gql`
+  mutation BandApplicationComment($id: ID!, $comment: String!) {
+    createBandApplicationComment(bandApplicationId: $id, comment: $comment) {
+      ...Comment
+    }
+  }
+  ${CommentFragmentDoc}
+`;
+export type BandApplicationCommentMutationFn = Apollo.MutationFunction<
+  BandApplicationCommentMutation,
+  BandApplicationCommentMutationVariables
+>;
+
+/**
+ * __useBandApplicationCommentMutation__
+ *
+ * To run a mutation, you first call `useBandApplicationCommentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useBandApplicationCommentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [bandApplicationCommentMutation, { data, loading, error }] = useBandApplicationCommentMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      comment: // value for 'comment'
+ *   },
+ * });
+ */
+export function useBandApplicationCommentMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    BandApplicationCommentMutation,
+    BandApplicationCommentMutationVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useMutation<
+    BandApplicationCommentMutation,
+    BandApplicationCommentMutationVariables
+  >(BandApplicationCommentDocument, options);
+}
+export type BandApplicationCommentMutationHookResult = ReturnType<
+  typeof useBandApplicationCommentMutation
+>;
+export type BandApplicationCommentMutationResult =
+  Apollo.MutationResult<BandApplicationCommentMutation>;
+export type BandApplicationCommentMutationOptions = Apollo.BaseMutationOptions<
+  BandApplicationCommentMutation,
+  BandApplicationCommentMutationVariables
+>;
+export const BandApplicationCommentDeleteDocument = gql`
+  mutation BandApplicationCommentDelete($id: ID!) {
+    deleteBandApplicationComment(id: $id)
+  }
+`;
+export type BandApplicationCommentDeleteMutationFn = Apollo.MutationFunction<
+  BandApplicationCommentDeleteMutation,
+  BandApplicationCommentDeleteMutationVariables
+>;
+
+/**
+ * __useBandApplicationCommentDeleteMutation__
+ *
+ * To run a mutation, you first call `useBandApplicationCommentDeleteMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useBandApplicationCommentDeleteMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [bandApplicationCommentDeleteMutation, { data, loading, error }] = useBandApplicationCommentDeleteMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useBandApplicationCommentDeleteMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    BandApplicationCommentDeleteMutation,
+    BandApplicationCommentDeleteMutationVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useMutation<
+    BandApplicationCommentDeleteMutation,
+    BandApplicationCommentDeleteMutationVariables
+  >(BandApplicationCommentDeleteDocument, options);
+}
+export type BandApplicationCommentDeleteMutationHookResult = ReturnType<
+  typeof useBandApplicationCommentDeleteMutation
+>;
+export type BandApplicationCommentDeleteMutationResult =
+  Apollo.MutationResult<BandApplicationCommentDeleteMutation>;
+export type BandApplicationCommentDeleteMutationOptions =
+  Apollo.BaseMutationOptions<
+    BandApplicationCommentDeleteMutation,
+    BandApplicationCommentDeleteMutationVariables
+  >;
 export const BandApplicationRatingDocument = gql`
   mutation BandApplicationRating($id: ID!, $rating: Int) {
     rateBandApplication(bandApplicationId: $id, rating: $rating) {
@@ -1551,8 +1880,9 @@ export const BandApplcationsDocument = gql`
           genre
           genreCategory
           distance
-          facebookLikes
-          instagramFollower
+          comments {
+            totalCount
+          }
           ...ContactedBy
           ...Rating
         }

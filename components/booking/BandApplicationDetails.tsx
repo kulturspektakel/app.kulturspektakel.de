@@ -1,16 +1,17 @@
-import {gql, useApolloClient} from '@apollo/client';
+import {gql} from '@apollo/client';
 import {
+  Button,
   Col,
-  Drawer,
   message,
+  Modal,
   Popconfirm,
   Row,
   Skeleton,
   Statistic,
-  Tag,
   Tooltip,
+  Typography,
 } from 'antd';
-import React, {useEffect, useMemo, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   useApplicationDetailsQuery,
   ApplicationDetailsQuery,
@@ -23,7 +24,7 @@ import Rater from './Rater';
 import Rating from './Rating';
 import {GlobalOutlined} from '@ant-design/icons';
 import styles from './BandApplicationDetails.module.css';
-import {useRouter} from 'next/router';
+import BandApplicationTimeline from './BandApplicationTimeline';
 
 gql`
   query ApplicationDetails($id: ID!) {
@@ -43,27 +44,15 @@ gql`
         contactPhone
         email
         demo
+        distance
+        city
         numberOfArtists
         numberOfNonMaleArtists
         hasPreviouslyPlayed
         website
-        pastApplications {
-          event {
-            id
-            start
-          }
-        }
-        pastPerformances {
-          startTime
-          event {
-            id
-            start
-          }
-          area {
-            displayName
-          }
-        }
+
         ...Rating
+        ...BandApplicationTimeline
       }
     }
   }
@@ -110,7 +99,7 @@ export default function BandApplicationDetails({
   }, [bandApplicationId]);
 
   return (
-    <Drawer
+    <Modal
       title={
         data?.node?.__typename === 'BandApplication' ? (
           data?.node.bandname
@@ -123,10 +112,10 @@ export default function BandApplicationDetails({
           />
         )
       }
-      placement="right"
-      width={400}
+      width="80%"
       closable={true}
-      onClose={onClose}
+      onCancel={onClose}
+      footer={null}
       destroyOnClose={true}
       open={Boolean(bandApplicationId)}
     >
@@ -138,7 +127,7 @@ export default function BandApplicationDetails({
           <Skeleton active={true} />
         </>
       )}
-    </Drawer>
+    </Modal>
   );
 }
 
@@ -150,217 +139,170 @@ type Props = Extract<
 function DrawerContent(props: Props) {
   const [contacted] = useMarkAsContextedMutation();
   const viewer = useViewerContext();
-  const {query} = useRouter();
-
-  const history = useMemo<
-    Array<Props['pastApplications'][number] | Props['pastPerformances'][number]>
-  >(
-    () =>
-      [
-        ...props.pastApplications.filter(
-          (a) =>
-            !props.pastPerformances.every((p) => p.event.id === a.event.id),
-        ),
-        ...props.pastPerformances,
-      ].sort((a, b) => a.event.start.getTime() - b.event.start.getTime()),
-    [props.pastApplications, props.pastPerformances],
-  );
 
   return (
     <>
-      {props.demo && <Demo demo={props.demo} />}
       <Row>
-        {props.website && (
-          <Col span={8}>
-            <a href={props.website} target="_blank" rel="noreferrer">
-              <Statistic
-                valueStyle={{color: '#1890ff'}}
-                value={' '}
-                prefix={<GlobalOutlined color="blue" />}
-                title="Webseite"
-              />
-            </a>
-          </Col>
-        )}
-        {props.facebook && (
-          <Col span={8}>
-            <a href={props.facebook} target="_blank" rel="noreferrer">
-              <Statistic
-                valueStyle={{color: '#1890ff'}}
-                value={props.facebookLikes ?? '?'}
-                title="Facebook"
-              />
-            </a>
-          </Col>
-        )}
-        {props.instagram && (
-          <Col span={8}>
-            <a
-              href={`https://instagram.com/${props.instagram}`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <Statistic
-                valueStyle={{color: '#1890ff'}}
-                value={props.instagramFollower ?? '?'}
-                title="Instagram"
-              />
-            </a>
-          </Col>
-        )}
-      </Row>
-      <br />
-      <h4 className={styles.h4}>Bewertung</h4>
-      <Row>
-        <Col span={8}>
-          <Rater
-            bandApplicationRating={props.bandApplicationRating}
-            bandApplicationId={props.id}
-            value={
-              props.bandApplicationRating.find(
-                ({viewer: {id}}) => id === viewer?.id,
-              )?.rating
-            }
-          />
-        </Col>
-        <Col span={8}>
-          {props.rating && (
-            <Rating
-              rating={props.rating}
-              bandApplicationRating={props.bandApplicationRating}
-            />
-          )}
-        </Col>
-      </Row>
-      <br />
-
-      {props.hasPreviouslyPlayed && (
-        <div className={styles.row}>
-          <h4 className={styles.h4}>Schonmal gespielt:</h4>&nbsp;
-          {PreviouslyPlayedText(props.hasPreviouslyPlayed)}
-        </div>
-      )}
-
-      {history.length > 0 && (
-        <div className={styles.row}>
-          <h4 className={styles.h4}>Frühere Bewerbungen/Auftritte:</h4>
-          <p>
-            {history.map((o) => (
-              <Tooltip
-                key={o.event.id}
-                title={
-                  o.__typename === 'BandPlaying'
-                    ? `${o.area.displayName}, ${o.startTime.toLocaleString(
-                        'de-DE',
-                        {
-                          weekday: 'short',
-                          minute: '2-digit',
-                          hour: '2-digit',
-                        },
-                      )}`
-                    : 'Bewerbung'
-                }
-              >
-                <Tag
-                  color={o.__typename === 'BandPlaying' ? 'blue' : undefined}
+        <Col span={12}>
+          {props.demo && <Demo demo={props.demo} />}
+          <Row>
+            {props.website && (
+              <Col span={8}>
+                <a href={props.website} target="_blank" rel="noreferrer">
+                  <Statistic
+                    valueStyle={{color: '#1890ff'}}
+                    value={' '}
+                    prefix={<GlobalOutlined color="blue" />}
+                    title="Webseite"
+                  />
+                </a>
+              </Col>
+            )}
+            {props.facebook && (
+              <Col span={8}>
+                <a href={props.facebook} target="_blank" rel="noreferrer">
+                  <Statistic
+                    valueStyle={{color: '#1890ff'}}
+                    value={props.facebookLikes ?? '?'}
+                    title="Facebook"
+                  />
+                </a>
+              </Col>
+            )}
+            {props.instagram && (
+              <Col span={8}>
+                <a
+                  href={`https://instagram.com/${props.instagram}`}
+                  target="_blank"
+                  rel="noreferrer"
                 >
-                  {o.event.start.getFullYear()}
-                </Tag>
-              </Tooltip>
-            ))}
-          </p>
-        </div>
-      )}
-
-      {props.numberOfArtists != null &&
-        props.numberOfNonMaleArtists != null && (
-          <div className={styles.row}>
-            <h4 className={styles.h4}>Bandgröße:</h4>&nbsp;
-            {props.numberOfArtists} Personen (
-            {(
-              (props.numberOfArtists! - props.numberOfNonMaleArtists!) /
-              props.numberOfArtists!
-            ).toLocaleString(undefined, {
-              style: 'percent',
-              maximumFractionDigits: 1,
-            })}
-            &nbsp;männlich)
-          </div>
-        )}
-
-      {props.knowsKultFrom && (
-        <>
-          <h4 className={styles.h4}>Woher kennt ihr das Kult?</h4>
-          <EllipsisText>{props.knowsKultFrom}</EllipsisText>
-        </>
-      )}
-
-      {props.description && (
-        <>
-          <h4 className={styles.h4}>Bandbeschreibung</h4>
-          <EllipsisText>{props.description}</EllipsisText>
-        </>
-      )}
-      <h4 className={styles.h4}>Kontakt</h4>
-      <p>
-        {props.contactName}
-        <br />
-        {props.contactPhone}
-        <br />
-        <Popconfirm
-          title="Band als kontaktiert markieren?"
-          onConfirm={() =>
-            contacted({
-              variables: {
-                contacted: true,
-                id: props.id,
-              },
-              optimisticResponse: {
-                markBandApplicationContacted: {
-                  __typename: 'BandApplication',
+                  <Statistic
+                    valueStyle={{color: '#1890ff'}}
+                    value={props.instagramFollower ?? '?'}
+                    title="Instagram"
+                  />
+                </a>
+              </Col>
+            )}
+          </Row>
+          <br />
+          {props.hasPreviouslyPlayed && (
+            <div className={styles.row}>
+              <h4 className={styles.h4}>Schonmal gespielt:</h4>&nbsp;
+              {PreviouslyPlayedText(props.hasPreviouslyPlayed)}
+            </div>
+          )}
+          {props.numberOfArtists != null &&
+            props.numberOfNonMaleArtists != null && (
+              <div className={styles.row}>
+                <h4 className={styles.h4}>Bandgröße:</h4>&nbsp;
+                {props.numberOfArtists} Personen (
+                {(
+                  (props.numberOfArtists! - props.numberOfNonMaleArtists!) /
+                  props.numberOfArtists!
+                ).toLocaleString(undefined, {
+                  style: 'percent',
+                  maximumFractionDigits: 1,
+                })}
+                &nbsp;männlich)
+              </div>
+            )}
+          {props.knowsKultFrom && (
+            <>
+              <Typography.Title level={5}>
+                Woher kennt ihr das Kult?
+              </Typography.Title>
+              <Typography.Paragraph
+                ellipsis={{rows: 5, expandable: true, symbol: 'mehr'}}
+              >
+                {props.knowsKultFrom}
+              </Typography.Paragraph>
+            </>
+          )}
+          {props.description && (
+            <>
+              <Typography.Title level={5}>Bandbeschreibung</Typography.Title>
+              <Typography.Paragraph
+                ellipsis={{rows: 5, expandable: true, symbol: 'mehr'}}
+              >
+                {props.description}
+              </Typography.Paragraph>
+            </>
+          )}
+          <Typography.Title level={5}>Kontakt</Typography.Title>
+          {props.contactName}
+          <br />
+          {props.contactPhone}
+          <br />
+          <Popconfirm
+            title="Band als kontaktiert markieren?"
+            onConfirm={() =>
+              contacted({
+                variables: {
+                  contacted: true,
                   id: props.id,
-                  contactedByViewer: viewer,
                 },
-              },
-            })
-          }
-          onCancel={() =>
-            contacted({
-              variables: {
-                contacted: false,
-                id: props.id,
-              },
-            })
-          }
-          okText="Ja"
-          cancelText="Nein"
-        >
-          <a
-            href={`mailto:${props.email}`}
-            onClick={() => {
-              message.info(`${props.email} in Zwischenablage kopiert`);
-              navigator.clipboard.writeText(props.email);
-            }}
+                optimisticResponse: {
+                  markBandApplicationContacted: {
+                    __typename: 'BandApplication',
+                    id: props.id,
+                    contactedByViewer: viewer,
+                  },
+                },
+              })
+            }
+            onCancel={() =>
+              contacted({
+                variables: {
+                  contacted: false,
+                  id: props.id,
+                },
+              })
+            }
+            okText="Ja"
+            cancelText="Nein"
           >
-            {props.email}
-          </a>
-        </Popconfirm>
-      </p>
+            <Tooltip title="E-Mailadresse kopieren">
+              <Button
+                onClick={() => {
+                  message.info(`${props.email} in Zwischenablage kopiert`);
+                  navigator.clipboard.writeText(props.email);
+                }}
+                type="link"
+                size="small"
+              >
+                {props.email}
+              </Button>
+            </Tooltip>
+          </Popconfirm>
+        </Col>
+        <Col span={12}>
+          <Typography.Title level={5}>Bewertung</Typography.Title>
+          <Row>
+            <Col span={8}>
+              <Rater
+                bandApplicationRating={props.bandApplicationRating}
+                bandApplicationId={props.id}
+                value={
+                  props.bandApplicationRating.find(
+                    ({viewer: {id}}) => id === viewer?.id,
+                  )?.rating
+                }
+              />
+            </Col>
+            <Col span={8}>
+              {props.rating && (
+                <Rating
+                  rating={props.rating}
+                  bandApplicationRating={props.bandApplicationRating}
+                />
+              )}
+            </Col>
+          </Row>
+          <BandApplicationTimeline {...props} />
+        </Col>
+      </Row>
     </>
-  );
-}
-
-function EllipsisText(props: {children?: string}) {
-  const [expanded, setExpanded] = useState(false);
-  const words = props.children?.split(' ') ?? [];
-
-  return expanded || words.length < 60 ? (
-    <p>{props.children}</p>
-  ) : (
-    <p>
-      {words.slice(0, 50).join(' ')}
-      &nbsp;<a onClick={() => setExpanded(true)}>mehr…</a>
-    </p>
   );
 }
 

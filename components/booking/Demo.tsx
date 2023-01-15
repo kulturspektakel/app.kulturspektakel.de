@@ -62,7 +62,7 @@ export default function Demo({demo}: {demo: string}) {
           width="400"
           height={height ?? 0}
           frameBorder="0"
-          style={{margin: -24, marginBottom: 10}}
+          style={{borderRadius: 10}}
         />
       )}
       <p>

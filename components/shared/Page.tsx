@@ -1,11 +1,11 @@
 import Head from 'next/head';
 import styles from './Page.module.css';
-import {Avatar, Dropdown, Layout, Menu} from 'antd';
+import {Dropdown, Layout, Menu} from 'antd';
 import React from 'react';
 const {Header} = Layout;
 import Link from 'next/link';
 import {useRouter} from 'next/dist/client/router';
-import useViewerContext from '../../utils/useViewerContext';
+import ViewerAvatar from './ViewerAvatar';
 
 export const HEADER_HEIGHT = 64;
 
@@ -23,7 +23,6 @@ export default function Page({
   accessory?: React.ReactNode;
 }) {
   const {asPath} = useRouter();
-  const viewer = useViewerContext();
 
   return (
     <Layout
@@ -95,14 +94,7 @@ export default function Page({
             ],
           }}
         >
-          {viewer && (
-            <Avatar src={viewer.profilePicture}>
-              {viewer.displayName
-                .split(' ')
-                .map((n) => n.substr(0, 1).toLocaleUpperCase())
-                .join('')}
-            </Avatar>
-          )}
+          <ViewerAvatar />
         </Dropdown>
       </Header>
       <Layout.Content className={padded ? styles.padded : undefined}>
