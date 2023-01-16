@@ -37,6 +37,7 @@ export default function Demo({demo}: {demo: string}) {
 
       break;
     case 'youtu.be':
+      borderRadius = 8;
       embed = `https://www.youtube.com/embed/${path[1]}?autoplay=0&fs=0&iv_load_policy=3&showinfo=0&rel=0&cc_load_policy=0&start=0&end=0`;
       break;
     case 'bandcamp.com':
@@ -79,7 +80,6 @@ export default function Demo({demo}: {demo: string}) {
           textOverflow: 'ellipsis',
           overflow: 'hidden',
           display: 'block',
-          marginBottom: 24,
         }}
         href={demo}
         target="_blank"

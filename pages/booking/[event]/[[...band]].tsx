@@ -59,7 +59,7 @@ type RecordType = Extract<
   {__typename?: 'Event'}
 >['bandApplication'][number];
 
-const GENRE_ICONS: Map<GenreCategory, string> = new Map([
+export const GENRE_ICONS: Map<GenreCategory, string> = new Map([
   [GenreCategory.Pop, 'pop.svg'],
   [GenreCategory.Rock, 'rock.svg'],
   [GenreCategory.Indie, 'indie.svg'],
@@ -72,7 +72,7 @@ const GENRE_ICONS: Map<GenreCategory, string> = new Map([
   [GenreCategory.Other, 'vocal.svg'],
 ]);
 
-const GENRE_CATEGORIES: Map<GenreCategory, string> = new Map([
+export const GENRE_CATEGORIES: Map<GenreCategory, string> = new Map([
   [GenreCategory.Pop, 'Pop'],
   [GenreCategory.Rock, 'Rock'],
   [GenreCategory.Indie, 'Indie'],
@@ -197,7 +197,8 @@ const MemoizedTable = React.memo(
               >
                 <img
                   src={`/genre/${GENRE_ICONS.get(genreCategory)}`}
-                  width="30px"
+                  width="32px"
+                  height="32px"
                   alt="Genre"
                 />
               </Tooltip>

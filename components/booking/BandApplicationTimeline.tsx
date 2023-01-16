@@ -63,8 +63,8 @@ gql`
           comment
           createdAt
           user {
-            displayName
-            profilePicture
+            id
+            ...Avatar
           }
         }
       }
@@ -78,7 +78,7 @@ export default function BandApplicationTimeline(
   const [comment, commentResult] = useBandApplicationCommentMutation();
   const [del, deleteResult] = useBandApplicationCommentDeleteMutation();
   const [val, setVal] = useState('');
-  const viewer = useViewerContext;
+  const viewer = useViewerContext();
 
   const history = useMemo<
     Array<
@@ -87,13 +87,9 @@ export default function BandApplicationTimeline(
     >
   >(
     () =>
-      [
-        ...props.pastApplications.filter(
-          (a) =>
-            !props.pastPerformances.every((p) => p.event.id === a.event.id),
-        ),
-        ...props.pastPerformances,
-      ].sort((a, b) => b.event.start.getTime() - a.event.start.getTime()),
+      [...props.pastApplications, ...props.pastPerformances].sort(
+        (a, b) => b.event.start.getTime() - a.event.start.getTime(),
+      ),
     [props.pastApplications, props.pastPerformances],
   );
 
@@ -118,7 +114,7 @@ export default function BandApplicationTimeline(
       <br />
       <br />
       <Timeline style={{paddingLeft: 10}}>
-        <Timeline.Item dot={<ViewerAvatar />}>
+        <Timeline.Item dot={<ViewerAvatar {...viewer!} />}>
           <Form onFinish={onSubmit} style={{position: 'relative'}}>
             <Input.TextArea
               onChange={(e) => setVal(e.target.value)}
@@ -143,7 +139,7 @@ export default function BandApplicationTimeline(
             key={node.id}
             dot={
               <Tooltip title="Name">
-                <ViewerAvatar />
+                <ViewerAvatar {...node.user} />
               </Tooltip>
             }
           >
@@ -153,17 +149,17 @@ export default function BandApplicationTimeline(
               {node.user.id === viewer!.id && (
                 <Tooltip title="Kommentar löschen">
                   <Button
-                    shape="circle"
+                    type="ghost"
                     icon={<DeleteOutlined />}
                     size="small"
                     loading={deleteResult.loading}
-                    onClick={async () => {
-                      await del({
+                    onClick={() =>
+                      del({
                         variables: {
                           id: node.id,
                         },
-                      });
-                    }}
+                      })
+                    }
                   />
                 </Tooltip>
               )}
@@ -200,7 +196,7 @@ export default function BandApplicationTimeline(
                     {o.rating != null && (
                       <>
                         <br />
-                        Bewertung:{' '}
+                        Bewertung: ★
                         {(Math.round(o.rating * 100) / 100).toFixed(2)}
                       </>
                     )}

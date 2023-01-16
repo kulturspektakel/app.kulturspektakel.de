@@ -1,16 +1,22 @@
+import {gql} from '@apollo/client';
 import {Avatar, AvatarProps} from 'antd';
-import useViewerContext from '../../utils/useViewerContext';
+import {AvatarFragment} from '../../types/graphql';
 
-export default function ViewerAvatar(props: AvatarProps) {
-  const viewer = useViewerContext();
-
-  if (!viewer) {
-    return null;
+gql`
+  fragment Avatar on Viewer {
+    displayName
+    profilePicture
   }
+`;
 
+export default function ViewerAvatar({
+  displayName,
+  profilePicture,
+  ...props
+}: AvatarProps & AvatarFragment) {
   return (
-    <Avatar src={viewer.profilePicture} {...props}>
-      {viewer.displayName
+    <Avatar src={profilePicture} {...props}>
+      {displayName
         .split(' ')
         .map((n) => n.substr(0, 1).toLocaleUpperCase())
         .join('')}

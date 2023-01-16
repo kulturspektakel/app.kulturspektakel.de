@@ -30,6 +30,12 @@ export default function Rater({
       count={4}
       value={value}
       style={{color: '#1890ff'}}
+      tooltips={[
+        'Auf keinen Fall',
+        'Eher nicht',
+        'Eher schon',
+        'Auf jeden Fall',
+      ]}
       onChange={(rating) =>
         rate({
           variables: {

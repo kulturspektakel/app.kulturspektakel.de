@@ -6,8 +6,7 @@ export const ViewerQ = gql`
   query ViewerContextProvider {
     viewer {
       id
-      profilePicture
-      displayName
+      ...Avatar
     }
   }
 `;

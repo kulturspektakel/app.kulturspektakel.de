@@ -1,10 +1,14 @@
-import { gql } from '@apollo/client';
+import {gql} from '@apollo/client';
 import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
-export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type Exact<T extends {[key: string]: unknown}> = {[K in keyof T]: T[K]};
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
+  [SubKey in K]?: Maybe<T[SubKey]>;
+};
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
+  [SubKey in K]: Maybe<T[SubKey]>;
+};
 const defaultOptions = {} as const;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
@@ -26,11 +30,9 @@ export type Area = Node & {
   themeColor: Scalars['String'];
 };
 
-
 export type AreaBandsPlayingArgs = {
   day: Scalars['Date'];
 };
-
 
 export type AreaOpeningHourArgs = {
   day?: InputMaybe<Scalars['Date']>;
@@ -69,7 +71,6 @@ export type BandApplication = Node & {
   rating?: Maybe<Scalars['Float']>;
   website?: Maybe<Scalars['String']>;
 };
-
 
 export type BandApplicationCommentsArgs = {
   after?: InputMaybe<Scalars['String']>;
@@ -127,7 +128,6 @@ export type Billable = {
   salesNumbers: Array<SalesNumber>;
 };
 
-
 export type BillableSalesNumbersArgs = {
   after: Scalars['DateTime'];
   before: Scalars['DateTime'];
@@ -144,12 +144,12 @@ export type Board = {
   treasurer: Scalars['String'];
 };
 
-export type Card = Node & Transactionable & {
-  __typename?: 'Card';
-  id: Scalars['ID'];
-  transactions: CardTransactionConnection;
-};
-
+export type Card = Node &
+  Transactionable & {
+    __typename?: 'Card';
+    id: Scalars['ID'];
+    transactions: CardTransactionConnection;
+  };
 
 export type CardTransactionsArgs = {
   after?: InputMaybe<Scalars['DateTime']>;
@@ -195,7 +195,7 @@ export type CardTransactionConnection = {
 export enum CardTransactionType {
   Cashout = 'Cashout',
   Charge = 'Charge',
-  TopUp = 'TopUp'
+  TopUp = 'TopUp',
 }
 
 export type Config = {
@@ -224,22 +224,22 @@ export type CreateBandApplicationInput = {
   website?: InputMaybe<Scalars['String']>;
 };
 
-export type Device = Billable & Node & Transactionable & {
-  __typename?: 'Device';
-  id: Scalars['ID'];
-  lastSeen?: Maybe<Scalars['DateTime']>;
-  productList?: Maybe<ProductList>;
-  salesNumbers: Array<SalesNumber>;
-  softwareVersion?: Maybe<Scalars['String']>;
-  transactions: CardTransactionConnection;
-};
-
+export type Device = Billable &
+  Node &
+  Transactionable & {
+    __typename?: 'Device';
+    id: Scalars['ID'];
+    lastSeen?: Maybe<Scalars['DateTime']>;
+    productList?: Maybe<ProductList>;
+    salesNumbers: Array<SalesNumber>;
+    softwareVersion?: Maybe<Scalars['String']>;
+    transactions: CardTransactionConnection;
+  };
 
 export type DeviceSalesNumbersArgs = {
   after: Scalars['DateTime'];
   before: Scalars['DateTime'];
 };
-
 
 export type DeviceTransactionsArgs = {
   after?: InputMaybe<Scalars['DateTime']>;
@@ -250,7 +250,7 @@ export type DeviceTransactionsArgs = {
 
 export enum DeviceType {
   ContactlessTerminal = 'CONTACTLESS_TERMINAL',
-  Ipad = 'IPAD'
+  Ipad = 'IPAD',
 }
 
 export type Event = Node & {
@@ -276,7 +276,7 @@ export enum GenreCategory {
   Other = 'Other',
   Pop = 'Pop',
   ReggaeSka = 'Reggae_Ska',
-  Rock = 'Rock'
+  Rock = 'Rock',
 }
 
 export enum HeardAboutBookingFrom {
@@ -285,7 +285,7 @@ export enum HeardAboutBookingFrom {
   Friends = 'Friends',
   Instagram = 'Instagram',
   Newspaper = 'Newspaper',
-  Website = 'Website'
+  Website = 'Website',
 }
 
 export type HistoricalProduct = Billable & {
@@ -294,7 +294,6 @@ export type HistoricalProduct = Billable & {
   productListId: Scalars['ID'];
   salesNumbers: Array<SalesNumber>;
 };
-
 
 export type HistoricalProductSalesNumbersArgs = {
   after: Scalars['DateTime'];
@@ -322,16 +321,13 @@ export type Mutation = {
   upsertProductList: ProductList;
 };
 
-
 export type MutationCreateBandApplicationArgs = {
   data: CreateBandApplicationInput;
 };
 
-
 export type MutationCreateBandApplicationCommentArgs = {
   input: BandApplicationCommentInput;
 };
-
 
 export type MutationCreateOrderArgs = {
   deposit: Scalars['Int'];
@@ -340,29 +336,24 @@ export type MutationCreateOrderArgs = {
   products: Array<OrderItemInput>;
 };
 
-
 export type MutationDeleteBandApplicationCommentArgs = {
   id: Scalars['ID'];
 };
-
 
 export type MutationMarkBandApplicationContactedArgs = {
   bandApplicationId: Scalars['ID'];
   contacted: Scalars['Boolean'];
 };
 
-
 export type MutationRateBandApplicationArgs = {
   bandApplicationId: Scalars['ID'];
   rating?: InputMaybe<Scalars['Int']>;
 };
 
-
 export type MutationUpdateDeviceProductListArgs = {
   deviceId: Scalars['ID'];
   productListId: Scalars['ID'];
 };
-
 
 export type MutationUpsertProductListArgs = {
   active?: InputMaybe<Scalars['Boolean']>;
@@ -441,7 +432,7 @@ export enum OrderPayment {
   FreeCrew = 'FREE_CREW',
   KultCard = 'KULT_CARD',
   SumUp = 'SUM_UP',
-  Voucher = 'VOUCHER'
+  Voucher = 'VOUCHER',
 }
 
 export type PageInfo = {
@@ -455,19 +446,19 @@ export type PageInfo = {
 export enum PreviouslyPlayed {
   No = 'No',
   OtherFormation = 'OtherFormation',
-  Yes = 'Yes'
+  Yes = 'Yes',
 }
 
-export type Product = Billable & Node & {
-  __typename?: 'Product';
-  id: Scalars['ID'];
-  name: Scalars['String'];
-  price: Scalars['Int'];
-  productListId: Scalars['ID'];
-  requiresDeposit: Scalars['Boolean'];
-  salesNumbers: Array<SalesNumber>;
-};
-
+export type Product = Billable &
+  Node & {
+    __typename?: 'Product';
+    id: Scalars['ID'];
+    name: Scalars['String'];
+    price: Scalars['Int'];
+    productListId: Scalars['ID'];
+    requiresDeposit: Scalars['Boolean'];
+    salesNumbers: Array<SalesNumber>;
+  };
 
 export type ProductSalesNumbersArgs = {
   after: Scalars['DateTime'];
@@ -480,17 +471,17 @@ export type ProductInput = {
   requiresDeposit?: InputMaybe<Scalars['Boolean']>;
 };
 
-export type ProductList = Billable & Node & {
-  __typename?: 'ProductList';
-  active: Scalars['Boolean'];
-  emoji?: Maybe<Scalars['String']>;
-  historicalProducts: Array<HistoricalProduct>;
-  id: Scalars['ID'];
-  name: Scalars['String'];
-  product: Array<Product>;
-  salesNumbers: Array<SalesNumber>;
-};
-
+export type ProductList = Billable &
+  Node & {
+    __typename?: 'ProductList';
+    active: Scalars['Boolean'];
+    emoji?: Maybe<Scalars['String']>;
+    historicalProducts: Array<HistoricalProduct>;
+    id: Scalars['ID'];
+    name: Scalars['String'];
+    product: Array<Product>;
+    salesNumbers: Array<SalesNumber>;
+  };
 
 export type ProductListSalesNumbersArgs = {
   after: Scalars['DateTime'];
@@ -513,31 +504,25 @@ export type Query = {
   viewer?: Maybe<Viewer>;
 };
 
-
 export type QueryCardStatusArgs = {
   payload: Scalars['String'];
 };
-
 
 export type QueryDevicesArgs = {
   type?: InputMaybe<DeviceType>;
 };
 
-
 export type QueryDistanceToKultArgs = {
   origin: Scalars['String'];
 };
-
 
 export type QueryNodeArgs = {
   id: Scalars['ID'];
 };
 
-
 export type QueryNodesArgs = {
   ids: Array<Scalars['ID']>;
 };
-
 
 export type QueryNuclinoPagesArgs = {
   query: Scalars['String'];
@@ -551,14 +536,13 @@ export type SalesNumber = {
   total: Scalars['Float'];
 };
 
-
 export type SalesNumberTimeSeriesArgs = {
   grouping?: InputMaybe<TimeGrouping>;
 };
 
 export enum TimeGrouping {
   Day = 'Day',
-  Hour = 'Hour'
+  Hour = 'Hour',
 }
 
 export type TimeSeries = {
@@ -578,7 +562,6 @@ export type Transactionable = {
   transactions: CardTransactionConnection;
 };
 
-
 export type TransactionableTransactionsArgs = {
   after?: InputMaybe<Scalars['DateTime']>;
   before?: InputMaybe<Scalars['DateTime']>;
@@ -590,7 +573,6 @@ export type Transactions = Transactionable & {
   __typename?: 'Transactions';
   transactions: CardTransactionConnection;
 };
-
 
 export type TransactionsTransactionsArgs = {
   after?: InputMaybe<Scalars['DateTime']>;
@@ -611,53 +593,363 @@ export type ApplicationDetailsQueryVariables = Exact<{
   id: Scalars['ID'];
 }>;
 
+export type ApplicationDetailsQuery = {
+  __typename?: 'Query';
+  node?:
+    | {__typename: 'Area'}
+    | {
+        __typename: 'BandApplication';
+        id: string;
+        bandname: string;
+        instagram?: string | null;
+        instagramFollower?: number | null;
+        facebook?: string | null;
+        facebookLikes?: number | null;
+        description?: string | null;
+        knowsKultFrom?: string | null;
+        heardAboutBookingFrom?: HeardAboutBookingFrom | null;
+        contactName: string;
+        contactPhone: string;
+        email: string;
+        demo?: string | null;
+        numberOfArtists?: number | null;
+        numberOfNonMaleArtists?: number | null;
+        hasPreviouslyPlayed?: PreviouslyPlayed | null;
+        website?: string | null;
+        genre?: string | null;
+        genreCategory: GenreCategory;
+        distance?: number | null;
+        city: string;
+        rating?: number | null;
+        createdAt: Date;
+        bandApplicationRating: Array<{
+          __typename?: 'BandApplicationRating';
+          rating: number;
+          viewer: {
+            __typename?: 'Viewer';
+            id: string;
+            displayName: string;
+            profilePicture?: string | null;
+          };
+        }>;
+        pastApplications: Array<{
+          __typename?: 'BandApplication';
+          rating?: number | null;
+          id: string;
+          event: {__typename?: 'Event'; id: string; start: Date; name: string};
+          contactedByViewer?: {
+            __typename?: 'Viewer';
+            displayName: string;
+          } | null;
+          comments: {
+            __typename?: 'BandApplicationCommentsConnection';
+            totalCount: number;
+            edges: Array<{
+              __typename?: 'BandApplicationCommentsConnectionEdge';
+              node: {
+                __typename?: 'BandApplicationComment';
+                id: string;
+                comment: string;
+                createdAt: Date;
+                user: {
+                  __typename?: 'Viewer';
+                  id: string;
+                  displayName: string;
+                  profilePicture?: string | null;
+                };
+              };
+            }>;
+          };
+        }>;
+        pastPerformances: Array<{
+          __typename?: 'BandPlaying';
+          startTime: Date;
+          event: {__typename?: 'Event'; id: string; start: Date; name: string};
+          area: {__typename?: 'Area'; displayName: string};
+        }>;
+        comments: {
+          __typename?: 'BandApplicationCommentsConnection';
+          totalCount: number;
+          edges: Array<{
+            __typename?: 'BandApplicationCommentsConnectionEdge';
+            node: {
+              __typename?: 'BandApplicationComment';
+              id: string;
+              comment: string;
+              createdAt: Date;
+              user: {
+                __typename?: 'Viewer';
+                id: string;
+                displayName: string;
+                profilePicture?: string | null;
+              };
+            };
+          }>;
+        };
+      }
+    | {__typename: 'BandApplicationComment'}
+    | {__typename: 'BandPlaying'}
+    | {__typename: 'Card'}
+    | {__typename: 'Device'}
+    | {__typename: 'Event'}
+    | {__typename: 'NuclinoPage'}
+    | {__typename: 'Product'}
+    | {__typename: 'ProductList'}
+    | {__typename: 'Viewer'}
+    | null;
+};
 
-export type ApplicationDetailsQuery = { __typename?: 'Query', node?: { __typename: 'Area' } | { __typename: 'BandApplication', id: string, bandname: string, instagram?: string | null, instagramFollower?: number | null, facebook?: string | null, facebookLikes?: number | null, description?: string | null, knowsKultFrom?: string | null, heardAboutBookingFrom?: HeardAboutBookingFrom | null, contactName: string, contactPhone: string, email: string, demo?: string | null, distance?: number | null, city: string, numberOfArtists?: number | null, numberOfNonMaleArtists?: number | null, hasPreviouslyPlayed?: PreviouslyPlayed | null, website?: string | null, rating?: number | null, createdAt: Date, bandApplicationRating: Array<{ __typename?: 'BandApplicationRating', rating: number, viewer: { __typename?: 'Viewer', id: string, displayName: string, profilePicture?: string | null } }>, pastApplications: Array<{ __typename?: 'BandApplication', rating?: number | null, id: string, event: { __typename?: 'Event', id: string, start: Date, name: string }, contactedByViewer?: { __typename?: 'Viewer', displayName: string } | null, comments: { __typename?: 'BandApplicationCommentsConnection', edges: Array<{ __typename?: 'BandApplicationCommentsConnectionEdge', node: { __typename?: 'BandApplicationComment', id: string, comment: string, createdAt: Date, user: { __typename?: 'Viewer', displayName: string, profilePicture?: string | null } } }> } }>, pastPerformances: Array<{ __typename?: 'BandPlaying', startTime: Date, event: { __typename?: 'Event', id: string, start: Date, name: string }, area: { __typename?: 'Area', displayName: string } }>, comments: { __typename?: 'BandApplicationCommentsConnection', edges: Array<{ __typename?: 'BandApplicationCommentsConnectionEdge', node: { __typename?: 'BandApplicationComment', id: string, comment: string, createdAt: Date, user: { __typename?: 'Viewer', displayName: string, profilePicture?: string | null } } }> } } | { __typename: 'BandApplicationComment' } | { __typename: 'BandPlaying' } | { __typename: 'Card' } | { __typename: 'Device' } | { __typename: 'Event' } | { __typename: 'NuclinoPage' } | { __typename: 'Product' } | { __typename: 'ProductList' } | { __typename: 'Viewer' } | null };
-
-export type ContactedByFragment = { __typename?: 'BandApplication', contactedByViewer?: { __typename?: 'Viewer', id: string, displayName: string } | null };
+export type ContactedByFragment = {
+  __typename?: 'BandApplication';
+  contactedByViewer?: {
+    __typename?: 'Viewer';
+    id: string;
+    displayName: string;
+  } | null;
+};
 
 export type MarkAsContextedMutationVariables = Exact<{
   id: Scalars['ID'];
   contacted: Scalars['Boolean'];
 }>;
 
+export type MarkAsContextedMutation = {
+  __typename?: 'Mutation';
+  markBandApplicationContacted: {
+    __typename?: 'BandApplication';
+    id: string;
+    contactedByViewer?: {
+      __typename?: 'Viewer';
+      id: string;
+      displayName: string;
+    } | null;
+  };
+};
 
-export type MarkAsContextedMutation = { __typename?: 'Mutation', markBandApplicationContacted: { __typename?: 'BandApplication', id: string, contactedByViewer?: { __typename?: 'Viewer', id: string, displayName: string } | null } };
-
-export type BandApplicationTimelineFragment = { __typename?: 'BandApplication', id: string, createdAt: Date, pastApplications: Array<{ __typename?: 'BandApplication', rating?: number | null, id: string, event: { __typename?: 'Event', id: string, start: Date, name: string }, contactedByViewer?: { __typename?: 'Viewer', displayName: string } | null, comments: { __typename?: 'BandApplicationCommentsConnection', edges: Array<{ __typename?: 'BandApplicationCommentsConnectionEdge', node: { __typename?: 'BandApplicationComment', id: string, comment: string, createdAt: Date, user: { __typename?: 'Viewer', displayName: string, profilePicture?: string | null } } }> } }>, pastPerformances: Array<{ __typename?: 'BandPlaying', startTime: Date, event: { __typename?: 'Event', id: string, start: Date, name: string }, area: { __typename?: 'Area', displayName: string } }>, comments: { __typename?: 'BandApplicationCommentsConnection', edges: Array<{ __typename?: 'BandApplicationCommentsConnectionEdge', node: { __typename?: 'BandApplicationComment', id: string, comment: string, createdAt: Date, user: { __typename?: 'Viewer', displayName: string, profilePicture?: string | null } } }> } };
+export type BandApplicationTimelineFragment = {
+  __typename?: 'BandApplication';
+  id: string;
+  createdAt: Date;
+  pastApplications: Array<{
+    __typename?: 'BandApplication';
+    rating?: number | null;
+    id: string;
+    event: {__typename?: 'Event'; id: string; start: Date; name: string};
+    contactedByViewer?: {__typename?: 'Viewer'; displayName: string} | null;
+    comments: {
+      __typename?: 'BandApplicationCommentsConnection';
+      totalCount: number;
+      edges: Array<{
+        __typename?: 'BandApplicationCommentsConnectionEdge';
+        node: {
+          __typename?: 'BandApplicationComment';
+          id: string;
+          comment: string;
+          createdAt: Date;
+          user: {
+            __typename?: 'Viewer';
+            id: string;
+            displayName: string;
+            profilePicture?: string | null;
+          };
+        };
+      }>;
+    };
+  }>;
+  pastPerformances: Array<{
+    __typename?: 'BandPlaying';
+    startTime: Date;
+    event: {__typename?: 'Event'; id: string; start: Date; name: string};
+    area: {__typename?: 'Area'; displayName: string};
+  }>;
+  comments: {
+    __typename?: 'BandApplicationCommentsConnection';
+    totalCount: number;
+    edges: Array<{
+      __typename?: 'BandApplicationCommentsConnectionEdge';
+      node: {
+        __typename?: 'BandApplicationComment';
+        id: string;
+        comment: string;
+        createdAt: Date;
+        user: {
+          __typename?: 'Viewer';
+          id: string;
+          displayName: string;
+          profilePicture?: string | null;
+        };
+      };
+    }>;
+  };
+};
 
 export type BandApplicationCommentMutationVariables = Exact<{
   input: BandApplicationCommentInput;
 }>;
 
-
-export type BandApplicationCommentMutation = { __typename?: 'Mutation', createBandApplicationComment: { __typename?: 'BandApplication', id: string, comments: { __typename?: 'BandApplicationCommentsConnection', edges: Array<{ __typename?: 'BandApplicationCommentsConnectionEdge', node: { __typename?: 'BandApplicationComment', id: string, comment: string, createdAt: Date, user: { __typename?: 'Viewer', displayName: string, profilePicture?: string | null } } }> } } };
+export type BandApplicationCommentMutation = {
+  __typename?: 'Mutation';
+  createBandApplicationComment: {
+    __typename?: 'BandApplication';
+    id: string;
+    comments: {
+      __typename?: 'BandApplicationCommentsConnection';
+      totalCount: number;
+      edges: Array<{
+        __typename?: 'BandApplicationCommentsConnectionEdge';
+        node: {
+          __typename?: 'BandApplicationComment';
+          id: string;
+          comment: string;
+          createdAt: Date;
+          user: {
+            __typename?: 'Viewer';
+            id: string;
+            displayName: string;
+            profilePicture?: string | null;
+          };
+        };
+      }>;
+    };
+  };
+};
 
 export type BandApplicationCommentDeleteMutationVariables = Exact<{
   id: Scalars['ID'];
 }>;
 
+export type BandApplicationCommentDeleteMutation = {
+  __typename?: 'Mutation';
+  deleteBandApplicationComment: {
+    __typename?: 'BandApplication';
+    id: string;
+    comments: {
+      __typename?: 'BandApplicationCommentsConnection';
+      totalCount: number;
+      edges: Array<{
+        __typename?: 'BandApplicationCommentsConnectionEdge';
+        node: {
+          __typename?: 'BandApplicationComment';
+          id: string;
+          comment: string;
+          createdAt: Date;
+          user: {
+            __typename?: 'Viewer';
+            id: string;
+            displayName: string;
+            profilePicture?: string | null;
+          };
+        };
+      }>;
+    };
+  };
+};
 
-export type BandApplicationCommentDeleteMutation = { __typename?: 'Mutation', deleteBandApplicationComment: { __typename?: 'BandApplication', id: string, comments: { __typename?: 'BandApplicationCommentsConnection', edges: Array<{ __typename?: 'BandApplicationCommentsConnectionEdge', node: { __typename?: 'BandApplicationComment', id: string, comment: string, createdAt: Date, user: { __typename?: 'Viewer', displayName: string, profilePicture?: string | null } } }> } } };
+export type CommentsFragment = {
+  __typename?: 'BandApplication';
+  id: string;
+  comments: {
+    __typename?: 'BandApplicationCommentsConnection';
+    totalCount: number;
+    edges: Array<{
+      __typename?: 'BandApplicationCommentsConnectionEdge';
+      node: {
+        __typename?: 'BandApplicationComment';
+        id: string;
+        comment: string;
+        createdAt: Date;
+        user: {
+          __typename?: 'Viewer';
+          id: string;
+          displayName: string;
+          profilePicture?: string | null;
+        };
+      };
+    }>;
+  };
+};
 
-export type CommentsFragment = { __typename?: 'BandApplication', id: string, comments: { __typename?: 'BandApplicationCommentsConnection', edges: Array<{ __typename?: 'BandApplicationCommentsConnectionEdge', node: { __typename?: 'BandApplicationComment', id: string, comment: string, createdAt: Date, user: { __typename?: 'Viewer', displayName: string, profilePicture?: string | null } } }> } };
+export type GoogleMapsFragment = {
+  __typename?: 'BandApplication';
+  distance?: number | null;
+  city: string;
+};
 
 export type BandApplicationRatingMutationVariables = Exact<{
   id: Scalars['ID'];
   rating?: InputMaybe<Scalars['Int']>;
 }>;
 
-
-export type BandApplicationRatingMutation = { __typename?: 'Mutation', rateBandApplication: { __typename?: 'BandApplication', id: string, rating?: number | null, bandApplicationRating: Array<{ __typename?: 'BandApplicationRating', rating: number, viewer: { __typename?: 'Viewer', id: string, displayName: string, profilePicture?: string | null } }> } };
+export type BandApplicationRatingMutation = {
+  __typename?: 'Mutation';
+  rateBandApplication: {
+    __typename?: 'BandApplication';
+    id: string;
+    rating?: number | null;
+    bandApplicationRating: Array<{
+      __typename?: 'BandApplicationRating';
+      rating: number;
+      viewer: {
+        __typename?: 'Viewer';
+        id: string;
+        displayName: string;
+        profilePicture?: string | null;
+      };
+    }>;
+  };
+};
 
 export type DeviceTransactionsQueryVariables = Exact<{
   deviceID: Scalars['ID'];
 }>;
 
+export type DeviceTransactionsQuery = {
+  __typename?: 'Query';
+  node?:
+    | {__typename?: 'Area'}
+    | {__typename?: 'BandApplication'}
+    | {__typename?: 'BandApplicationComment'}
+    | {__typename?: 'BandPlaying'}
+    | {__typename?: 'Card'}
+    | {
+        __typename?: 'Device';
+        transactions: {
+          __typename?: 'CardTransactionConnection';
+          data: Array<{
+            __typename?: 'CardTransaction';
+            deviceTime: Date;
+            balanceAfter: number;
+            balanceBefore: number;
+            depositBefore: number;
+            depositAfter: number;
+            cardId: string;
+            transactionType: CardTransactionType;
+            clientId: string;
+          }>;
+        };
+      }
+    | {__typename?: 'Event'}
+    | {__typename?: 'NuclinoPage'}
+    | {__typename?: 'Product'}
+    | {__typename?: 'ProductList'}
+    | {__typename?: 'Viewer'}
+    | null;
+};
 
-export type DeviceTransactionsQuery = { __typename?: 'Query', node?: { __typename?: 'Area' } | { __typename?: 'BandApplication' } | { __typename?: 'BandApplicationComment' } | { __typename?: 'BandPlaying' } | { __typename?: 'Card' } | { __typename?: 'Device', transactions: { __typename?: 'CardTransactionConnection', data: Array<{ __typename?: 'CardTransaction', deviceTime: Date, balanceAfter: number, balanceBefore: number, depositBefore: number, depositAfter: number, cardId: string, transactionType: CardTransactionType, clientId: string }> } } | { __typename?: 'Event' } | { __typename?: 'NuclinoPage' } | { __typename?: 'Product' } | { __typename?: 'ProductList' } | { __typename?: 'Viewer' } | null };
-
-export type ProductListFragment = { __typename?: 'ProductList', id: string, name: string, emoji?: string | null, active: boolean, product: Array<{ __typename?: 'Product', id: string, name: string, price: number, requiresDeposit: boolean }> };
+export type ProductListFragment = {
+  __typename?: 'ProductList';
+  id: string;
+  name: string;
+  emoji?: string | null;
+  active: boolean;
+  product: Array<{
+    __typename?: 'Product';
+    id: string;
+    name: string;
+    price: number;
+    requiresDeposit: boolean;
+  }>;
+};
 
 export type UpsertProductListMutationVariables = Exact<{
   id?: InputMaybe<Scalars['ID']>;
@@ -667,10 +959,31 @@ export type UpsertProductListMutationVariables = Exact<{
   active?: InputMaybe<Scalars['Boolean']>;
 }>;
 
+export type UpsertProductListMutation = {
+  __typename?: 'Mutation';
+  upsertProductList: {
+    __typename?: 'ProductList';
+    id: string;
+    name: string;
+    emoji?: string | null;
+    active: boolean;
+    product: Array<{
+      __typename?: 'Product';
+      id: string;
+      name: string;
+      price: number;
+      requiresDeposit: boolean;
+    }>;
+  };
+};
 
-export type UpsertProductListMutation = { __typename?: 'Mutation', upsertProductList: { __typename?: 'ProductList', id: string, name: string, emoji?: string | null, active: boolean, product: Array<{ __typename?: 'Product', id: string, name: string, price: number, requiresDeposit: boolean }> } };
-
-export type ProductRowFragment = { __typename?: 'Product', id: string, name: string, price: number, requiresDeposit: boolean };
+export type ProductRowFragment = {
+  __typename?: 'Product';
+  id: string;
+  name: string;
+  price: number;
+  requiresDeposit: boolean;
+};
 
 export type RevenueDetailsQueryVariables = Exact<{
   id: Scalars['ID'];
@@ -679,193 +992,485 @@ export type RevenueDetailsQueryVariables = Exact<{
   grouping: TimeGrouping;
 }>;
 
+export type RevenueDetailsQuery = {
+  __typename?: 'Query';
+  productList?:
+    | {__typename?: 'Area'}
+    | {__typename?: 'BandApplication'}
+    | {__typename?: 'BandApplicationComment'}
+    | {__typename?: 'BandPlaying'}
+    | {__typename?: 'Card'}
+    | {__typename?: 'Device'}
+    | {__typename?: 'Event'}
+    | {__typename?: 'NuclinoPage'}
+    | {__typename?: 'Product'}
+    | {
+        __typename?: 'ProductList';
+        id: string;
+        name: string;
+        salesNumbers: Array<{
+          __typename?: 'SalesNumber';
+          payment: OrderPayment;
+          timeSeries: Array<{
+            __typename?: 'TimeSeries';
+            time: Date;
+            value: number;
+          }>;
+        }>;
+        historicalProducts: Array<{
+          __typename?: 'HistoricalProduct';
+          name: string;
+          salesNumbers: Array<{
+            __typename?: 'SalesNumber';
+            count: number;
+            total: number;
+            payment: OrderPayment;
+          }>;
+        }>;
+      }
+    | {__typename?: 'Viewer'}
+    | null;
+};
 
-export type RevenueDetailsQuery = { __typename?: 'Query', productList?: { __typename?: 'Area' } | { __typename?: 'BandApplication' } | { __typename?: 'BandApplicationComment' } | { __typename?: 'BandPlaying' } | { __typename?: 'Card' } | { __typename?: 'Device' } | { __typename?: 'Event' } | { __typename?: 'NuclinoPage' } | { __typename?: 'Product' } | { __typename?: 'ProductList', id: string, name: string, salesNumbers: Array<{ __typename?: 'SalesNumber', payment: OrderPayment, timeSeries: Array<{ __typename?: 'TimeSeries', time: Date, value: number }> }>, historicalProducts: Array<{ __typename?: 'HistoricalProduct', name: string, salesNumbers: Array<{ __typename?: 'SalesNumber', count: number, total: number, payment: OrderPayment }> }> } | { __typename?: 'Viewer' } | null };
+export type AvatarFragment = {
+  __typename?: 'Viewer';
+  displayName: string;
+  profilePicture?: string | null;
+};
 
-export type RatingFragment = { __typename?: 'BandApplication', rating?: number | null, bandApplicationRating: Array<{ __typename?: 'BandApplicationRating', rating: number, viewer: { __typename?: 'Viewer', id: string, displayName: string, profilePicture?: string | null } }> };
+export type RatingFragment = {
+  __typename?: 'BandApplication';
+  rating?: number | null;
+  bandApplicationRating: Array<{
+    __typename?: 'BandApplicationRating';
+    rating: number;
+    viewer: {
+      __typename?: 'Viewer';
+      id: string;
+      displayName: string;
+      profilePicture?: string | null;
+    };
+  }>;
+};
 
 export type BandApplcationsQueryVariables = Exact<{
   id: Scalars['ID'];
 }>;
 
+export type BandApplcationsQuery = {
+  __typename?: 'Query';
+  viewer?: {__typename?: 'Viewer'; id: string} | null;
+  node?:
+    | {__typename?: 'Area'}
+    | {__typename?: 'BandApplication'}
+    | {__typename?: 'BandApplicationComment'}
+    | {__typename?: 'BandPlaying'}
+    | {__typename?: 'Card'}
+    | {__typename?: 'Device'}
+    | {
+        __typename?: 'Event';
+        bandApplication: Array<{
+          __typename?: 'BandApplication';
+          id: string;
+          bandname: string;
+          rating?: number | null;
+          city: string;
+          genre?: string | null;
+          genreCategory: GenreCategory;
+          distance?: number | null;
+          comments: {
+            __typename?: 'BandApplicationCommentsConnection';
+            totalCount: number;
+          };
+          contactedByViewer?: {
+            __typename?: 'Viewer';
+            id: string;
+            displayName: string;
+          } | null;
+          bandApplicationRating: Array<{
+            __typename?: 'BandApplicationRating';
+            rating: number;
+            viewer: {
+              __typename?: 'Viewer';
+              id: string;
+              displayName: string;
+              profilePicture?: string | null;
+            };
+          }>;
+        }>;
+      }
+    | {__typename?: 'NuclinoPage'}
+    | {__typename?: 'Product'}
+    | {__typename?: 'ProductList'}
+    | {__typename?: 'Viewer'}
+    | null;
+};
 
-export type BandApplcationsQuery = { __typename?: 'Query', viewer?: { __typename?: 'Viewer', id: string } | null, node?: { __typename?: 'Area' } | { __typename?: 'BandApplication' } | { __typename?: 'BandApplicationComment' } | { __typename?: 'BandPlaying' } | { __typename?: 'Card' } | { __typename?: 'Device' } | { __typename?: 'Event', bandApplication: Array<{ __typename?: 'BandApplication', id: string, bandname: string, rating?: number | null, city: string, genre?: string | null, genreCategory: GenreCategory, distance?: number | null, comments: { __typename?: 'BandApplicationCommentsConnection', totalCount: number }, contactedByViewer?: { __typename?: 'Viewer', id: string, displayName: string } | null, bandApplicationRating: Array<{ __typename?: 'BandApplicationRating', rating: number, viewer: { __typename?: 'Viewer', id: string, displayName: string, profilePicture?: string | null } }> }> } | { __typename?: 'NuclinoPage' } | { __typename?: 'Product' } | { __typename?: 'ProductList' } | { __typename?: 'Viewer' } | null };
+export type EventsQueryVariables = Exact<{[key: string]: never}>;
 
-export type EventsQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type EventsQuery = { __typename?: 'Query', events: Array<{ __typename?: 'Event', id: string, name: string }> };
+export type EventsQuery = {
+  __typename?: 'Query';
+  events: Array<{__typename?: 'Event'; id: string; name: string}>;
+};
 
 export type CardInfoQueryVariables = Exact<{
   cardID: Scalars['ID'];
 }>;
 
+export type CardInfoQuery = {
+  __typename?: 'Query';
+  config: {__typename?: 'Config'; depositValue: number};
+  node?:
+    | {__typename?: 'Area'}
+    | {__typename?: 'BandApplication'}
+    | {__typename?: 'BandApplicationComment'}
+    | {__typename?: 'BandPlaying'}
+    | {
+        __typename?: 'Card';
+        id: string;
+        transactions: {
+          __typename?: 'CardTransactionConnection';
+          balanceTotal: number;
+          data: Array<{
+            __typename?: 'CardTransaction';
+            clientId: string;
+            transactionType: CardTransactionType;
+            balanceAfter: number;
+            balanceBefore: number;
+            depositAfter: number;
+            depositBefore: number;
+            deviceTime: Date;
+            Order: Array<{
+              __typename?: 'Order';
+              total: number;
+              items: Array<{
+                __typename?: 'OrderItem';
+                amount: number;
+                name: string;
+                productList?: {
+                  __typename?: 'ProductList';
+                  emoji?: string | null;
+                  name: string;
+                } | null;
+              }>;
+            }>;
+          }>;
+        };
+      }
+    | {__typename?: 'Device'}
+    | {__typename?: 'Event'}
+    | {__typename?: 'NuclinoPage'}
+    | {__typename?: 'Product'}
+    | {__typename?: 'ProductList'}
+    | {__typename?: 'Viewer'}
+    | null;
+};
 
-export type CardInfoQuery = { __typename?: 'Query', config: { __typename?: 'Config', depositValue: number }, node?: { __typename?: 'Area' } | { __typename?: 'BandApplication' } | { __typename?: 'BandApplicationComment' } | { __typename?: 'BandPlaying' } | { __typename?: 'Card', id: string, transactions: { __typename?: 'CardTransactionConnection', balanceTotal: number, data: Array<{ __typename?: 'CardTransaction', clientId: string, transactionType: CardTransactionType, balanceAfter: number, balanceBefore: number, depositAfter: number, depositBefore: number, deviceTime: Date, Order: Array<{ __typename?: 'Order', total: number, items: Array<{ __typename?: 'OrderItem', amount: number, name: string, productList?: { __typename?: 'ProductList', emoji?: string | null, name: string } | null }> }> }> } } | { __typename?: 'Device' } | { __typename?: 'Event' } | { __typename?: 'NuclinoPage' } | { __typename?: 'Product' } | { __typename?: 'ProductList' } | { __typename?: 'Viewer' } | null };
+export type DevicesQueryVariables = Exact<{[key: string]: never}>;
 
-export type DevicesQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type DevicesQuery = { __typename?: 'Query', devices: Array<{ __typename?: 'Device', id: string, lastSeen?: Date | null, softwareVersion?: string | null, productList?: { __typename?: 'ProductList', id: string, name: string } | null }>, productLists: Array<{ __typename?: 'ProductList', id: string, name: string, active: boolean }> };
+export type DevicesQuery = {
+  __typename?: 'Query';
+  devices: Array<{
+    __typename?: 'Device';
+    id: string;
+    lastSeen?: Date | null;
+    softwareVersion?: string | null;
+    productList?: {__typename?: 'ProductList'; id: string; name: string} | null;
+  }>;
+  productLists: Array<{
+    __typename?: 'ProductList';
+    id: string;
+    name: string;
+    active: boolean;
+  }>;
+};
 
 export type UpdateDeviceListMutationVariables = Exact<{
   productListId: Scalars['ID'];
   deviceId: Scalars['ID'];
 }>;
 
+export type UpdateDeviceListMutation = {
+  __typename?: 'Mutation';
+  updateDeviceProductList: {
+    __typename?: 'Device';
+    id: string;
+    productList?: {__typename?: 'ProductList'; id: string; name: string} | null;
+  };
+};
 
-export type UpdateDeviceListMutation = { __typename?: 'Mutation', updateDeviceProductList: { __typename?: 'Device', id: string, productList?: { __typename?: 'ProductList', id: string, name: string } | null } };
+export type ProductListQueryVariables = Exact<{[key: string]: never}>;
 
-export type ProductListQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type ProductListQuery = { __typename?: 'Query', productLists: Array<{ __typename?: 'ProductList', id: string, name: string, emoji?: string | null, active: boolean, product: Array<{ __typename?: 'Product', id: string, name: string, price: number, requiresDeposit: boolean }> }> };
+export type ProductListQuery = {
+  __typename?: 'Query';
+  productLists: Array<{
+    __typename?: 'ProductList';
+    id: string;
+    name: string;
+    emoji?: string | null;
+    active: boolean;
+    product: Array<{
+      __typename?: 'Product';
+      id: string;
+      name: string;
+      price: number;
+      requiresDeposit: boolean;
+    }>;
+  }>;
+};
 
 export type CreateProductListMutationVariables = Exact<{
   name: Scalars['String'];
 }>;
 
+export type CreateProductListMutation = {
+  __typename?: 'Mutation';
+  upsertProductList: {
+    __typename?: 'ProductList';
+    id: string;
+    name: string;
+    emoji?: string | null;
+    active: boolean;
+    product: Array<{
+      __typename?: 'Product';
+      id: string;
+      name: string;
+      price: number;
+      requiresDeposit: boolean;
+    }>;
+  };
+};
 
-export type CreateProductListMutation = { __typename?: 'Mutation', upsertProductList: { __typename?: 'ProductList', id: string, name: string, emoji?: string | null, active: boolean, product: Array<{ __typename?: 'Product', id: string, name: string, price: number, requiresDeposit: boolean }> } };
+export type ProductPrintQueryVariables = Exact<{[key: string]: never}>;
 
-export type ProductPrintQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type ProductPrintQuery = { __typename?: 'Query', productLists: Array<{ __typename?: 'ProductList', id: string, emoji?: string | null, name: string, active: boolean, product: Array<{ __typename?: 'Product', id: string, name: string, price: number, requiresDeposit: boolean }> }>, config: { __typename?: 'Config', depositValue: number } };
+export type ProductPrintQuery = {
+  __typename?: 'Query';
+  productLists: Array<{
+    __typename?: 'ProductList';
+    id: string;
+    emoji?: string | null;
+    name: string;
+    active: boolean;
+    product: Array<{
+      __typename?: 'Product';
+      id: string;
+      name: string;
+      price: number;
+      requiresDeposit: boolean;
+    }>;
+  }>;
+  config: {__typename?: 'Config'; depositValue: number};
+};
 
 export type RevenueQueryVariables = Exact<{
   after: Scalars['DateTime'];
   before: Scalars['DateTime'];
 }>;
 
+export type RevenueQuery = {
+  __typename?: 'Query';
+  config: {__typename?: 'Config'; depositValue: number};
+  events: Array<{
+    __typename?: 'Event';
+    id: string;
+    name: string;
+    start: Date;
+    end: Date;
+  }>;
+  productLists: Array<{
+    __typename?: 'ProductList';
+    id: string;
+    name: string;
+    salesNumbers: Array<{
+      __typename?: 'SalesNumber';
+      count: number;
+      total: number;
+      payment: OrderPayment;
+    }>;
+  }>;
+  transactions: {
+    __typename?: 'Transactions';
+    topUps: {
+      __typename?: 'CardTransactionConnection';
+      balanceTotal: number;
+      totalCount: number;
+      depositIn: number;
+      depositOut: number;
+    };
+    cashouts: {
+      __typename?: 'CardTransactionConnection';
+      balanceTotal: number;
+      totalCount: number;
+      depositIn: number;
+      depositOut: number;
+    };
+    charges: {
+      __typename?: 'CardTransactionConnection';
+      balanceTotal: number;
+      totalCount: number;
+      depositIn: number;
+      depositOut: number;
+    };
+    transactions: {
+      __typename?: 'CardTransactionConnection';
+      depositIn: number;
+      depositOut: number;
+      uniqueCards: number;
+    };
+  };
+};
 
-export type RevenueQuery = { __typename?: 'Query', config: { __typename?: 'Config', depositValue: number }, events: Array<{ __typename?: 'Event', id: string, name: string, start: Date, end: Date }>, productLists: Array<{ __typename?: 'ProductList', id: string, name: string, salesNumbers: Array<{ __typename?: 'SalesNumber', count: number, total: number, payment: OrderPayment }> }>, transactions: { __typename?: 'Transactions', topUps: { __typename?: 'CardTransactionConnection', balanceTotal: number, totalCount: number, depositIn: number, depositOut: number }, cashouts: { __typename?: 'CardTransactionConnection', balanceTotal: number, totalCount: number, depositIn: number, depositOut: number }, charges: { __typename?: 'CardTransactionConnection', balanceTotal: number, totalCount: number, depositIn: number, depositOut: number }, transactions: { __typename?: 'CardTransactionConnection', depositIn: number, depositOut: number, uniqueCards: number } } };
+export type ViewerContextProviderQueryVariables = Exact<{[key: string]: never}>;
 
-export type ViewerContextProviderQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type ViewerContextProviderQuery = { __typename?: 'Query', viewer?: { __typename?: 'Viewer', id: string, profilePicture?: string | null, displayName: string } | null };
+export type ViewerContextProviderQuery = {
+  __typename?: 'Query';
+  viewer?: {
+    __typename?: 'Viewer';
+    id: string;
+    displayName: string;
+    profilePicture?: string | null;
+  } | null;
+};
 
 export const ContactedByFragmentDoc = gql`
-    fragment ContactedBy on BandApplication {
-  contactedByViewer {
-    id
-    displayName
+  fragment ContactedBy on BandApplication {
+    contactedByViewer {
+      id
+      displayName
+    }
   }
-}
-    `;
+`;
+export const AvatarFragmentDoc = gql`
+  fragment Avatar on Viewer {
+    displayName
+    profilePicture
+  }
+`;
 export const CommentsFragmentDoc = gql`
-    fragment Comments on BandApplication {
-  id
-  comments {
-    edges {
-      node {
-        id
-        comment
-        createdAt
-        user {
-          displayName
-          profilePicture
+  fragment Comments on BandApplication {
+    id
+    comments {
+      totalCount
+      edges {
+        node {
+          id
+          comment
+          createdAt
+          user {
+            id
+            ...Avatar
+          }
         }
       }
     }
   }
-}
-    `;
+  ${AvatarFragmentDoc}
+`;
 export const BandApplicationTimelineFragmentDoc = gql`
-    fragment BandApplicationTimeline on BandApplication {
-  id
-  createdAt
-  pastApplications {
-    event {
-      id
-      start
-      name
+  fragment BandApplicationTimeline on BandApplication {
+    id
+    createdAt
+    pastApplications {
+      event {
+        id
+        start
+        name
+      }
+      rating
+      contactedByViewer {
+        displayName
+      }
+      ...Comments
     }
-    rating
-    contactedByViewer {
-      displayName
+    pastPerformances {
+      startTime
+      event {
+        id
+        start
+        name
+      }
+      area {
+        displayName
+      }
     }
     ...Comments
   }
-  pastPerformances {
-    startTime
-    event {
-      id
-      start
-      name
-    }
-    area {
-      displayName
-    }
+  ${CommentsFragmentDoc}
+`;
+export const GoogleMapsFragmentDoc = gql`
+  fragment GoogleMaps on BandApplication {
+    distance
+    city
   }
-  ...Comments
-}
-    ${CommentsFragmentDoc}`;
+`;
 export const ProductRowFragmentDoc = gql`
-    fragment ProductRow on Product {
-  id
-  name
-  price
-  requiresDeposit
-}
-    `;
-export const ProductListFragmentDoc = gql`
-    fragment ProductList on ProductList {
-  id
-  name
-  emoji
-  active
-  product {
+  fragment ProductRow on Product {
     id
-    ...ProductRow
+    name
+    price
+    requiresDeposit
   }
-}
-    ${ProductRowFragmentDoc}`;
-export const RatingFragmentDoc = gql`
-    fragment Rating on BandApplication {
-  bandApplicationRating {
-    viewer {
+`;
+export const ProductListFragmentDoc = gql`
+  fragment ProductList on ProductList {
+    id
+    name
+    emoji
+    active
+    product {
       id
-      displayName
-      profilePicture
+      ...ProductRow
+    }
+  }
+  ${ProductRowFragmentDoc}
+`;
+export const RatingFragmentDoc = gql`
+  fragment Rating on BandApplication {
+    bandApplicationRating {
+      viewer {
+        id
+        displayName
+        profilePicture
+      }
+      rating
     }
     rating
   }
-  rating
-}
-    `;
+`;
 export const ApplicationDetailsDocument = gql`
-    query ApplicationDetails($id: ID!) {
-  node(id: $id) {
-    __typename
-    ... on BandApplication {
-      id
-      bandname
-      instagram
-      instagramFollower
-      facebook
-      facebookLikes
-      description
-      knowsKultFrom
-      heardAboutBookingFrom
-      contactName
-      contactPhone
-      email
-      demo
-      distance
-      city
-      numberOfArtists
-      numberOfNonMaleArtists
-      hasPreviouslyPlayed
-      website
-      ...Rating
-      ...BandApplicationTimeline
+  query ApplicationDetails($id: ID!) {
+    node(id: $id) {
+      __typename
+      ... on BandApplication {
+        id
+        bandname
+        instagram
+        instagramFollower
+        facebook
+        facebookLikes
+        description
+        knowsKultFrom
+        heardAboutBookingFrom
+        contactName
+        contactPhone
+        email
+        demo
+        numberOfArtists
+        numberOfNonMaleArtists
+        hasPreviouslyPlayed
+        website
+        genre
+        genreCategory
+        ...GoogleMaps
+        ...Rating
+        ...BandApplicationTimeline
+      }
     }
   }
-}
-    ${RatingFragmentDoc}
-${BandApplicationTimelineFragmentDoc}`;
+  ${GoogleMapsFragmentDoc}
+  ${RatingFragmentDoc}
+  ${BandApplicationTimelineFragmentDoc}
+`;
 
 /**
  * __useApplicationDetailsQuery__
@@ -883,26 +1488,56 @@ ${BandApplicationTimelineFragmentDoc}`;
  *   },
  * });
  */
-export function useApplicationDetailsQuery(baseOptions: Apollo.QueryHookOptions<ApplicationDetailsQuery, ApplicationDetailsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ApplicationDetailsQuery, ApplicationDetailsQueryVariables>(ApplicationDetailsDocument, options);
-      }
-export function useApplicationDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ApplicationDetailsQuery, ApplicationDetailsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ApplicationDetailsQuery, ApplicationDetailsQueryVariables>(ApplicationDetailsDocument, options);
-        }
-export type ApplicationDetailsQueryHookResult = ReturnType<typeof useApplicationDetailsQuery>;
-export type ApplicationDetailsLazyQueryHookResult = ReturnType<typeof useApplicationDetailsLazyQuery>;
-export type ApplicationDetailsQueryResult = Apollo.QueryResult<ApplicationDetailsQuery, ApplicationDetailsQueryVariables>;
-export const MarkAsContextedDocument = gql`
-    mutation MarkAsContexted($id: ID!, $contacted: Boolean!) {
-  markBandApplicationContacted(bandApplicationId: $id, contacted: $contacted) {
-    id
-    ...ContactedBy
-  }
+export function useApplicationDetailsQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    ApplicationDetailsQuery,
+    ApplicationDetailsQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useQuery<
+    ApplicationDetailsQuery,
+    ApplicationDetailsQueryVariables
+  >(ApplicationDetailsDocument, options);
 }
-    ${ContactedByFragmentDoc}`;
-export type MarkAsContextedMutationFn = Apollo.MutationFunction<MarkAsContextedMutation, MarkAsContextedMutationVariables>;
+export function useApplicationDetailsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    ApplicationDetailsQuery,
+    ApplicationDetailsQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useLazyQuery<
+    ApplicationDetailsQuery,
+    ApplicationDetailsQueryVariables
+  >(ApplicationDetailsDocument, options);
+}
+export type ApplicationDetailsQueryHookResult = ReturnType<
+  typeof useApplicationDetailsQuery
+>;
+export type ApplicationDetailsLazyQueryHookResult = ReturnType<
+  typeof useApplicationDetailsLazyQuery
+>;
+export type ApplicationDetailsQueryResult = Apollo.QueryResult<
+  ApplicationDetailsQuery,
+  ApplicationDetailsQueryVariables
+>;
+export const MarkAsContextedDocument = gql`
+  mutation MarkAsContexted($id: ID!, $contacted: Boolean!) {
+    markBandApplicationContacted(
+      bandApplicationId: $id
+      contacted: $contacted
+    ) {
+      id
+      ...ContactedBy
+    }
+  }
+  ${ContactedByFragmentDoc}
+`;
+export type MarkAsContextedMutationFn = Apollo.MutationFunction<
+  MarkAsContextedMutation,
+  MarkAsContextedMutationVariables
+>;
 
 /**
  * __useMarkAsContextedMutation__
@@ -922,21 +1557,39 @@ export type MarkAsContextedMutationFn = Apollo.MutationFunction<MarkAsContextedM
  *   },
  * });
  */
-export function useMarkAsContextedMutation(baseOptions?: Apollo.MutationHookOptions<MarkAsContextedMutation, MarkAsContextedMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<MarkAsContextedMutation, MarkAsContextedMutationVariables>(MarkAsContextedDocument, options);
-      }
-export type MarkAsContextedMutationHookResult = ReturnType<typeof useMarkAsContextedMutation>;
-export type MarkAsContextedMutationResult = Apollo.MutationResult<MarkAsContextedMutation>;
-export type MarkAsContextedMutationOptions = Apollo.BaseMutationOptions<MarkAsContextedMutation, MarkAsContextedMutationVariables>;
-export const BandApplicationCommentDocument = gql`
-    mutation BandApplicationComment($input: BandApplicationCommentInput!) {
-  createBandApplicationComment(input: $input) {
-    ...Comments
-  }
+export function useMarkAsContextedMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    MarkAsContextedMutation,
+    MarkAsContextedMutationVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useMutation<
+    MarkAsContextedMutation,
+    MarkAsContextedMutationVariables
+  >(MarkAsContextedDocument, options);
 }
-    ${CommentsFragmentDoc}`;
-export type BandApplicationCommentMutationFn = Apollo.MutationFunction<BandApplicationCommentMutation, BandApplicationCommentMutationVariables>;
+export type MarkAsContextedMutationHookResult = ReturnType<
+  typeof useMarkAsContextedMutation
+>;
+export type MarkAsContextedMutationResult =
+  Apollo.MutationResult<MarkAsContextedMutation>;
+export type MarkAsContextedMutationOptions = Apollo.BaseMutationOptions<
+  MarkAsContextedMutation,
+  MarkAsContextedMutationVariables
+>;
+export const BandApplicationCommentDocument = gql`
+  mutation BandApplicationComment($input: BandApplicationCommentInput!) {
+    createBandApplicationComment(input: $input) {
+      ...Comments
+    }
+  }
+  ${CommentsFragmentDoc}
+`;
+export type BandApplicationCommentMutationFn = Apollo.MutationFunction<
+  BandApplicationCommentMutation,
+  BandApplicationCommentMutationVariables
+>;
 
 /**
  * __useBandApplicationCommentMutation__
@@ -955,21 +1608,39 @@ export type BandApplicationCommentMutationFn = Apollo.MutationFunction<BandAppli
  *   },
  * });
  */
-export function useBandApplicationCommentMutation(baseOptions?: Apollo.MutationHookOptions<BandApplicationCommentMutation, BandApplicationCommentMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<BandApplicationCommentMutation, BandApplicationCommentMutationVariables>(BandApplicationCommentDocument, options);
-      }
-export type BandApplicationCommentMutationHookResult = ReturnType<typeof useBandApplicationCommentMutation>;
-export type BandApplicationCommentMutationResult = Apollo.MutationResult<BandApplicationCommentMutation>;
-export type BandApplicationCommentMutationOptions = Apollo.BaseMutationOptions<BandApplicationCommentMutation, BandApplicationCommentMutationVariables>;
-export const BandApplicationCommentDeleteDocument = gql`
-    mutation BandApplicationCommentDelete($id: ID!) {
-  deleteBandApplicationComment(id: $id) {
-    ...Comments
-  }
+export function useBandApplicationCommentMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    BandApplicationCommentMutation,
+    BandApplicationCommentMutationVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useMutation<
+    BandApplicationCommentMutation,
+    BandApplicationCommentMutationVariables
+  >(BandApplicationCommentDocument, options);
 }
-    ${CommentsFragmentDoc}`;
-export type BandApplicationCommentDeleteMutationFn = Apollo.MutationFunction<BandApplicationCommentDeleteMutation, BandApplicationCommentDeleteMutationVariables>;
+export type BandApplicationCommentMutationHookResult = ReturnType<
+  typeof useBandApplicationCommentMutation
+>;
+export type BandApplicationCommentMutationResult =
+  Apollo.MutationResult<BandApplicationCommentMutation>;
+export type BandApplicationCommentMutationOptions = Apollo.BaseMutationOptions<
+  BandApplicationCommentMutation,
+  BandApplicationCommentMutationVariables
+>;
+export const BandApplicationCommentDeleteDocument = gql`
+  mutation BandApplicationCommentDelete($id: ID!) {
+    deleteBandApplicationComment(id: $id) {
+      ...Comments
+    }
+  }
+  ${CommentsFragmentDoc}
+`;
+export type BandApplicationCommentDeleteMutationFn = Apollo.MutationFunction<
+  BandApplicationCommentDeleteMutation,
+  BandApplicationCommentDeleteMutationVariables
+>;
 
 /**
  * __useBandApplicationCommentDeleteMutation__
@@ -988,22 +1659,41 @@ export type BandApplicationCommentDeleteMutationFn = Apollo.MutationFunction<Ban
  *   },
  * });
  */
-export function useBandApplicationCommentDeleteMutation(baseOptions?: Apollo.MutationHookOptions<BandApplicationCommentDeleteMutation, BandApplicationCommentDeleteMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<BandApplicationCommentDeleteMutation, BandApplicationCommentDeleteMutationVariables>(BandApplicationCommentDeleteDocument, options);
-      }
-export type BandApplicationCommentDeleteMutationHookResult = ReturnType<typeof useBandApplicationCommentDeleteMutation>;
-export type BandApplicationCommentDeleteMutationResult = Apollo.MutationResult<BandApplicationCommentDeleteMutation>;
-export type BandApplicationCommentDeleteMutationOptions = Apollo.BaseMutationOptions<BandApplicationCommentDeleteMutation, BandApplicationCommentDeleteMutationVariables>;
-export const BandApplicationRatingDocument = gql`
-    mutation BandApplicationRating($id: ID!, $rating: Int) {
-  rateBandApplication(bandApplicationId: $id, rating: $rating) {
-    id
-    ...Rating
-  }
+export function useBandApplicationCommentDeleteMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    BandApplicationCommentDeleteMutation,
+    BandApplicationCommentDeleteMutationVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useMutation<
+    BandApplicationCommentDeleteMutation,
+    BandApplicationCommentDeleteMutationVariables
+  >(BandApplicationCommentDeleteDocument, options);
 }
-    ${RatingFragmentDoc}`;
-export type BandApplicationRatingMutationFn = Apollo.MutationFunction<BandApplicationRatingMutation, BandApplicationRatingMutationVariables>;
+export type BandApplicationCommentDeleteMutationHookResult = ReturnType<
+  typeof useBandApplicationCommentDeleteMutation
+>;
+export type BandApplicationCommentDeleteMutationResult =
+  Apollo.MutationResult<BandApplicationCommentDeleteMutation>;
+export type BandApplicationCommentDeleteMutationOptions =
+  Apollo.BaseMutationOptions<
+    BandApplicationCommentDeleteMutation,
+    BandApplicationCommentDeleteMutationVariables
+  >;
+export const BandApplicationRatingDocument = gql`
+  mutation BandApplicationRating($id: ID!, $rating: Int) {
+    rateBandApplication(bandApplicationId: $id, rating: $rating) {
+      id
+      ...Rating
+    }
+  }
+  ${RatingFragmentDoc}
+`;
+export type BandApplicationRatingMutationFn = Apollo.MutationFunction<
+  BandApplicationRatingMutation,
+  BandApplicationRatingMutationVariables
+>;
 
 /**
  * __useBandApplicationRatingMutation__
@@ -1023,33 +1713,47 @@ export type BandApplicationRatingMutationFn = Apollo.MutationFunction<BandApplic
  *   },
  * });
  */
-export function useBandApplicationRatingMutation(baseOptions?: Apollo.MutationHookOptions<BandApplicationRatingMutation, BandApplicationRatingMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<BandApplicationRatingMutation, BandApplicationRatingMutationVariables>(BandApplicationRatingDocument, options);
-      }
-export type BandApplicationRatingMutationHookResult = ReturnType<typeof useBandApplicationRatingMutation>;
-export type BandApplicationRatingMutationResult = Apollo.MutationResult<BandApplicationRatingMutation>;
-export type BandApplicationRatingMutationOptions = Apollo.BaseMutationOptions<BandApplicationRatingMutation, BandApplicationRatingMutationVariables>;
+export function useBandApplicationRatingMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    BandApplicationRatingMutation,
+    BandApplicationRatingMutationVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useMutation<
+    BandApplicationRatingMutation,
+    BandApplicationRatingMutationVariables
+  >(BandApplicationRatingDocument, options);
+}
+export type BandApplicationRatingMutationHookResult = ReturnType<
+  typeof useBandApplicationRatingMutation
+>;
+export type BandApplicationRatingMutationResult =
+  Apollo.MutationResult<BandApplicationRatingMutation>;
+export type BandApplicationRatingMutationOptions = Apollo.BaseMutationOptions<
+  BandApplicationRatingMutation,
+  BandApplicationRatingMutationVariables
+>;
 export const DeviceTransactionsDocument = gql`
-    query DeviceTransactions($deviceID: ID!) {
-  node(id: $deviceID) {
-    ... on Device {
-      transactions(limit: 25) {
-        data {
-          deviceTime
-          balanceAfter
-          balanceBefore
-          depositBefore
-          depositAfter
-          cardId
-          transactionType
-          clientId
+  query DeviceTransactions($deviceID: ID!) {
+    node(id: $deviceID) {
+      ... on Device {
+        transactions(limit: 25) {
+          data {
+            deviceTime
+            balanceAfter
+            balanceBefore
+            depositBefore
+            depositAfter
+            cardId
+            transactionType
+            clientId
+          }
         }
       }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useDeviceTransactionsQuery__
@@ -1067,31 +1771,64 @@ export const DeviceTransactionsDocument = gql`
  *   },
  * });
  */
-export function useDeviceTransactionsQuery(baseOptions: Apollo.QueryHookOptions<DeviceTransactionsQuery, DeviceTransactionsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<DeviceTransactionsQuery, DeviceTransactionsQueryVariables>(DeviceTransactionsDocument, options);
-      }
-export function useDeviceTransactionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<DeviceTransactionsQuery, DeviceTransactionsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<DeviceTransactionsQuery, DeviceTransactionsQueryVariables>(DeviceTransactionsDocument, options);
-        }
-export type DeviceTransactionsQueryHookResult = ReturnType<typeof useDeviceTransactionsQuery>;
-export type DeviceTransactionsLazyQueryHookResult = ReturnType<typeof useDeviceTransactionsLazyQuery>;
-export type DeviceTransactionsQueryResult = Apollo.QueryResult<DeviceTransactionsQuery, DeviceTransactionsQueryVariables>;
-export const UpsertProductListDocument = gql`
-    mutation UpsertProductList($id: ID, $emoji: String, $name: String, $products: [ProductInput!], $active: Boolean) {
-  upsertProductList(
-    id: $id
-    emoji: $emoji
-    name: $name
-    products: $products
-    active: $active
-  ) {
-    ...ProductList
-  }
+export function useDeviceTransactionsQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    DeviceTransactionsQuery,
+    DeviceTransactionsQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useQuery<
+    DeviceTransactionsQuery,
+    DeviceTransactionsQueryVariables
+  >(DeviceTransactionsDocument, options);
 }
-    ${ProductListFragmentDoc}`;
-export type UpsertProductListMutationFn = Apollo.MutationFunction<UpsertProductListMutation, UpsertProductListMutationVariables>;
+export function useDeviceTransactionsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    DeviceTransactionsQuery,
+    DeviceTransactionsQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useLazyQuery<
+    DeviceTransactionsQuery,
+    DeviceTransactionsQueryVariables
+  >(DeviceTransactionsDocument, options);
+}
+export type DeviceTransactionsQueryHookResult = ReturnType<
+  typeof useDeviceTransactionsQuery
+>;
+export type DeviceTransactionsLazyQueryHookResult = ReturnType<
+  typeof useDeviceTransactionsLazyQuery
+>;
+export type DeviceTransactionsQueryResult = Apollo.QueryResult<
+  DeviceTransactionsQuery,
+  DeviceTransactionsQueryVariables
+>;
+export const UpsertProductListDocument = gql`
+  mutation UpsertProductList(
+    $id: ID
+    $emoji: String
+    $name: String
+    $products: [ProductInput!]
+    $active: Boolean
+  ) {
+    upsertProductList(
+      id: $id
+      emoji: $emoji
+      name: $name
+      products: $products
+      active: $active
+    ) {
+      ...ProductList
+    }
+  }
+  ${ProductListFragmentDoc}
+`;
+export type UpsertProductListMutationFn = Apollo.MutationFunction<
+  UpsertProductListMutation,
+  UpsertProductListMutationVariables
+>;
 
 /**
  * __useUpsertProductListMutation__
@@ -1114,38 +1851,57 @@ export type UpsertProductListMutationFn = Apollo.MutationFunction<UpsertProductL
  *   },
  * });
  */
-export function useUpsertProductListMutation(baseOptions?: Apollo.MutationHookOptions<UpsertProductListMutation, UpsertProductListMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpsertProductListMutation, UpsertProductListMutationVariables>(UpsertProductListDocument, options);
-      }
-export type UpsertProductListMutationHookResult = ReturnType<typeof useUpsertProductListMutation>;
-export type UpsertProductListMutationResult = Apollo.MutationResult<UpsertProductListMutation>;
-export type UpsertProductListMutationOptions = Apollo.BaseMutationOptions<UpsertProductListMutation, UpsertProductListMutationVariables>;
+export function useUpsertProductListMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UpsertProductListMutation,
+    UpsertProductListMutationVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useMutation<
+    UpsertProductListMutation,
+    UpsertProductListMutationVariables
+  >(UpsertProductListDocument, options);
+}
+export type UpsertProductListMutationHookResult = ReturnType<
+  typeof useUpsertProductListMutation
+>;
+export type UpsertProductListMutationResult =
+  Apollo.MutationResult<UpsertProductListMutation>;
+export type UpsertProductListMutationOptions = Apollo.BaseMutationOptions<
+  UpsertProductListMutation,
+  UpsertProductListMutationVariables
+>;
 export const RevenueDetailsDocument = gql`
-    query RevenueDetails($id: ID!, $after: DateTime!, $before: DateTime!, $grouping: TimeGrouping!) {
-  productList: node(id: $id) {
-    ... on ProductList {
-      id
-      name
-      salesNumbers(after: $after, before: $before) {
-        timeSeries(grouping: $grouping) {
-          time
-          value
-        }
-        payment
-      }
-      historicalProducts {
+  query RevenueDetails(
+    $id: ID!
+    $after: DateTime!
+    $before: DateTime!
+    $grouping: TimeGrouping!
+  ) {
+    productList: node(id: $id) {
+      ... on ProductList {
+        id
         name
         salesNumbers(after: $after, before: $before) {
-          count
-          total
+          timeSeries(grouping: $grouping) {
+            time
+            value
+          }
           payment
+        }
+        historicalProducts {
+          name
+          salesNumbers(after: $after, before: $before) {
+            count
+            total
+            payment
+          }
         }
       }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useRevenueDetailsQuery__
@@ -1166,43 +1922,67 @@ export const RevenueDetailsDocument = gql`
  *   },
  * });
  */
-export function useRevenueDetailsQuery(baseOptions: Apollo.QueryHookOptions<RevenueDetailsQuery, RevenueDetailsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<RevenueDetailsQuery, RevenueDetailsQueryVariables>(RevenueDetailsDocument, options);
-      }
-export function useRevenueDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<RevenueDetailsQuery, RevenueDetailsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<RevenueDetailsQuery, RevenueDetailsQueryVariables>(RevenueDetailsDocument, options);
-        }
-export type RevenueDetailsQueryHookResult = ReturnType<typeof useRevenueDetailsQuery>;
-export type RevenueDetailsLazyQueryHookResult = ReturnType<typeof useRevenueDetailsLazyQuery>;
-export type RevenueDetailsQueryResult = Apollo.QueryResult<RevenueDetailsQuery, RevenueDetailsQueryVariables>;
+export function useRevenueDetailsQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    RevenueDetailsQuery,
+    RevenueDetailsQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useQuery<RevenueDetailsQuery, RevenueDetailsQueryVariables>(
+    RevenueDetailsDocument,
+    options,
+  );
+}
+export function useRevenueDetailsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    RevenueDetailsQuery,
+    RevenueDetailsQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useLazyQuery<RevenueDetailsQuery, RevenueDetailsQueryVariables>(
+    RevenueDetailsDocument,
+    options,
+  );
+}
+export type RevenueDetailsQueryHookResult = ReturnType<
+  typeof useRevenueDetailsQuery
+>;
+export type RevenueDetailsLazyQueryHookResult = ReturnType<
+  typeof useRevenueDetailsLazyQuery
+>;
+export type RevenueDetailsQueryResult = Apollo.QueryResult<
+  RevenueDetailsQuery,
+  RevenueDetailsQueryVariables
+>;
 export const BandApplcationsDocument = gql`
-    query BandApplcations($id: ID!) {
-  viewer {
-    id
-  }
-  node(id: $id) {
-    ... on Event {
-      bandApplication {
-        id
-        bandname
-        rating
-        city
-        genre
-        genreCategory
-        distance
-        comments {
-          totalCount
+  query BandApplcations($id: ID!) {
+    viewer {
+      id
+    }
+    node(id: $id) {
+      ... on Event {
+        bandApplication {
+          id
+          bandname
+          rating
+          city
+          genre
+          genreCategory
+          distance
+          comments {
+            totalCount
+          }
+          ...ContactedBy
+          ...Rating
         }
-        ...ContactedBy
-        ...Rating
       }
     }
   }
-}
-    ${ContactedByFragmentDoc}
-${RatingFragmentDoc}`;
+  ${ContactedByFragmentDoc}
+  ${RatingFragmentDoc}
+`;
 
 /**
  * __useBandApplcationsQuery__
@@ -1220,25 +2000,48 @@ ${RatingFragmentDoc}`;
  *   },
  * });
  */
-export function useBandApplcationsQuery(baseOptions: Apollo.QueryHookOptions<BandApplcationsQuery, BandApplcationsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<BandApplcationsQuery, BandApplcationsQueryVariables>(BandApplcationsDocument, options);
-      }
-export function useBandApplcationsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<BandApplcationsQuery, BandApplcationsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<BandApplcationsQuery, BandApplcationsQueryVariables>(BandApplcationsDocument, options);
-        }
-export type BandApplcationsQueryHookResult = ReturnType<typeof useBandApplcationsQuery>;
-export type BandApplcationsLazyQueryHookResult = ReturnType<typeof useBandApplcationsLazyQuery>;
-export type BandApplcationsQueryResult = Apollo.QueryResult<BandApplcationsQuery, BandApplcationsQueryVariables>;
-export const EventsDocument = gql`
-    query Events {
-  events {
-    id
-    name
-  }
+export function useBandApplcationsQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    BandApplcationsQuery,
+    BandApplcationsQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useQuery<BandApplcationsQuery, BandApplcationsQueryVariables>(
+    BandApplcationsDocument,
+    options,
+  );
 }
-    `;
+export function useBandApplcationsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    BandApplcationsQuery,
+    BandApplcationsQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useLazyQuery<
+    BandApplcationsQuery,
+    BandApplcationsQueryVariables
+  >(BandApplcationsDocument, options);
+}
+export type BandApplcationsQueryHookResult = ReturnType<
+  typeof useBandApplcationsQuery
+>;
+export type BandApplcationsLazyQueryHookResult = ReturnType<
+  typeof useBandApplcationsLazyQuery
+>;
+export type BandApplcationsQueryResult = Apollo.QueryResult<
+  BandApplcationsQuery,
+  BandApplcationsQueryVariables
+>;
+export const EventsDocument = gql`
+  query Events {
+    events {
+      id
+      name
+    }
+  }
+`;
 
 /**
  * __useEventsQuery__
@@ -1255,43 +2058,57 @@ export const EventsDocument = gql`
  *   },
  * });
  */
-export function useEventsQuery(baseOptions?: Apollo.QueryHookOptions<EventsQuery, EventsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<EventsQuery, EventsQueryVariables>(EventsDocument, options);
-      }
-export function useEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<EventsQuery, EventsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<EventsQuery, EventsQueryVariables>(EventsDocument, options);
-        }
+export function useEventsQuery(
+  baseOptions?: Apollo.QueryHookOptions<EventsQuery, EventsQueryVariables>,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useQuery<EventsQuery, EventsQueryVariables>(
+    EventsDocument,
+    options,
+  );
+}
+export function useEventsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<EventsQuery, EventsQueryVariables>,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useLazyQuery<EventsQuery, EventsQueryVariables>(
+    EventsDocument,
+    options,
+  );
+}
 export type EventsQueryHookResult = ReturnType<typeof useEventsQuery>;
 export type EventsLazyQueryHookResult = ReturnType<typeof useEventsLazyQuery>;
-export type EventsQueryResult = Apollo.QueryResult<EventsQuery, EventsQueryVariables>;
+export type EventsQueryResult = Apollo.QueryResult<
+  EventsQuery,
+  EventsQueryVariables
+>;
 export const CardInfoDocument = gql`
-    query CardInfo($cardID: ID!) {
-  config {
-    depositValue
-  }
-  node(id: $cardID) {
-    ... on Card {
-      id
-      transactions {
-        balanceTotal
-        data {
-          clientId
-          transactionType
-          balanceAfter
-          balanceBefore
-          depositAfter
-          depositBefore
-          deviceTime
-          Order {
-            total
-            items {
-              amount
-              name
-              productList {
-                emoji
+  query CardInfo($cardID: ID!) {
+    config {
+      depositValue
+    }
+    node(id: $cardID) {
+      ... on Card {
+        id
+        transactions {
+          balanceTotal
+          data {
+            clientId
+            transactionType
+            balanceAfter
+            balanceBefore
+            depositAfter
+            depositBefore
+            deviceTime
+            Order {
+              total
+              items {
+                amount
                 name
+                productList {
+                  emoji
+                  name
+                }
               }
             }
           }
@@ -1299,8 +2116,7 @@ export const CardInfoDocument = gql`
       }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useCardInfoQuery__
@@ -1318,35 +2134,53 @@ export const CardInfoDocument = gql`
  *   },
  * });
  */
-export function useCardInfoQuery(baseOptions: Apollo.QueryHookOptions<CardInfoQuery, CardInfoQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<CardInfoQuery, CardInfoQueryVariables>(CardInfoDocument, options);
-      }
-export function useCardInfoLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CardInfoQuery, CardInfoQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<CardInfoQuery, CardInfoQueryVariables>(CardInfoDocument, options);
-        }
+export function useCardInfoQuery(
+  baseOptions: Apollo.QueryHookOptions<CardInfoQuery, CardInfoQueryVariables>,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useQuery<CardInfoQuery, CardInfoQueryVariables>(
+    CardInfoDocument,
+    options,
+  );
+}
+export function useCardInfoLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    CardInfoQuery,
+    CardInfoQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useLazyQuery<CardInfoQuery, CardInfoQueryVariables>(
+    CardInfoDocument,
+    options,
+  );
+}
 export type CardInfoQueryHookResult = ReturnType<typeof useCardInfoQuery>;
-export type CardInfoLazyQueryHookResult = ReturnType<typeof useCardInfoLazyQuery>;
-export type CardInfoQueryResult = Apollo.QueryResult<CardInfoQuery, CardInfoQueryVariables>;
+export type CardInfoLazyQueryHookResult = ReturnType<
+  typeof useCardInfoLazyQuery
+>;
+export type CardInfoQueryResult = Apollo.QueryResult<
+  CardInfoQuery,
+  CardInfoQueryVariables
+>;
 export const DevicesDocument = gql`
-    query Devices {
-  devices(type: CONTACTLESS_TERMINAL) {
-    id
-    lastSeen
-    softwareVersion
-    productList {
+  query Devices {
+    devices(type: CONTACTLESS_TERMINAL) {
+      id
+      lastSeen
+      softwareVersion
+      productList {
+        id
+        name
+      }
+    }
+    productLists {
       id
       name
+      active
     }
   }
-  productLists {
-    id
-    name
-    active
-  }
-}
-    `;
+`;
 
 /**
  * __useDevicesQuery__
@@ -1363,29 +2197,51 @@ export const DevicesDocument = gql`
  *   },
  * });
  */
-export function useDevicesQuery(baseOptions?: Apollo.QueryHookOptions<DevicesQuery, DevicesQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<DevicesQuery, DevicesQueryVariables>(DevicesDocument, options);
-      }
-export function useDevicesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<DevicesQuery, DevicesQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<DevicesQuery, DevicesQueryVariables>(DevicesDocument, options);
-        }
+export function useDevicesQuery(
+  baseOptions?: Apollo.QueryHookOptions<DevicesQuery, DevicesQueryVariables>,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useQuery<DevicesQuery, DevicesQueryVariables>(
+    DevicesDocument,
+    options,
+  );
+}
+export function useDevicesLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    DevicesQuery,
+    DevicesQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useLazyQuery<DevicesQuery, DevicesQueryVariables>(
+    DevicesDocument,
+    options,
+  );
+}
 export type DevicesQueryHookResult = ReturnType<typeof useDevicesQuery>;
 export type DevicesLazyQueryHookResult = ReturnType<typeof useDevicesLazyQuery>;
-export type DevicesQueryResult = Apollo.QueryResult<DevicesQuery, DevicesQueryVariables>;
+export type DevicesQueryResult = Apollo.QueryResult<
+  DevicesQuery,
+  DevicesQueryVariables
+>;
 export const UpdateDeviceListDocument = gql`
-    mutation UpdateDeviceList($productListId: ID!, $deviceId: ID!) {
-  updateDeviceProductList(productListId: $productListId, deviceId: $deviceId) {
-    id
-    productList {
+  mutation UpdateDeviceList($productListId: ID!, $deviceId: ID!) {
+    updateDeviceProductList(
+      productListId: $productListId
+      deviceId: $deviceId
+    ) {
       id
-      name
+      productList {
+        id
+        name
+      }
     }
   }
-}
-    `;
-export type UpdateDeviceListMutationFn = Apollo.MutationFunction<UpdateDeviceListMutation, UpdateDeviceListMutationVariables>;
+`;
+export type UpdateDeviceListMutationFn = Apollo.MutationFunction<
+  UpdateDeviceListMutation,
+  UpdateDeviceListMutationVariables
+>;
 
 /**
  * __useUpdateDeviceListMutation__
@@ -1405,21 +2261,36 @@ export type UpdateDeviceListMutationFn = Apollo.MutationFunction<UpdateDeviceLis
  *   },
  * });
  */
-export function useUpdateDeviceListMutation(baseOptions?: Apollo.MutationHookOptions<UpdateDeviceListMutation, UpdateDeviceListMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateDeviceListMutation, UpdateDeviceListMutationVariables>(UpdateDeviceListDocument, options);
-      }
-export type UpdateDeviceListMutationHookResult = ReturnType<typeof useUpdateDeviceListMutation>;
-export type UpdateDeviceListMutationResult = Apollo.MutationResult<UpdateDeviceListMutation>;
-export type UpdateDeviceListMutationOptions = Apollo.BaseMutationOptions<UpdateDeviceListMutation, UpdateDeviceListMutationVariables>;
-export const ProductListDocument = gql`
-    query ProductList {
-  productLists {
-    id
-    ...ProductList
-  }
+export function useUpdateDeviceListMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UpdateDeviceListMutation,
+    UpdateDeviceListMutationVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useMutation<
+    UpdateDeviceListMutation,
+    UpdateDeviceListMutationVariables
+  >(UpdateDeviceListDocument, options);
 }
-    ${ProductListFragmentDoc}`;
+export type UpdateDeviceListMutationHookResult = ReturnType<
+  typeof useUpdateDeviceListMutation
+>;
+export type UpdateDeviceListMutationResult =
+  Apollo.MutationResult<UpdateDeviceListMutation>;
+export type UpdateDeviceListMutationOptions = Apollo.BaseMutationOptions<
+  UpdateDeviceListMutation,
+  UpdateDeviceListMutationVariables
+>;
+export const ProductListDocument = gql`
+  query ProductList {
+    productLists {
+      id
+      ...ProductList
+    }
+  }
+  ${ProductListFragmentDoc}
+`;
 
 /**
  * __useProductListQuery__
@@ -1436,25 +2307,50 @@ export const ProductListDocument = gql`
  *   },
  * });
  */
-export function useProductListQuery(baseOptions?: Apollo.QueryHookOptions<ProductListQuery, ProductListQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ProductListQuery, ProductListQueryVariables>(ProductListDocument, options);
-      }
-export function useProductListLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProductListQuery, ProductListQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ProductListQuery, ProductListQueryVariables>(ProductListDocument, options);
-        }
-export type ProductListQueryHookResult = ReturnType<typeof useProductListQuery>;
-export type ProductListLazyQueryHookResult = ReturnType<typeof useProductListLazyQuery>;
-export type ProductListQueryResult = Apollo.QueryResult<ProductListQuery, ProductListQueryVariables>;
-export const CreateProductListDocument = gql`
-    mutation CreateProductList($name: String!) {
-  upsertProductList(name: $name) {
-    ...ProductList
-  }
+export function useProductListQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    ProductListQuery,
+    ProductListQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useQuery<ProductListQuery, ProductListQueryVariables>(
+    ProductListDocument,
+    options,
+  );
 }
-    ${ProductListFragmentDoc}`;
-export type CreateProductListMutationFn = Apollo.MutationFunction<CreateProductListMutation, CreateProductListMutationVariables>;
+export function useProductListLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    ProductListQuery,
+    ProductListQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useLazyQuery<ProductListQuery, ProductListQueryVariables>(
+    ProductListDocument,
+    options,
+  );
+}
+export type ProductListQueryHookResult = ReturnType<typeof useProductListQuery>;
+export type ProductListLazyQueryHookResult = ReturnType<
+  typeof useProductListLazyQuery
+>;
+export type ProductListQueryResult = Apollo.QueryResult<
+  ProductListQuery,
+  ProductListQueryVariables
+>;
+export const CreateProductListDocument = gql`
+  mutation CreateProductList($name: String!) {
+    upsertProductList(name: $name) {
+      ...ProductList
+    }
+  }
+  ${ProductListFragmentDoc}
+`;
+export type CreateProductListMutationFn = Apollo.MutationFunction<
+  CreateProductListMutation,
+  CreateProductListMutationVariables
+>;
 
 /**
  * __useCreateProductListMutation__
@@ -1473,32 +2369,46 @@ export type CreateProductListMutationFn = Apollo.MutationFunction<CreateProductL
  *   },
  * });
  */
-export function useCreateProductListMutation(baseOptions?: Apollo.MutationHookOptions<CreateProductListMutation, CreateProductListMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateProductListMutation, CreateProductListMutationVariables>(CreateProductListDocument, options);
-      }
-export type CreateProductListMutationHookResult = ReturnType<typeof useCreateProductListMutation>;
-export type CreateProductListMutationResult = Apollo.MutationResult<CreateProductListMutation>;
-export type CreateProductListMutationOptions = Apollo.BaseMutationOptions<CreateProductListMutation, CreateProductListMutationVariables>;
+export function useCreateProductListMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CreateProductListMutation,
+    CreateProductListMutationVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useMutation<
+    CreateProductListMutation,
+    CreateProductListMutationVariables
+  >(CreateProductListDocument, options);
+}
+export type CreateProductListMutationHookResult = ReturnType<
+  typeof useCreateProductListMutation
+>;
+export type CreateProductListMutationResult =
+  Apollo.MutationResult<CreateProductListMutation>;
+export type CreateProductListMutationOptions = Apollo.BaseMutationOptions<
+  CreateProductListMutation,
+  CreateProductListMutationVariables
+>;
 export const ProductPrintDocument = gql`
-    query ProductPrint {
-  productLists {
-    id
-    emoji
-    name
-    active
-    product {
+  query ProductPrint {
+    productLists {
       id
+      emoji
       name
-      price
-      requiresDeposit
+      active
+      product {
+        id
+        name
+        price
+        requiresDeposit
+      }
+    }
+    config {
+      depositValue
     }
   }
-  config {
-    depositValue
-  }
-}
-    `;
+`;
 
 /**
  * __useProductPrintQuery__
@@ -1515,64 +2425,87 @@ export const ProductPrintDocument = gql`
  *   },
  * });
  */
-export function useProductPrintQuery(baseOptions?: Apollo.QueryHookOptions<ProductPrintQuery, ProductPrintQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ProductPrintQuery, ProductPrintQueryVariables>(ProductPrintDocument, options);
-      }
-export function useProductPrintLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProductPrintQuery, ProductPrintQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ProductPrintQuery, ProductPrintQueryVariables>(ProductPrintDocument, options);
-        }
-export type ProductPrintQueryHookResult = ReturnType<typeof useProductPrintQuery>;
-export type ProductPrintLazyQueryHookResult = ReturnType<typeof useProductPrintLazyQuery>;
-export type ProductPrintQueryResult = Apollo.QueryResult<ProductPrintQuery, ProductPrintQueryVariables>;
-export const RevenueDocument = gql`
-    query Revenue($after: DateTime!, $before: DateTime!) {
-  config {
-    depositValue
-  }
-  events {
-    id
-    name
-    start
-    end
-  }
-  productLists {
-    id
-    name
-    salesNumbers(after: $after, before: $before) {
-      count
-      total
-      payment
-    }
-  }
-  transactions {
-    topUps: transactions(after: $after, before: $before, type: TopUp) {
-      balanceTotal
-      totalCount
-      depositIn
-      depositOut
-    }
-    cashouts: transactions(after: $after, before: $before, type: Cashout) {
-      balanceTotal
-      totalCount
-      depositIn
-      depositOut
-    }
-    charges: transactions(after: $after, before: $before, type: Charge) {
-      balanceTotal
-      totalCount
-      depositIn
-      depositOut
-    }
-    transactions(after: $after, before: $before) {
-      depositIn
-      depositOut
-      uniqueCards
-    }
-  }
+export function useProductPrintQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    ProductPrintQuery,
+    ProductPrintQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useQuery<ProductPrintQuery, ProductPrintQueryVariables>(
+    ProductPrintDocument,
+    options,
+  );
 }
-    `;
+export function useProductPrintLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    ProductPrintQuery,
+    ProductPrintQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useLazyQuery<ProductPrintQuery, ProductPrintQueryVariables>(
+    ProductPrintDocument,
+    options,
+  );
+}
+export type ProductPrintQueryHookResult = ReturnType<
+  typeof useProductPrintQuery
+>;
+export type ProductPrintLazyQueryHookResult = ReturnType<
+  typeof useProductPrintLazyQuery
+>;
+export type ProductPrintQueryResult = Apollo.QueryResult<
+  ProductPrintQuery,
+  ProductPrintQueryVariables
+>;
+export const RevenueDocument = gql`
+  query Revenue($after: DateTime!, $before: DateTime!) {
+    config {
+      depositValue
+    }
+    events {
+      id
+      name
+      start
+      end
+    }
+    productLists {
+      id
+      name
+      salesNumbers(after: $after, before: $before) {
+        count
+        total
+        payment
+      }
+    }
+    transactions {
+      topUps: transactions(after: $after, before: $before, type: TopUp) {
+        balanceTotal
+        totalCount
+        depositIn
+        depositOut
+      }
+      cashouts: transactions(after: $after, before: $before, type: Cashout) {
+        balanceTotal
+        totalCount
+        depositIn
+        depositOut
+      }
+      charges: transactions(after: $after, before: $before, type: Charge) {
+        balanceTotal
+        totalCount
+        depositIn
+        depositOut
+      }
+      transactions(after: $after, before: $before) {
+        depositIn
+        depositOut
+        uniqueCards
+      }
+    }
+  }
+`;
 
 /**
  * __useRevenueQuery__
@@ -1591,26 +2524,42 @@ export const RevenueDocument = gql`
  *   },
  * });
  */
-export function useRevenueQuery(baseOptions: Apollo.QueryHookOptions<RevenueQuery, RevenueQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<RevenueQuery, RevenueQueryVariables>(RevenueDocument, options);
-      }
-export function useRevenueLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<RevenueQuery, RevenueQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<RevenueQuery, RevenueQueryVariables>(RevenueDocument, options);
-        }
+export function useRevenueQuery(
+  baseOptions: Apollo.QueryHookOptions<RevenueQuery, RevenueQueryVariables>,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useQuery<RevenueQuery, RevenueQueryVariables>(
+    RevenueDocument,
+    options,
+  );
+}
+export function useRevenueLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    RevenueQuery,
+    RevenueQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useLazyQuery<RevenueQuery, RevenueQueryVariables>(
+    RevenueDocument,
+    options,
+  );
+}
 export type RevenueQueryHookResult = ReturnType<typeof useRevenueQuery>;
 export type RevenueLazyQueryHookResult = ReturnType<typeof useRevenueLazyQuery>;
-export type RevenueQueryResult = Apollo.QueryResult<RevenueQuery, RevenueQueryVariables>;
+export type RevenueQueryResult = Apollo.QueryResult<
+  RevenueQuery,
+  RevenueQueryVariables
+>;
 export const ViewerContextProviderDocument = gql`
-    query ViewerContextProvider {
-  viewer {
-    id
-    profilePicture
-    displayName
+  query ViewerContextProvider {
+    viewer {
+      id
+      ...Avatar
+    }
   }
-}
-    `;
+  ${AvatarFragmentDoc}
+`;
 
 /**
  * __useViewerContextProviderQuery__
@@ -1627,14 +2576,37 @@ export const ViewerContextProviderDocument = gql`
  *   },
  * });
  */
-export function useViewerContextProviderQuery(baseOptions?: Apollo.QueryHookOptions<ViewerContextProviderQuery, ViewerContextProviderQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ViewerContextProviderQuery, ViewerContextProviderQueryVariables>(ViewerContextProviderDocument, options);
-      }
-export function useViewerContextProviderLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ViewerContextProviderQuery, ViewerContextProviderQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ViewerContextProviderQuery, ViewerContextProviderQueryVariables>(ViewerContextProviderDocument, options);
-        }
-export type ViewerContextProviderQueryHookResult = ReturnType<typeof useViewerContextProviderQuery>;
-export type ViewerContextProviderLazyQueryHookResult = ReturnType<typeof useViewerContextProviderLazyQuery>;
-export type ViewerContextProviderQueryResult = Apollo.QueryResult<ViewerContextProviderQuery, ViewerContextProviderQueryVariables>;
+export function useViewerContextProviderQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    ViewerContextProviderQuery,
+    ViewerContextProviderQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useQuery<
+    ViewerContextProviderQuery,
+    ViewerContextProviderQueryVariables
+  >(ViewerContextProviderDocument, options);
+}
+export function useViewerContextProviderLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    ViewerContextProviderQuery,
+    ViewerContextProviderQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useLazyQuery<
+    ViewerContextProviderQuery,
+    ViewerContextProviderQueryVariables
+  >(ViewerContextProviderDocument, options);
+}
+export type ViewerContextProviderQueryHookResult = ReturnType<
+  typeof useViewerContextProviderQuery
+>;
+export type ViewerContextProviderLazyQueryHookResult = ReturnType<
+  typeof useViewerContextProviderLazyQuery
+>;
+export type ViewerContextProviderQueryResult = Apollo.QueryResult<
+  ViewerContextProviderQuery,
+  ViewerContextProviderQueryVariables
+>;

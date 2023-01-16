@@ -6,6 +6,7 @@ const {Header} = Layout;
 import Link from 'next/link';
 import {useRouter} from 'next/dist/client/router';
 import ViewerAvatar from './ViewerAvatar';
+import useViewerContext from '../../utils/useViewerContext';
 
 export const HEADER_HEIGHT = 64;
 
@@ -23,6 +24,7 @@ export default function Page({
   accessory?: React.ReactNode;
 }) {
   const {asPath} = useRouter();
+  const viewer = useViewerContext();
 
   return (
     <Layout
@@ -79,23 +81,25 @@ export default function Page({
           ]}
         />
         <div className={styles.spacer} />
-        <Dropdown
-          className={styles.profileMenu}
-          placement="bottomRight"
-          arrow
-          menu={{
-            items: [
-              {
-                label: (
-                  <a href="https://api.kulturspektakel.de/logout">Logout</a>
-                ),
-                key: 'logout',
-              },
-            ],
-          }}
-        >
-          <ViewerAvatar />
-        </Dropdown>
+        {viewer && (
+          <Dropdown
+            className={styles.profileMenu}
+            placement="bottomRight"
+            arrow
+            menu={{
+              items: [
+                {
+                  label: (
+                    <a href="https://api.kulturspektakel.de/logout">Logout</a>
+                  ),
+                  key: 'logout',
+                },
+              ],
+            }}
+          >
+            <ViewerAvatar {...viewer} />
+          </Dropdown>
+        )}
       </Header>
       <Layout.Content className={padded ? styles.padded : undefined}>
         {(title || accessory) && (

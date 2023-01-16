@@ -23,6 +23,11 @@ import {GlobalOutlined} from '@ant-design/icons';
 import styles from './BandApplicationDetails.module.css';
 import BandApplicationTimeline from './BandApplicationTimeline';
 import Clipboard from '../shared/Clipboard';
+import GoogleMaps from './GoogleMaps';
+import {
+  GENRE_CATEGORIES,
+  GENRE_ICONS,
+} from '../../pages/booking/[event]/[[...band]]';
 
 gql`
   query ApplicationDetails($id: ID!) {
@@ -42,13 +47,13 @@ gql`
         contactPhone
         email
         demo
-        distance
-        city
         numberOfArtists
         numberOfNonMaleArtists
         hasPreviouslyPlayed
         website
-
+        genre
+        genreCategory
+        ...GoogleMaps
         ...Rating
         ...BandApplicationTimeline
       }
@@ -100,7 +105,23 @@ export default function BandApplicationDetails({
     <Modal
       title={
         data?.node?.__typename === 'BandApplication' ? (
-          data?.node.bandname
+          <div className={styles.titleGroup}>
+            <img
+              src={`/genre/${GENRE_ICONS.get(data?.node?.genreCategory)}`}
+              width="32px"
+              height="32px"
+              alt="Genre"
+            />
+            <div>
+              <Typography.Title className={styles.title} level={5}>
+                {data?.node.bandname}
+              </Typography.Title>
+              <Typography.Text className={styles.subTitle} type="secondary">
+                {data?.node.genre ??
+                  GENRE_CATEGORIES.get(data?.node.genreCategory)}
+              </Typography.Text>
+            </div>
+          </div>
         ) : (
           <Skeleton
             title={true}
@@ -144,46 +165,7 @@ function DrawerContent(props: Props) {
       <Row gutter={24}>
         <Col span={12}>
           {props.demo && <Demo demo={props.demo} />}
-          <Row className={styles.social}>
-            {props.website && (
-              <Col span={8}>
-                <a href={props.website} target="_blank" rel="noreferrer">
-                  <Statistic
-                    valueStyle={{color: '#1890ff'}}
-                    value={' '}
-                    prefix={<GlobalOutlined color="blue" />}
-                    title="Webseite"
-                  />
-                </a>
-              </Col>
-            )}
-            {props.facebook && (
-              <Col span={8}>
-                <a href={props.facebook} target="_blank" rel="noreferrer">
-                  <Statistic
-                    valueStyle={{color: '#1890ff'}}
-                    value={props.facebookLikes ?? '?'}
-                    title="Facebook"
-                  />
-                </a>
-              </Col>
-            )}
-            {props.instagram && (
-              <Col span={8}>
-                <a
-                  href={`https://instagram.com/${props.instagram}`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <Statistic
-                    valueStyle={{color: '#1890ff'}}
-                    value={props.instagramFollower ?? '?'}
-                    title="Instagram"
-                  />
-                </a>
-              </Col>
-            )}
-          </Row>
+
           <br />
           {props.hasPreviouslyPlayed && (
             <div className={styles.row}>
@@ -228,6 +210,8 @@ function DrawerContent(props: Props) {
               </Typography.Paragraph>
             </>
           )}
+
+          <GoogleMaps city={props.city} />
           <Typography.Title level={5}>Kontakt</Typography.Title>
           {props.contactName}
           <br />
@@ -265,6 +249,48 @@ function DrawerContent(props: Props) {
           </Popconfirm>
         </Col>
         <Col span={12}>
+          {(props.website || props.facebook || props.instagram) && (
+            <Row className={styles.social}>
+              {props.website && (
+                <Col span={8}>
+                  <a href={props.website} target="_blank" rel="noreferrer">
+                    <Statistic
+                      valueStyle={{color: '#1890ff'}}
+                      value={' '}
+                      prefix={<GlobalOutlined color="blue" />}
+                      title="Webseite"
+                    />
+                  </a>
+                </Col>
+              )}
+              {props.facebook && (
+                <Col span={8}>
+                  <a href={props.facebook} target="_blank" rel="noreferrer">
+                    <Statistic
+                      valueStyle={{color: '#1890ff'}}
+                      value={props.facebookLikes ?? '?'}
+                      title="Facebook"
+                    />
+                  </a>
+                </Col>
+              )}
+              {props.instagram && (
+                <Col span={8}>
+                  <a
+                    href={`https://instagram.com/${props.instagram}`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <Statistic
+                      valueStyle={{color: '#1890ff'}}
+                      value={props.instagramFollower ?? '?'}
+                      title="Instagram"
+                    />
+                  </a>
+                </Col>
+              )}
+            </Row>
+          )}
           <Typography.Title level={5} className={styles.firstHeading}>
             Bewertung
           </Typography.Title>
@@ -289,7 +315,13 @@ function DrawerContent(props: Props) {
               )}
             </Col>
           </Row>
-          <BandApplicationTimeline {...props} />
+          <BandApplicationTimeline
+            id={props.id}
+            createdAt={props.createdAt}
+            pastApplications={props.pastApplications}
+            pastPerformances={props.pastPerformances}
+            comments={props.comments}
+          />
         </Col>
       </Row>
     </>
