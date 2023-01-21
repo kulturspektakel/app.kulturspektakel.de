@@ -49,6 +49,7 @@ export type BandApplication = Node & {
   contactedByViewer?: Maybe<Viewer>;
   createdAt: Scalars['DateTime'];
   demo?: Maybe<Scalars['String']>;
+  demoEmbedUrl?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   distance?: Maybe<Scalars['Float']>;
   email: Scalars['String'];
@@ -64,6 +65,8 @@ export type BandApplication = Node & {
   instagram?: Maybe<Scalars['String']>;
   instagramFollower?: Maybe<Scalars['Int']>;
   knowsKultFrom?: Maybe<Scalars['String']>;
+  latitude?: Maybe<Scalars['Float']>;
+  longitude?: Maybe<Scalars['Float']>;
   numberOfArtists?: Maybe<Scalars['Int']>;
   numberOfNonMaleArtists?: Maybe<Scalars['Int']>;
   pastApplications: Array<BandApplication>;
@@ -612,16 +615,19 @@ export type ApplicationDetailsQuery = {
         contactPhone: string;
         email: string;
         demo?: string | null;
+        city: string;
+        distance?: number | null;
         numberOfArtists?: number | null;
         numberOfNonMaleArtists?: number | null;
         hasPreviouslyPlayed?: PreviouslyPlayed | null;
         website?: string | null;
         genre?: string | null;
         genreCategory: GenreCategory;
-        distance?: number | null;
-        city: string;
+        latitude?: number | null;
+        longitude?: number | null;
         rating?: number | null;
         createdAt: Date;
+        contactedByViewer?: {__typename?: 'Viewer'; id: string} | null;
         bandApplicationRating: Array<{
           __typename?: 'BandApplicationRating';
           rating: number;
@@ -871,8 +877,8 @@ export type CommentsFragment = {
 
 export type GoogleMapsFragment = {
   __typename?: 'BandApplication';
-  distance?: number | null;
-  city: string;
+  latitude?: number | null;
+  longitude?: number | null;
 };
 
 export type BandApplicationRatingMutationVariables = Exact<{
@@ -1399,8 +1405,8 @@ export const BandApplicationTimelineFragmentDoc = gql`
 `;
 export const GoogleMapsFragmentDoc = gql`
   fragment GoogleMaps on BandApplication {
-    distance
-    city
+    latitude
+    longitude
   }
 `;
 export const ProductRowFragmentDoc = gql`
@@ -1455,9 +1461,14 @@ export const ApplicationDetailsDocument = gql`
         contactPhone
         email
         demo
+        city
+        distance
         numberOfArtists
         numberOfNonMaleArtists
         hasPreviouslyPlayed
+        contactedByViewer {
+          id
+        }
         website
         genre
         genreCategory

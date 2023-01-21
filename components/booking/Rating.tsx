@@ -1,4 +1,4 @@
-import {Statistic, Tooltip} from 'antd';
+import {Statistic, theme, Tooltip} from 'antd';
 
 export default function Rating(props: {
   rating: number;
@@ -9,6 +9,8 @@ export default function Rating(props: {
     };
   }>;
 }) {
+  const {token} = theme.useToken();
+
   return (
     <Tooltip
       title={props.bandApplicationRating.map((r) => (
@@ -24,7 +26,7 @@ export default function Rating(props: {
     >
       <Statistic
         style={{display: 'inline-block'}}
-        valueStyle={{color: '#1890ff', fontSize: '1.5em'}}
+        valueStyle={{color: token.colorPrimary, fontSize: '1.5em'}}
         precision={2}
         value={props.rating}
       />

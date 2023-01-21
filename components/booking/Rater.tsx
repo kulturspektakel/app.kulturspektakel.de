@@ -1,5 +1,5 @@
 import {gql} from '@apollo/client';
-import {Rate} from 'antd';
+import {Rate, theme} from 'antd';
 import React from 'react';
 import {useBandApplicationRatingMutation} from '../../types/graphql';
 import {RatingFragment} from '../../types/graphql';
@@ -25,11 +25,13 @@ export default function Rater({
 }) {
   const [rate] = useBandApplicationRatingMutation();
   const viewer = useViewerContext();
+  const {token} = theme.useToken();
+
   return (
     <Rate
       count={4}
       value={value}
-      style={{color: '#1890ff'}}
+      style={{color: token.colorPrimary}}
       tooltips={[
         'Auf keinen Fall',
         'Eher nicht',

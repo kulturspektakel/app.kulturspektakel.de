@@ -1,4 +1,4 @@
-import {Avatar, Checkbox, Table, Tooltip, Typography} from 'antd';
+import {Avatar, Checkbox, Table, theme, Tooltip, Typography} from 'antd';
 import React, {useMemo, useState} from 'react';
 import Page from '../../../components/shared/Page';
 import {gql} from '@apollo/client';
@@ -149,7 +149,7 @@ const MemoizedTable = React.memo(
     height: number;
   }) => {
     const viewer = useViewerContext();
-    const [markContacted] = useMarkAsContextedMutation();
+    const {token} = theme.useToken();
     const ids = useMemo(
       () =>
         dataSource?.reduce(
@@ -303,7 +303,9 @@ const MemoizedTable = React.memo(
                   }`}
                   placement="left"
                 >
-                  <CommentOutlined style={{fontSize: 20, color: '#1890ff'}} />
+                  <CommentOutlined
+                    style={{fontSize: 20, color: token.colorPrimary}}
+                  />
                 </Tooltip>
               ) : null,
           },

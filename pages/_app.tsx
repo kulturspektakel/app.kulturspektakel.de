@@ -17,7 +17,7 @@ import weekday from 'dayjs/plugin/weekday';
 import localeData from 'dayjs/plugin/localeData';
 import dayjs from 'dayjs';
 import de from 'dayjs/locale/de';
-import {ConfigProvider} from 'antd';
+import {ConfigProvider, theme} from 'antd';
 import deDE from 'antd/locale/de_DE';
 
 dayjs.locale(de);
@@ -34,7 +34,14 @@ const App = ({Component, pageProps, initialApolloState}: AppProps & Props) => {
   return (
     <ApolloProvider client={client}>
       <LoginProvider>
-        <ConfigProvider locale={deDE}>
+        <ConfigProvider
+          locale={deDE}
+          theme={{
+            token: {
+              fontSizeHeading5: theme.defaultConfig.token.fontSize,
+            },
+          }}
+        >
           <Component {...pageProps} />
         </ConfigProvider>
       </LoginProvider>
@@ -50,6 +57,7 @@ App.getInitialProps = async (
     : app.ctx.req?.headers.cookie;
 
   const appProps = await NextApp.getInitialProps(app);
+  console.log(appProps);
 
   let initialApolloState: NormalizedCacheObject | undefined;
 

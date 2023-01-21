@@ -5,24 +5,20 @@ import {GoogleMapsFragment} from '../../types/graphql';
 
 gql`
   fragment GoogleMaps on BandApplication {
-    distance
-    city
+    latitude
+    longitude
   }
 `;
 
 export default function GoogleMaps(props: GoogleMapsFragment) {
   return (
-    <>
-      <Wrapper apiKey={'AIzaSyAP-SY6yJqQoHNb5YkkHJdcC-cOpBTJrz4'}>
-        <MapComponent city={props.city} />
-      </Wrapper>
-      {props.city}
-      {props.distance != null && <> ({props.distance.toFixed()} km)</>}
-    </>
+    <Wrapper apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY ?? ''}>
+      <MapComponent {...props} />
+    </Wrapper>
   );
 }
 
-function MapComponent({city}: {city: string}) {
+function MapComponent({latitude, longitude}: GoogleMapsFragment) {
   const ref = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -30,8 +26,9 @@ function MapComponent({city}: {city: string}) {
       return;
     }
 
+    const kult = new google.maps.LatLng(48.078143, 11.375518);
     const map = new window.google.maps.Map(ref.current, {
-      center: new google.maps.LatLng(-34, 151),
+      center: kult,
       zoom: 12,
       gestureHandling: 'cooperative',
       streetViewControl: false,
@@ -40,22 +37,27 @@ function MapComponent({city}: {city: string}) {
       mapTypeId: google.maps.MapTypeId.ROADMAP,
     });
 
-    // new google.maps.Marker({
-    //   position: new google.maps.LatLng(0, 0),
-    //   map,
-    // });
-
-    const kult = new google.maps.Marker({
-      position: new google.maps.LatLng(48.078143, 11.375518),
+    var bounds = new google.maps.LatLngBounds(kult);
+    const band = new google.maps.LatLng(latitude!, longitude!);
+    new google.maps.Marker({
+      position: band,
       map,
     });
+    new google.maps.Marker({
+      position: kult,
+      icon: {
+        url: '/marker.png',
+        size: new google.maps.Size(52, 74),
+        origin: new google.maps.Point(0, 0),
+        anchor: new google.maps.Point(13, 37),
+        scaledSize: new google.maps.Size(26, 37),
+      },
+      map,
+    });
+
+    bounds.extend(band);
+    map.fitBounds(bounds);
   });
 
-  return (
-    <div
-      ref={ref}
-      id="map"
-      style={{aspectRatio: '16 / 9', width: '100%', borderRadius: 8}}
-    />
-  );
+  return <div ref={ref} style={{height: '100%'}} />;
 }
