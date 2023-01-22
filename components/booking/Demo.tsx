@@ -2,7 +2,7 @@ import {LinkOutlined} from '@ant-design/icons';
 import {gql} from '@apollo/client';
 import {Typography} from 'antd';
 import React from 'react';
-import {DemoFragment} from '../../types/graphql';
+import {DemoEmbedType, DemoFragment} from '../../types/graphql';
 
 gql`
   fragment Demo on BandApplication {
@@ -48,7 +48,7 @@ export default function Demo({demo, demoEmbed, demoEmbedType}: DemoFragment) {
       break;
     case DemoEmbedType.SoundcloudUrl:
       embed = `https://w.soundcloud.com/player/?url=${encodeURIComponent(
-        demoEmbed,
+        demoEmbed ?? '',
       )}&auto_play=false`;
       break;
   }

@@ -49,6 +49,8 @@ export type BandApplication = Node & {
   contactedByViewer?: Maybe<Viewer>;
   createdAt: Scalars['DateTime'];
   demo?: Maybe<Scalars['String']>;
+  demoEmbed?: Maybe<Scalars['String']>;
+  demoEmbedType?: Maybe<DemoEmbedType>;
   demoEmbedUrl?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   distance?: Maybe<Scalars['Float']>;
@@ -226,6 +228,18 @@ export type CreateBandApplicationInput = {
   numberOfNonMaleArtists?: InputMaybe<Scalars['Int']>;
   website?: InputMaybe<Scalars['String']>;
 };
+
+export enum DemoEmbedType {
+  BandcampAlbum = 'BandcampAlbum',
+  BandcampTrack = 'BandcampTrack',
+  SoundcloudUrl = 'SoundcloudUrl',
+  SpotifyAlbum = 'SpotifyAlbum',
+  SpotifyArtist = 'SpotifyArtist',
+  SpotifyTrack = 'SpotifyTrack',
+  Unresolvable = 'Unresolvable',
+  YouTubePlaylist = 'YouTubePlaylist',
+  YouTubeVideo = 'YouTubeVideo',
+}
 
 export type Device = Billable &
   Node &
@@ -623,7 +637,8 @@ export type ApplicationDetailsQuery = {
         website?: string | null;
         genre?: string | null;
         genreCategory: GenreCategory;
-        demoEmbedUrl?: string | null;
+        demoEmbed?: string | null;
+        demoEmbedType?: DemoEmbedType | null;
         latitude?: number | null;
         longitude?: number | null;
         rating?: number | null;
@@ -879,7 +894,8 @@ export type CommentsFragment = {
 export type DemoFragment = {
   __typename?: 'BandApplication';
   demo?: string | null;
-  demoEmbedUrl?: string | null;
+  demoEmbed?: string | null;
+  demoEmbedType?: DemoEmbedType | null;
 };
 
 export type GoogleMapsFragment = {
@@ -1413,7 +1429,8 @@ export const BandApplicationTimelineFragmentDoc = gql`
 export const DemoFragmentDoc = gql`
   fragment Demo on BandApplication {
     demo
-    demoEmbedUrl
+    demoEmbed
+    demoEmbedType
   }
 `;
 export const GoogleMapsFragmentDoc = gql`
