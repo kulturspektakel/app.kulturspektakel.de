@@ -7,35 +7,57 @@ import {DemoFragment} from '../../types/graphql';
 gql`
   fragment Demo on BandApplication {
     demo
-    demoEmbedUrl
+    demoEmbed
+    demoEmbedType
   }
 `;
 
-export default function Demo({demo, demoEmbedUrl}: DemoFragment) {
-  let domain: string | undefined;
+export default function Demo({demo, demoEmbed, demoEmbedType}: DemoFragment) {
+  let embed: string | undefined;
   let height: string | number = 'auto';
   let borderRadius: number | undefined = undefined;
 
-  if (demoEmbedUrl != null) {
-    const url = new URL(demoEmbedUrl ?? '');
-    domain = url.hostname.toLowerCase().split('.').slice(-2).join('.');
-    switch (domain) {
-      case 'youtube.com':
-      case 'youtu.be':
-        height = 'auto';
-        borderRadius = 8;
-        break;
-      case 'spotify.com':
-        height = 352;
-        break;
-    }
+  switch (demoEmbedType) {
+    case DemoEmbedType.YouTubeVideo:
+      height = 'auto';
+      borderRadius = 8;
+      embed = `https://www.youtube.com/embed/${demoEmbed}?autoplay=0&fs=0&iv_load_policy=3&showinfo=0&rel=0&cc_load_policy=0&start=0&end=0`;
+      break;
+    case DemoEmbedType.YouTubePlaylist:
+      height = 'auto';
+      borderRadius = 8;
+      embed = `https://www.youtube.com/embed/videoseries?list=${demoEmbed}`;
+      break;
+    case DemoEmbedType.SpotifyAlbum:
+      height = 352;
+      embed = `https://open.spotify.com/embed/album/${demoEmbed}`;
+      break;
+    case DemoEmbedType.SpotifyTrack:
+      height = 352;
+      embed = `https://open.spotify.com/embed/track/${demoEmbed}`;
+      break;
+    case DemoEmbedType.SpotifyArtist:
+      height = 352;
+      embed = `https://open.spotify.com/embed/artist/${demoEmbed}`;
+      break;
+    case DemoEmbedType.BandcampAlbum:
+      embed = `https://bandcamp.com/EmbeddedPlayer/album=${demoEmbed}/size=large/bgcol=ffffff/linkcol=0687f5/artwork=small/transparent=true/`;
+      break;
+    case DemoEmbedType.BandcampTrack:
+      embed = `https://bandcamp.com/EmbeddedPlayer/track=${demoEmbed}/size=large/bgcol=ffffff/linkcol=0687f5/artwork=small/transparent=true/`;
+      break;
+    case DemoEmbedType.SoundcloudUrl:
+      embed = `https://w.soundcloud.com/player/?url=${encodeURIComponent(
+        demoEmbed,
+      )}&auto_play=false`;
+      break;
   }
 
   return (
     <>
-      {demoEmbedUrl && (
+      {embed && (
         <iframe
-          src={demoEmbedUrl}
+          src={embed}
           width="100%"
           height={height ?? 0}
           frameBorder="0"
@@ -45,7 +67,7 @@ export default function Demo({demo, demoEmbedUrl}: DemoFragment) {
           }}
         />
       )}
-      {!demoEmbedUrl && <Typography.Title level={5}>Demo</Typography.Title>}
+      {!embed && <Typography.Title level={5}>Demo</Typography.Title>}
       {demo && (
         <a
           style={{
