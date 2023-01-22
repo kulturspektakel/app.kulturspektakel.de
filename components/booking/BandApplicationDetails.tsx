@@ -205,7 +205,11 @@ function DrawerContent(props: Props) {
     <>
       <Col span={12}>
         {props.demo && (
-          <Demo demo={props.demo} demoEmbedUrl={props.demoEmbedUrl} />
+          <Demo
+            demo={props.demo}
+            demoEmbed={props.demoEmbed}
+            demoEmbedType={props.demoEmbedType}
+          />
         )}
         {props.hasPreviouslyPlayed && (
           <Typography.Title level={5}>
