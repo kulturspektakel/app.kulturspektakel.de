@@ -637,6 +637,8 @@ export type ApplicationDetailsQuery = {
         website?: string | null;
         genre?: string | null;
         genreCategory: GenreCategory;
+        demoEmbed?: string | null;
+        demoEmbedType?: DemoEmbedType | null;
         latitude?: number | null;
         longitude?: number | null;
         rating?: number | null;
@@ -887,6 +889,13 @@ export type CommentsFragment = {
       };
     }>;
   };
+};
+
+export type DemoFragment = {
+  __typename?: 'BandApplication';
+  demo?: string | null;
+  demoEmbed?: string | null;
+  demoEmbedType?: DemoEmbedType | null;
 };
 
 export type GoogleMapsFragment = {
@@ -1417,6 +1426,13 @@ export const BandApplicationTimelineFragmentDoc = gql`
   }
   ${CommentsFragmentDoc}
 `;
+export const DemoFragmentDoc = gql`
+  fragment Demo on BandApplication {
+    demo
+    demoEmbed
+    demoEmbedType
+  }
+`;
 export const GoogleMapsFragmentDoc = gql`
   fragment GoogleMaps on BandApplication {
     latitude
@@ -1486,12 +1502,14 @@ export const ApplicationDetailsDocument = gql`
         website
         genre
         genreCategory
+        ...Demo
         ...GoogleMaps
         ...Rating
         ...BandApplicationTimeline
       }
     }
   }
+  ${DemoFragmentDoc}
   ${GoogleMapsFragmentDoc}
   ${RatingFragmentDoc}
   ${BandApplicationTimelineFragmentDoc}

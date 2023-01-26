@@ -65,6 +65,7 @@ gql`
         website
         genre
         genreCategory
+        ...Demo
         ...GoogleMaps
         ...Rating
         ...BandApplicationTimeline
@@ -205,7 +206,13 @@ function DrawerContent(props: Props) {
   return (
     <>
       <Col span={12}>
-        {props.demo && <Demo demo={props.demo} />}
+        {props.demo && (
+          <Demo
+            demo={props.demo}
+            demoEmbed={props.demoEmbed}
+            demoEmbedType={props.demoEmbedType}
+          />
+        )}
         {props.hasPreviouslyPlayed && (
           <Typography.Title level={5}>
             Schonmal gespielt:&nbsp;
