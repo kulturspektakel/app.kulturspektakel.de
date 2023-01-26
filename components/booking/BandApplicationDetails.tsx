@@ -130,9 +130,11 @@ export default function BandApplicationDetails({
                 alt="Genre"
               />
               <div>
-                <Typography.Title className={styles.title} level={4}>
-                  {data?.node.bandname}
-                </Typography.Title>
+                <Clipboard value={data?.node.bandname}>
+                  <Typography.Title className={styles.title} level={4}>
+                    {data?.node.bandname}
+                  </Typography.Title>
+                </Clipboard>
                 <Typography.Text className={styles.subTitle} type="secondary">
                   {data?.node.genre ??
                     GENRE_CATEGORIES.get(data?.node.genreCategory)}

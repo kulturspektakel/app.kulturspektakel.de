@@ -49,6 +49,8 @@ export type BandApplication = Node & {
   contactedByViewer?: Maybe<Viewer>;
   createdAt: Scalars['DateTime'];
   demo?: Maybe<Scalars['String']>;
+  demoEmbed?: Maybe<Scalars['String']>;
+  demoEmbedType?: Maybe<DemoEmbedType>;
   demoEmbedUrl?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   distance?: Maybe<Scalars['Float']>;
@@ -226,6 +228,18 @@ export type CreateBandApplicationInput = {
   numberOfNonMaleArtists?: InputMaybe<Scalars['Int']>;
   website?: InputMaybe<Scalars['String']>;
 };
+
+export enum DemoEmbedType {
+  BandcampAlbum = 'BandcampAlbum',
+  BandcampTrack = 'BandcampTrack',
+  SoundcloudUrl = 'SoundcloudUrl',
+  SpotifyAlbum = 'SpotifyAlbum',
+  SpotifyArtist = 'SpotifyArtist',
+  SpotifyTrack = 'SpotifyTrack',
+  Unresolvable = 'Unresolvable',
+  YouTubePlaylist = 'YouTubePlaylist',
+  YouTubeVideo = 'YouTubeVideo',
+}
 
 export type Device = Billable &
   Node &
