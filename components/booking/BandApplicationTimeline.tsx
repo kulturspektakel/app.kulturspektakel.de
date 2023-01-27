@@ -135,14 +135,9 @@ export default function BandApplicationTimeline(
           </Form>
         </Timeline.Item>
         {props.comments.edges?.map(({node}) => (
-          <Timeline.Item
-            key={node.id}
-            dot={
-              <Tooltip title="Name">
-                <ViewerAvatar {...node.user} />
-              </Tooltip>
-            }
-          >
+          <Timeline.Item key={node.id} dot={<ViewerAvatar {...node.user} />}>
+            <Typography.Text strong>{node.user.displayName}</Typography.Text>
+            &nbsp;
             <Typography.Text type="secondary">
               <RelativeDate date={node.createdAt} />
               &nbsp;
