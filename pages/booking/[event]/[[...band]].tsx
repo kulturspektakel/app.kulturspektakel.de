@@ -1,4 +1,4 @@
-import {Avatar, Checkbox, Table, theme, Tooltip, Typography} from 'antd';
+import {Avatar, Table, theme, Tooltip, Typography} from 'antd';
 import React, {useMemo, useState} from 'react';
 import Page from '../../../components/shared/Page';
 import {gql} from '@apollo/client';
@@ -6,7 +6,6 @@ import {
   BandApplcationsQuery,
   GenreCategory,
   useBandApplcationsQuery,
-  useMarkAsContextedMutation,
 } from '../../../types/graphql';
 import Rater from '../../../components/booking/Rater';
 import BandApplicationDetails from '../../../components/booking/BandApplicationDetails';

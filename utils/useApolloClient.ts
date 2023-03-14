@@ -30,7 +30,7 @@ export function initializeApolloClient(
       new HttpLink({
         uri: 'https://api.kulturspektakel.de/graphql',
         credentials: 'include',
-        headers: {cookie},
+        headers: {cookie: cookie ?? ''},
       }),
     ]),
     cache: initialState
