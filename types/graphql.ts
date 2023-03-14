@@ -38,6 +38,13 @@ export type AreaOpeningHourArgs = {
   day?: InputMaybe<Scalars['Date']>;
 };
 
+export type Asset = {
+  copyright?: Maybe<Scalars['String']>;
+  id: Scalars['String'];
+  title?: Maybe<Scalars['String']>;
+  uri: Scalars['String'];
+};
+
 export type BandApplication = Node & {
   __typename?: 'BandApplication';
   bandApplicationRating: Array<BandApplicationRating>;
@@ -116,6 +123,11 @@ export type BandApplicationRating = {
   viewer: Viewer;
 };
 
+export type BandApplicationUpdateInput = {
+  contacted?: InputMaybe<Scalars['Boolean']>;
+  instagramFollower?: InputMaybe<Scalars['Int']>;
+};
+
 export type BandPlaying = Node & {
   __typename?: 'BandPlaying';
   area: Area;
@@ -126,7 +138,14 @@ export type BandPlaying = Node & {
   genre?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
   name: Scalars['String'];
+  photo?: Maybe<PixelImage>;
+  slug: Scalars['String'];
   startTime: Scalars['DateTime'];
+};
+
+export type BandPlayingPhotoArgs = {
+  height?: InputMaybe<Scalars['Int']>;
+  width?: InputMaybe<Scalars['Int']>;
 };
 
 export type Billable = {
@@ -275,13 +294,46 @@ export type Event = Node & {
   bandApplication: Array<BandApplication>;
   bandApplicationEnd?: Maybe<Scalars['DateTime']>;
   bandApplicationStart?: Maybe<Scalars['DateTime']>;
-  bandsPlaying: Array<BandPlaying>;
+  bandsPlaying: EventBandsPlayingConnection;
+  description?: Maybe<Scalars['String']>;
   djApplicationEnd?: Maybe<Scalars['DateTime']>;
   end: Scalars['DateTime'];
   id: Scalars['ID'];
   name: Scalars['String'];
+  poster?: Maybe<PixelImage>;
   start: Scalars['DateTime'];
 };
+
+export type EventBandsPlayingArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+export type EventPosterArgs = {
+  height?: InputMaybe<Scalars['Int']>;
+  width?: InputMaybe<Scalars['Int']>;
+};
+
+export type EventBandsPlayingConnection = {
+  __typename?: 'EventBandsPlayingConnection';
+  edges: Array<EventBandsPlayingConnectionEdge>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
+};
+
+export type EventBandsPlayingConnectionEdge = {
+  __typename?: 'EventBandsPlayingConnectionEdge';
+  cursor: Scalars['String'];
+  node: BandPlaying;
+};
+
+export enum EventType {
+  Kulturspektakel = 'Kulturspektakel',
+  Locker = 'Locker',
+  Other = 'Other',
+}
 
 export enum GenreCategory {
   BluesFunkJazzSoul = 'Blues_Funk_Jazz_Soul',
@@ -334,6 +386,7 @@ export type Mutation = {
   deleteBandApplicationComment: BandApplication;
   markBandApplicationContacted: BandApplication;
   rateBandApplication: BandApplication;
+  updateBandApplication: BandApplication;
   updateDeviceProductList: Device;
   upsertProductList: ProductList;
 };
@@ -367,6 +420,11 @@ export type MutationRateBandApplicationArgs = {
   rating?: InputMaybe<Scalars['Int']>;
 };
 
+export type MutationUpdateBandApplicationArgs = {
+  bandApplicationId: Scalars['ID'];
+  data?: InputMaybe<BandApplicationUpdateInput>;
+};
+
 export type MutationUpdateDeviceProductListArgs = {
   deviceId: Scalars['ID'];
   productListId: Scalars['ID'];
@@ -378,6 +436,15 @@ export type MutationUpsertProductListArgs = {
   id?: InputMaybe<Scalars['ID']>;
   name?: InputMaybe<Scalars['String']>;
   products?: InputMaybe<Array<ProductInput>>;
+};
+
+export type News = Node & {
+  __typename?: 'News';
+  content: Scalars['String'];
+  createdAt: Scalars['Date'];
+  id: Scalars['ID'];
+  slug: Scalars['String'];
+  title: Scalars['String'];
 };
 
 export type Node = {
@@ -405,6 +472,12 @@ export type NuclinoUser = {
   firstName: Scalars['String'];
   id: Scalars['ID'];
   lastName: Scalars['String'];
+};
+
+export type ObfuscatedBandApplication = {
+  __typename?: 'ObfuscatedBandApplication';
+  applicationTime: Scalars['DateTime'];
+  obfuscatedEmail: Scalars['String'];
 };
 
 export type OpeningHour = {
@@ -460,6 +533,22 @@ export type PageInfo = {
   startCursor?: Maybe<Scalars['String']>;
 };
 
+export type PixelImage = Asset & {
+  __typename?: 'PixelImage';
+  copyright?: Maybe<Scalars['String']>;
+  format: PixelImageFormat;
+  height: Scalars['Int'];
+  id: Scalars['String'];
+  title?: Maybe<Scalars['String']>;
+  uri: Scalars['String'];
+  width: Scalars['Int'];
+};
+
+export enum PixelImageFormat {
+  Jpeg = 'JPEG',
+  Png = 'PNG',
+}
+
 export enum PreviouslyPlayed {
   No = 'No',
   OtherFormation = 'OtherFormation',
@@ -508,11 +597,15 @@ export type ProductListSalesNumbersArgs = {
 export type Query = {
   __typename?: 'Query';
   areas: Array<Area>;
+  bandPlaying?: Maybe<BandPlaying>;
   cardStatus: CardStatus;
+  checkDuplicateApplication?: Maybe<ObfuscatedBandApplication>;
   config: Config;
   devices: Array<Device>;
   distanceToKult?: Maybe<Scalars['Float']>;
   events: Array<Event>;
+  findBandPlaying: Array<BandPlaying>;
+  news: QueryNewsConnection;
   node?: Maybe<Node>;
   nodes: Array<Maybe<Node>>;
   nuclinoPages: Array<NuclinoSearchResult>;
@@ -521,8 +614,18 @@ export type Query = {
   viewer?: Maybe<Viewer>;
 };
 
+export type QueryBandPlayingArgs = {
+  eventId: Scalars['ID'];
+  slug: Scalars['String'];
+};
+
 export type QueryCardStatusArgs = {
   payload: Scalars['String'];
+};
+
+export type QueryCheckDuplicateApplicationArgs = {
+  bandname: Scalars['String'];
+  eventId: Scalars['ID'];
 };
 
 export type QueryDevicesArgs = {
@@ -531,6 +634,23 @@ export type QueryDevicesArgs = {
 
 export type QueryDistanceToKultArgs = {
   origin: Scalars['String'];
+};
+
+export type QueryEventsArgs = {
+  limit?: InputMaybe<Scalars['Int']>;
+  type?: InputMaybe<EventType>;
+};
+
+export type QueryFindBandPlayingArgs = {
+  limit?: InputMaybe<Scalars['Int']>;
+  query: Scalars['String'];
+};
+
+export type QueryNewsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 export type QueryNodeArgs = {
@@ -543,6 +663,19 @@ export type QueryNodesArgs = {
 
 export type QueryNuclinoPagesArgs = {
   query: Scalars['String'];
+};
+
+export type QueryNewsConnection = {
+  __typename?: 'QueryNewsConnection';
+  edges: Array<QueryNewsConnectionEdge>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int'];
+};
+
+export type QueryNewsConnectionEdge = {
+  __typename?: 'QueryNewsConnectionEdge';
+  cursor: Scalars['String'];
+  node: News;
 };
 
 export type SalesNumber = {
@@ -714,6 +847,7 @@ export type ApplicationDetailsQuery = {
     | {__typename: 'Card'}
     | {__typename: 'Device'}
     | {__typename: 'Event'}
+    | {__typename: 'News'}
     | {__typename: 'NuclinoPage'}
     | {__typename: 'Product'}
     | {__typename: 'ProductList'}
@@ -958,6 +1092,7 @@ export type DeviceTransactionsQuery = {
         };
       }
     | {__typename?: 'Event'}
+    | {__typename?: 'News'}
     | {__typename?: 'NuclinoPage'}
     | {__typename?: 'Product'}
     | {__typename?: 'ProductList'}
@@ -1031,6 +1166,7 @@ export type RevenueDetailsQuery = {
     | {__typename?: 'Card'}
     | {__typename?: 'Device'}
     | {__typename?: 'Event'}
+    | {__typename?: 'News'}
     | {__typename?: 'NuclinoPage'}
     | {__typename?: 'Product'}
     | {
@@ -1128,6 +1264,7 @@ export type BandApplcationsQuery = {
           }>;
         }>;
       }
+    | {__typename?: 'News'}
     | {__typename?: 'NuclinoPage'}
     | {__typename?: 'Product'}
     | {__typename?: 'ProductList'}
@@ -1188,6 +1325,7 @@ export type CardInfoQuery = {
       }
     | {__typename?: 'Device'}
     | {__typename?: 'Event'}
+    | {__typename?: 'News'}
     | {__typename?: 'NuclinoPage'}
     | {__typename?: 'Product'}
     | {__typename?: 'ProductList'}

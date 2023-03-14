@@ -122,6 +122,59 @@
         "possibleTypes": null
       },
       {
+        "kind": "INTERFACE",
+        "name": "Asset",
+        "description": null,
+        "fields": [
+          {
+            "name": "copyright",
+            "description": null,
+            "args": [],
+            "type": {"kind": "SCALAR", "name": "String", "ofType": null},
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "id",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {"kind": "SCALAR", "name": "String", "ofType": null}
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "title",
+            "description": null,
+            "args": [],
+            "type": {"kind": "SCALAR", "name": "String", "ofType": null},
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "uri",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {"kind": "SCALAR", "name": "String", "ofType": null}
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": [
+          {"kind": "OBJECT", "name": "PixelImage", "ofType": null}
+        ]
+      },
+      {
         "kind": "OBJECT",
         "name": "BandApplication",
         "description": null,
@@ -781,6 +834,33 @@
         "possibleTypes": null
       },
       {
+        "kind": "INPUT_OBJECT",
+        "name": "BandApplicationUpdateInput",
+        "description": null,
+        "fields": null,
+        "inputFields": [
+          {
+            "name": "contacted",
+            "description": null,
+            "type": {"kind": "SCALAR", "name": "Boolean", "ofType": null},
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "instagramFollower",
+            "description": null,
+            "type": {"kind": "SCALAR", "name": "Int", "ofType": null},
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
         "kind": "OBJECT",
         "name": "BandPlaying",
         "description": null,
@@ -863,6 +943,43 @@
           },
           {
             "name": "name",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {"kind": "SCALAR", "name": "String", "ofType": null}
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "photo",
+            "description": null,
+            "args": [
+              {
+                "name": "height",
+                "description": null,
+                "type": {"kind": "SCALAR", "name": "Int", "ofType": null},
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "width",
+                "description": null,
+                "type": {"kind": "SCALAR", "name": "Int", "ofType": null},
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
+            "type": {"kind": "OBJECT", "name": "PixelImage", "ofType": null},
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "slug",
             "description": null,
             "args": [],
             "type": {
@@ -2031,24 +2148,57 @@
           {
             "name": "bandsPlaying",
             "description": null,
-            "args": [],
+            "args": [
+              {
+                "name": "after",
+                "description": null,
+                "type": {"kind": "SCALAR", "name": "String", "ofType": null},
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "before",
+                "description": null,
+                "type": {"kind": "SCALAR", "name": "String", "ofType": null},
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "first",
+                "description": null,
+                "type": {"kind": "SCALAR", "name": "Int", "ofType": null},
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "last",
+                "description": null,
+                "type": {"kind": "SCALAR", "name": "Int", "ofType": null},
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
             "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "BandPlaying",
-                    "ofType": null
-                  }
-                }
+                "kind": "OBJECT",
+                "name": "EventBandsPlayingConnection",
+                "ofType": null
               }
             },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "description",
+            "description": null,
+            "args": [],
+            "type": {"kind": "SCALAR", "name": "String", "ofType": null},
             "isDeprecated": false,
             "deprecationReason": null
           },
@@ -2097,6 +2247,31 @@
             "deprecationReason": null
           },
           {
+            "name": "poster",
+            "description": null,
+            "args": [
+              {
+                "name": "height",
+                "description": null,
+                "type": {"kind": "SCALAR", "name": "Int", "ofType": null},
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "width",
+                "description": null,
+                "type": {"kind": "SCALAR", "name": "Int", "ofType": null},
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
+            "type": {"kind": "OBJECT", "name": "PixelImage", "ofType": null},
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "start",
             "description": null,
             "args": [],
@@ -2112,6 +2287,133 @@
         "inputFields": null,
         "interfaces": [{"kind": "INTERFACE", "name": "Node", "ofType": null}],
         "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "EventBandsPlayingConnection",
+        "description": null,
+        "fields": [
+          {
+            "name": "edges",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "EventBandsPlayingConnectionEdge",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "pageInfo",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {"kind": "OBJECT", "name": "PageInfo", "ofType": null}
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "totalCount",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {"kind": "SCALAR", "name": "Int", "ofType": null}
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "EventBandsPlayingConnectionEdge",
+        "description": null,
+        "fields": [
+          {
+            "name": "cursor",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {"kind": "SCALAR", "name": "String", "ofType": null}
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "node",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "BandPlaying",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "ENUM",
+        "name": "EventType",
+        "description": null,
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "enumValues": [
+          {
+            "name": "Kulturspektakel",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "Locker",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "Other",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
         "possibleTypes": null
       },
       {
@@ -2693,6 +2995,47 @@
             "deprecationReason": null
           },
           {
+            "name": "updateBandApplication",
+            "description": null,
+            "args": [
+              {
+                "name": "bandApplicationId",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {"kind": "SCALAR", "name": "ID", "ofType": null}
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "data",
+                "description": null,
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "BandApplicationUpdateInput",
+                  "ofType": null
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "BandApplication",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "updateDeviceProductList",
             "description": null,
             "args": [
@@ -2805,6 +3148,77 @@
         "possibleTypes": null
       },
       {
+        "kind": "OBJECT",
+        "name": "News",
+        "description": null,
+        "fields": [
+          {
+            "name": "content",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {"kind": "SCALAR", "name": "String", "ofType": null}
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "createdAt",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {"kind": "SCALAR", "name": "Date", "ofType": null}
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "id",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {"kind": "SCALAR", "name": "ID", "ofType": null}
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "slug",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {"kind": "SCALAR", "name": "String", "ofType": null}
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "title",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {"kind": "SCALAR", "name": "String", "ofType": null}
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [{"kind": "INTERFACE", "name": "Node", "ofType": null}],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
         "kind": "INTERFACE",
         "name": "Node",
         "description": null,
@@ -2833,6 +3247,7 @@
           {"kind": "OBJECT", "name": "Card", "ofType": null},
           {"kind": "OBJECT", "name": "Device", "ofType": null},
           {"kind": "OBJECT", "name": "Event", "ofType": null},
+          {"kind": "OBJECT", "name": "News", "ofType": null},
           {"kind": "OBJECT", "name": "NuclinoPage", "ofType": null},
           {"kind": "OBJECT", "name": "Product", "ofType": null},
           {"kind": "OBJECT", "name": "ProductList", "ofType": null},
@@ -2992,6 +3407,41 @@
           },
           {
             "name": "lastName",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {"kind": "SCALAR", "name": "String", "ofType": null}
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "ObfuscatedBandApplication",
+        "description": null,
+        "fields": [
+          {
+            "name": "applicationTime",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {"kind": "SCALAR", "name": "DateTime", "ofType": null}
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "obfuscatedEmail",
             "description": null,
             "args": [],
             "type": {
@@ -3389,6 +3839,120 @@
         "possibleTypes": null
       },
       {
+        "kind": "OBJECT",
+        "name": "PixelImage",
+        "description": null,
+        "fields": [
+          {
+            "name": "copyright",
+            "description": null,
+            "args": [],
+            "type": {"kind": "SCALAR", "name": "String", "ofType": null},
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "format",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "ENUM",
+                "name": "PixelImageFormat",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "height",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {"kind": "SCALAR", "name": "Int", "ofType": null}
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "id",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {"kind": "SCALAR", "name": "String", "ofType": null}
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "title",
+            "description": null,
+            "args": [],
+            "type": {"kind": "SCALAR", "name": "String", "ofType": null},
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "uri",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {"kind": "SCALAR", "name": "String", "ofType": null}
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "width",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {"kind": "SCALAR", "name": "Int", "ofType": null}
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [{"kind": "INTERFACE", "name": "Asset", "ofType": null}],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "ENUM",
+        "name": "PixelImageFormat",
+        "description": null,
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "enumValues": [
+          {
+            "name": "JPEG",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "PNG",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "possibleTypes": null
+      },
+      {
         "kind": "ENUM",
         "name": "PreviouslyPlayed",
         "description": null,
@@ -3780,6 +4344,39 @@
             "deprecationReason": null
           },
           {
+            "name": "bandPlaying",
+            "description": null,
+            "args": [
+              {
+                "name": "eventId",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {"kind": "SCALAR", "name": "ID", "ofType": null}
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "slug",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {"kind": "SCALAR", "name": "String", "ofType": null}
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
+            "type": {"kind": "OBJECT", "name": "BandPlaying", "ofType": null},
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "cardStatus",
             "description": null,
             "args": [
@@ -3800,6 +4397,43 @@
               "kind": "NON_NULL",
               "name": null,
               "ofType": {"kind": "OBJECT", "name": "CardStatus", "ofType": null}
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "checkDuplicateApplication",
+            "description": null,
+            "args": [
+              {
+                "name": "bandname",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {"kind": "SCALAR", "name": "String", "ofType": null}
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "eventId",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {"kind": "SCALAR", "name": "ID", "ofType": null}
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
+            "type": {
+              "kind": "OBJECT",
+              "name": "ObfuscatedBandApplication",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -3869,7 +4503,24 @@
           {
             "name": "events",
             "description": null,
-            "args": [],
+            "args": [
+              {
+                "name": "limit",
+                "description": null,
+                "type": {"kind": "SCALAR", "name": "Int", "ofType": null},
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "type",
+                "description": null,
+                "type": {"kind": "ENUM", "name": "EventType", "ofType": null},
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
             "type": {
               "kind": "NON_NULL",
               "name": null,
@@ -3881,6 +4532,100 @@
                   "name": null,
                   "ofType": {"kind": "OBJECT", "name": "Event", "ofType": null}
                 }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "findBandPlaying",
+            "description": null,
+            "args": [
+              {
+                "name": "limit",
+                "description": null,
+                "type": {"kind": "SCALAR", "name": "Int", "ofType": null},
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "query",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {"kind": "SCALAR", "name": "String", "ofType": null}
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "BandPlaying",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "news",
+            "description": null,
+            "args": [
+              {
+                "name": "after",
+                "description": null,
+                "type": {"kind": "SCALAR", "name": "String", "ofType": null},
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "before",
+                "description": null,
+                "type": {"kind": "SCALAR", "name": "String", "ofType": null},
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "first",
+                "description": null,
+                "type": {"kind": "SCALAR", "name": "Int", "ofType": null},
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "last",
+                "description": null,
+                "type": {"kind": "SCALAR", "name": "Int", "ofType": null},
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "QueryNewsConnection",
+                "ofType": null
               }
             },
             "isDeprecated": false,
@@ -4026,6 +4771,100 @@
             "description": null,
             "args": [],
             "type": {"kind": "OBJECT", "name": "Viewer", "ofType": null},
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "QueryNewsConnection",
+        "description": null,
+        "fields": [
+          {
+            "name": "edges",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "QueryNewsConnectionEdge",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "pageInfo",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {"kind": "OBJECT", "name": "PageInfo", "ofType": null}
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "totalCount",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {"kind": "SCALAR", "name": "Int", "ofType": null}
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "QueryNewsConnectionEdge",
+        "description": null,
+        "fields": [
+          {
+            "name": "cursor",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {"kind": "SCALAR", "name": "String", "ofType": null}
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "node",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {"kind": "OBJECT", "name": "News", "ofType": null}
+            },
             "isDeprecated": false,
             "deprecationReason": null
           }

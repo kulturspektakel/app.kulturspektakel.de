@@ -1,6 +1,6 @@
 import '../styles/globals.css';
 
-import React from 'react';
+import React, {useMemo} from 'react';
 import NextApp, {AppContext, AppInitialProps, AppProps} from 'next/app';
 import {ApolloProvider, NormalizedCacheObject} from '@apollo/client';
 import useApolloClient, {
@@ -30,18 +30,19 @@ type Props = {
 
 const App = ({Component, pageProps, initialApolloState}: AppProps & Props) => {
   const client = useApolloClient(initialApolloState);
+  const customTheme = useMemo(
+    () => ({
+      token: {
+        fontSizeHeading5: theme.defaultConfig.token.fontSize,
+      },
+    }),
+    [],
+  );
 
   return (
     <ApolloProvider client={client}>
       <LoginProvider>
-        <ConfigProvider
-          locale={deDE}
-          theme={{
-            token: {
-              fontSizeHeading5: theme.defaultConfig.token.fontSize,
-            },
-          }}
-        >
+        <ConfigProvider locale={deDE} theme={customTheme}>
           <Component {...pageProps} />
         </ConfigProvider>
       </LoginProvider>
@@ -57,7 +58,6 @@ App.getInitialProps = async (
     : app.ctx.req?.headers.cookie;
 
   const appProps = await NextApp.getInitialProps(app);
-  console.log(appProps);
 
   let initialApolloState: NormalizedCacheObject | undefined;
 

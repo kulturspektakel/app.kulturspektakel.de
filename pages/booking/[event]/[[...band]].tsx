@@ -163,7 +163,7 @@ const MemoizedTable = React.memo(
       <Table<RecordType>
         loading={loading}
         pagination={false}
-        scroll={{y: height, x: 500}}
+        scroll={{y: height}}
         onRow={(r) => ({
           onClick: (e) =>
             !new Set(['path', 'input']).has(
@@ -309,42 +309,6 @@ const MemoizedTable = React.memo(
                 </Tooltip>
               ) : null,
           },
-          // {
-          //   key: 'contactedByViewer',
-          //   title: 'Kontakt',
-          //   dataIndex: 'contactedByViewer',
-          //   width: 80,
-          //   align: 'center',
-          //   render: (_, {contactedByViewer, id}) => (
-          //     <Tooltip
-          //       title={
-          //         contactedByViewer
-          //           ? `Kontaktiert von ${contactedByViewer.displayName}`
-          //           : 'als kontaktiert markieren'
-          //       }
-          //       placement="topLeft"
-          //     >
-          //       <Checkbox
-          //         checked={Boolean(contactedByViewer)}
-          //         onChange={(e) =>
-          //           markContacted({
-          //             variables: {
-          //               contacted: e.target.checked,
-          //               id,
-          //             },
-          //             optimisticResponse: {
-          //               markBandApplicationContacted: {
-          //                 __typename: 'BandApplication',
-          //                 id,
-          //                 contactedByViewer: e.target.checked ? viewer : null,
-          //               },
-          //             },
-          //           })
-          //         }
-          //       />
-          //     </Tooltip>
-          //   ),
-          // },
         ]}
         dataSource={dataSource}
         rowKey="id"
