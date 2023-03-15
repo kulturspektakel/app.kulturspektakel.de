@@ -1,0 +1,14 @@
+.quickType :global(.ant-modal-content) {
+    padding: 5px;
+    border-radius: 11px;
+    background: rgba(255,255,255,.8);
+}
+
+.quickType :global(.ant-modal-close) {
+    display: none;
+}
+
+.popup :global(.ant-select-item-option-active) {
+    background-color: #1876FF !important;
+    color: white;
+}

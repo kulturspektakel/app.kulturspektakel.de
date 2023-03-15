@@ -15,6 +15,7 @@ import {useEffect} from 'react';
 import useViewerContext from '../../../utils/useViewerContext';
 import Rating from '../../../components/booking/Rating';
 import {CommentOutlined} from '@ant-design/icons';
+import QuickType from '../../../components/booking/QuickType';
 
 gql`
   fragment Rating on BandApplication {
@@ -109,18 +110,18 @@ export default function Booking() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selected]);
 
+  const dataSource =
+    data?.node?.__typename === 'Event' ? data.node.bandApplication : [];
+
   return (
     <Page>
+      <QuickType data={dataSource} onSelect={setSelected} />
       <AutoSizer>
         {({height, width}) => (
           <div style={{height, width}}>
             <MemoizedTable
               loading={loading}
-              dataSource={
-                data?.node?.__typename === 'Event'
-                  ? data.node.bandApplication
-                  : []
-              }
+              dataSource={dataSource}
               setSelected={setSelected}
               height={height - 40}
             />
