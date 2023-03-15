@@ -1,6 +1,6 @@
 import {AutoComplete, Input, Modal} from 'antd';
-import {BandApplcationsQuery} from 'kulturspektakel-utils/graphql';
 import {useCallback, useEffect, useState} from 'react';
+import {BandApplcationsQuery} from '../../types/graphql';
 import styles from './QuickType.module.css';
 
 export default function QuickType(props: {
