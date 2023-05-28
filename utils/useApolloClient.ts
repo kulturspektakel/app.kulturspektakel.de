@@ -4,47 +4,75 @@ import {
   ApolloLink,
   HttpLink,
   InMemoryCache,
-  NormalizedCacheObject,
 } from '@apollo/client';
+import {setContext} from '@apollo/client/link/context';
 import {withScalars} from 'apollo-link-scalars';
 import {buildClientSchema, IntrospectionQuery} from 'graphql';
 import {GraphQLDate, GraphQLDateTime} from 'graphql-scalars';
 import introspectionResult from '../types/graphql.schema.json';
+import jwtDecode from 'jwt-decode';
 
-export function initializeApolloClient(
-  initialState: NormalizedCacheObject | null = null,
-  cookie?: string,
-) {
-  return new ApolloClient({
-    ssrMode: typeof window === 'undefined', // set to true for SSR
-    link: ApolloLink.from([
-      withScalars({
-        schema: buildClientSchema(
-          introspectionResult as unknown as IntrospectionQuery,
-        ),
-        typesMap: {
-          DateTime: GraphQLDateTime,
-          Date: GraphQLDate,
-        },
-      }),
-      new HttpLink({
-        uri: 'https://api.kulturspektakel.de/graphql',
+let token: string | null = null;
+// prevent multiple refresh operations to run in parallel
+let refresher: Promise<Response> | null = null;
+
+const authMiddleware = setContext(async () => {
+  if (
+    token == null ||
+    jwtDecode<{exp: number}>(token).exp < new Date().getTime() / 1000
+  ) {
+    if (!refresher) {
+      refresher = fetch('https://crew.kulturspektakel.de/auth/refresh', {
+        method: 'POST',
         credentials: 'include',
-        headers: {cookie: cookie ?? ''},
-      }),
-    ]),
-    cache: initialState
-      ? new InMemoryCache().restore(initialState)
-      : new InMemoryCache(),
-  });
-}
+      });
+    }
 
-function useApolloClient(
-  initialState: NormalizedCacheObject | null = null,
-  cookie?: string,
-) {
+    const res = await refresher;
+    refresher = null;
+    token = null;
+    if (res.status === 400) {
+      // tried refreshing, but couldn't
+      location.href = 'https://google.com';
+    } else {
+      token = (await res?.json())?.data?.access_token ?? null;
+    }
+  }
+
+  return {
+    headers:
+      token != null
+        ? {
+            authorization: `Bearer ${token}`,
+          }
+        : undefined,
+  };
+});
+
+export default function useApolloClient() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const store = useMemo(() => initializeApolloClient(initialState, cookie), []);
-  return store;
+  const client = useMemo(
+    () =>
+      new ApolloClient({
+        link: ApolloLink.from([
+          withScalars({
+            schema: buildClientSchema(
+              introspectionResult as unknown as IntrospectionQuery,
+            ),
+            typesMap: {
+              DateTime: GraphQLDateTime,
+              Date: GraphQLDate,
+            },
+          }),
+          authMiddleware,
+          new HttpLink({
+            uri: 'https://api.kulturspektakel.de/graphql',
+            credentials: 'include',
+          }),
+        ]),
+        cache: new InMemoryCache(),
+      }),
+    [],
+  );
+  return client;
 }
-export default useApolloClient;
