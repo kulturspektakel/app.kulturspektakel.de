@@ -32,7 +32,7 @@ const DEPOSIT_LENGTH = 1;
 const BALANCE_LENGTH = 2;
 const SIGNATURE_LENGTH = 5;
 
-function Token() {
+export default function Token() {
   const [balance, setBalance] = useState(0);
   const [deposit, setDeposit] = useState(0);
   const [count, setCount] = useState(0);
@@ -210,8 +210,3 @@ function Token() {
     </Page>
   );
 }
-
-// Disable SSR, because localStorage is used
-export default dynamic(() => Promise.resolve(Token), {
-  ssr: false,
-});

@@ -115,7 +115,7 @@ export default function ProductList({list}: {list: ProductListFragment}) {
       actions={[
         <Button
           key="save"
-          icon={<CheckCircleOutlined />}
+          icon={<CheckCircleOutlined rev={undefined} />}
           type="link"
           disabled={!dirty}
           onClick={async () => {
@@ -135,7 +135,7 @@ export default function ProductList({list}: {list: ProductListFragment}) {
         </Button>,
         <Button
           key="product"
-          icon={<PlusCircleOutlined />}
+          icon={<PlusCircleOutlined rev={undefined} />}
           type="link"
           style={{color: products.length >= 30 ? undefined : '#52c41a'}}
           disabled={products.length >= 30}
@@ -147,7 +147,7 @@ export default function ProductList({list}: {list: ProductListFragment}) {
         </Button>,
         <Button
           key="disable"
-          icon={<PoweroffOutlined />}
+          icon={<PoweroffOutlined rev={undefined} />}
           type="link"
           danger={list.active}
           style={list.active ? undefined : {color: '#52c41a'}}
@@ -155,7 +155,7 @@ export default function ProductList({list}: {list: ProductListFragment}) {
             if (list.active) {
               return Modal.confirm({
                 title: 'Preisliste deaktivieren',
-                icon: <ExclamationCircleOutlined />,
+                icon: <ExclamationCircleOutlined rev={undefined} />,
                 okText: 'Deaktivieren',
                 okButtonProps: {
                   danger: true,

@@ -1,20 +1,17 @@
-import {gql} from '@apollo/client';
-import React, {useContext} from 'react';
-import {ViewerContextProviderQuery} from '../types/graphql';
+import {gql, useSuspenseQuery} from '@apollo/client';
+import {ViewerQuery} from 'types/graphql';
 
 export const ViewerQ = gql`
-  query ViewerContextProvider {
+  query Viewer {
     viewer {
       id
-      ...Avatar
+      displayName
+      profilePicture
     }
   }
 `;
 
-export type ViewerContextType = ViewerContextProviderQuery['viewer'];
-
-export const ViewerContext = React.createContext<ViewerContextType>(null);
 export default function useViewerContext() {
-  const viewer = useContext(ViewerContext);
-  return viewer;
+  const {data} = useSuspenseQuery<ViewerQuery>(ViewerQ);
+  return data.viewer;
 }

@@ -47,7 +47,7 @@ export default function Lists() {
       padded
       accessory={
         <>
-          <Button href="/products/print" target="_blank">
+          <Button href="/contactless/print" target="_blank">
             Drucken
           </Button>
           <Button type="primary" onClick={() => setCreateModalVisible(true)}>

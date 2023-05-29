@@ -1,9 +1,14 @@
 import '../styles/globals.css';
 
-import React, {useMemo} from 'react';
+import React, {Suspense, useMemo} from 'react';
 import {AppProps} from 'next/app';
-import {ApolloProvider, NormalizedCacheObject} from '@apollo/client';
+import {
+  ApolloProvider,
+  NormalizedCacheObject,
+  SuspenseCache,
+} from '@apollo/client';
 import useApolloClient from '../utils/useApolloClient';
+import dynamic from 'next/dynamic';
 
 import weekday from 'dayjs/plugin/weekday';
 import localeData from 'dayjs/plugin/localeData';
@@ -22,6 +27,8 @@ type Props = {
 
 const App = ({Component, pageProps}: AppProps & Props) => {
   const client = useApolloClient();
+  const suspenseCache = useMemo(() => new SuspenseCache(), []);
+
   const customTheme = useMemo(
     () => ({
       token: {
@@ -32,12 +39,14 @@ const App = ({Component, pageProps}: AppProps & Props) => {
   );
 
   return (
-    <ApolloProvider client={client}>
+    <ApolloProvider client={client} suspenseCache={suspenseCache}>
       <ConfigProvider locale={deDE} theme={customTheme}>
-        <Component {...pageProps} />
+        <Suspense fallback={null}>
+          <Component {...pageProps} />
+        </Suspense>
       </ConfigProvider>
     </ApolloProvider>
   );
 };
 
-export default App;
+export default dynamic(() => Promise.resolve(App), {ssr: false});

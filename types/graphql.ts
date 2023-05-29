@@ -1505,9 +1505,9 @@ export type RevenueQuery = {
   };
 };
 
-export type ViewerContextProviderQueryVariables = Exact<{[key: string]: never}>;
+export type ViewerQueryVariables = Exact<{[key: string]: never}>;
 
-export type ViewerContextProviderQuery = {
+export type ViewerQuery = {
   __typename?: 'Query';
   viewer?: {
     __typename?: 'Viewer';
@@ -2699,62 +2699,52 @@ export type RevenueQueryResult = Apollo.QueryResult<
   RevenueQuery,
   RevenueQueryVariables
 >;
-export const ViewerContextProviderDocument = gql`
-  query ViewerContextProvider {
+export const ViewerDocument = gql`
+  query Viewer {
     viewer {
       id
-      ...Avatar
+      displayName
+      profilePicture
     }
   }
-  ${AvatarFragmentDoc}
 `;
 
 /**
- * __useViewerContextProviderQuery__
+ * __useViewerQuery__
  *
- * To run a query within a React component, call `useViewerContextProviderQuery` and pass it any options that fit your needs.
- * When your component renders, `useViewerContextProviderQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useViewerQuery` and pass it any options that fit your needs.
+ * When your component renders, `useViewerQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useViewerContextProviderQuery({
+ * const { data, loading, error } = useViewerQuery({
  *   variables: {
  *   },
  * });
  */
-export function useViewerContextProviderQuery(
-  baseOptions?: Apollo.QueryHookOptions<
-    ViewerContextProviderQuery,
-    ViewerContextProviderQueryVariables
-  >,
+export function useViewerQuery(
+  baseOptions?: Apollo.QueryHookOptions<ViewerQuery, ViewerQueryVariables>,
 ) {
   const options = {...defaultOptions, ...baseOptions};
-  return Apollo.useQuery<
-    ViewerContextProviderQuery,
-    ViewerContextProviderQueryVariables
-  >(ViewerContextProviderDocument, options);
+  return Apollo.useQuery<ViewerQuery, ViewerQueryVariables>(
+    ViewerDocument,
+    options,
+  );
 }
-export function useViewerContextProviderLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    ViewerContextProviderQuery,
-    ViewerContextProviderQueryVariables
-  >,
+export function useViewerLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<ViewerQuery, ViewerQueryVariables>,
 ) {
   const options = {...defaultOptions, ...baseOptions};
-  return Apollo.useLazyQuery<
-    ViewerContextProviderQuery,
-    ViewerContextProviderQueryVariables
-  >(ViewerContextProviderDocument, options);
+  return Apollo.useLazyQuery<ViewerQuery, ViewerQueryVariables>(
+    ViewerDocument,
+    options,
+  );
 }
-export type ViewerContextProviderQueryHookResult = ReturnType<
-  typeof useViewerContextProviderQuery
->;
-export type ViewerContextProviderLazyQueryHookResult = ReturnType<
-  typeof useViewerContextProviderLazyQuery
->;
-export type ViewerContextProviderQueryResult = Apollo.QueryResult<
-  ViewerContextProviderQuery,
-  ViewerContextProviderQueryVariables
+export type ViewerQueryHookResult = ReturnType<typeof useViewerQuery>;
+export type ViewerLazyQueryHookResult = ReturnType<typeof useViewerLazyQuery>;
+export type ViewerQueryResult = Apollo.QueryResult<
+  ViewerQuery,
+  ViewerQueryVariables
 >;

@@ -1,5 +1,5 @@
 import styles from './ProductRow.module.css';
-import {Checkbox, Input, Tooltip} from 'antd';
+import {Checkbox, Input, Switch, Tooltip} from 'antd';
 import React, {useRef} from 'react';
 import {gql} from '@apollo/client';
 import {ProductRowFragment} from '../../types/graphql';
@@ -63,11 +63,13 @@ const ProductRow = React.forwardRef<Ref, Props>(
           suffix={data.price ? `€` : ''}
         />
         <Tooltip title="Pfand">
-          <Checkbox
+          <Switch
+            style={{marginTop: 3}}
+            size="small"
             className={styles.deposit}
             checked={data.requiresDeposit}
-            onChange={(e) =>
-              onChange(index - 1, {requiresDeposit: e.target.checked})
+            onChange={(requiresDeposit) =>
+              onChange(index - 1, {requiresDeposit})
             }
           />
         </Tooltip>
