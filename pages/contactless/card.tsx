@@ -1,10 +1,10 @@
 import {Button, Input, Spin, Table, Tooltip} from 'antd';
 import {useRouter} from 'next/router';
-import Page from '../../components/shared/Page';
+import Page from 'components/shared/Page';
 import {gql} from '@apollo/client';
-import {useCardInfoQuery} from '../../types/graphql';
-import RelativeDate from '../../components/shared/RelativeDate';
-import currencyFormatter from '../../utils/currencyFormatter';
+import {useCardInfoQuery} from 'types/graphql';
+import RelativeDate from 'components/shared/RelativeDate';
+import currencyFormatter from 'utils/currencyFormatter';
 
 gql`
   query CardInfo($cardID: ID!) {

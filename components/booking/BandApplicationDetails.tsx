@@ -16,21 +16,18 @@ import {
   ApplicationDetailsQuery,
   useMarkAsContextedMutation,
   PreviouslyPlayed,
-} from '../../types/graphql';
-import useViewerContext from '../../utils/useViewerContext';
+} from 'types/graphql';
 import Demo from './Demo';
 import Rater from './Rater';
 import Rating from './Rating';
 import {GlobalOutlined} from '@ant-design/icons';
 import styles from './BandApplicationDetails.module.css';
 import BandApplicationTimeline from './BandApplicationTimeline';
-import Clipboard from '../shared/Clipboard';
+import Clipboard from 'components/shared/Clipboard';
 
-import {
-  GENRE_CATEGORIES,
-  GENRE_ICONS,
-} from '../../pages/booking/[event]/[[...band]]';
+import {GENRE_CATEGORIES, GENRE_ICONS} from 'pages/booking/[event]';
 import dynamic from 'next/dynamic';
+import useViewerContext from 'utils/useViewerContext';
 
 const LazyGoogleMap = dynamic(() => import('./GoogleMaps'), {
   loading: () => <Skeleton.Image active className={styles.mapInner} />,
@@ -155,7 +152,7 @@ export default function BandApplicationDetails({
     >
       <Row gutter={24}>
         {data?.node?.__typename === 'BandApplication' ? (
-          <DrawerContent {...data?.node} />
+          <DrawerContent {...data?.node} viewerId={data?.viewer?.id} />
         ) : (
           <>
             <Col span={12}>
@@ -181,9 +178,9 @@ type Props = Extract<
 >;
 
 function DrawerContent(props: Props) {
-  const viewer = useViewerContext();
   const [contacted] = useMarkAsContextedMutation();
   const {token} = theme.useToken();
+  const viewer = useViewerContext();
 
   const onContact = useCallback(
     (c: boolean) =>
@@ -308,7 +305,7 @@ function DrawerContent(props: Props) {
                   <Statistic
                     valueStyle={{color: token.colorPrimary}}
                     value={' '}
-                    prefix={<GlobalOutlined color="blue" />}
+                    prefix={<GlobalOutlined rev={undefined} color="blue" />}
                     title="Webseite"
                   />
                 </a>

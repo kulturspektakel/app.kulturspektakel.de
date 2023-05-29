@@ -2,49 +2,17 @@
   min-height: 100vh;
 }
 
-.header {
-  display: flex;
-  flex-direction: row;
-  padding: 0;
-  padding-inline: 0 !important;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000;
-}
-
 .title {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.logo {
-  padding: 15px;
-}
-
-.logo img {
-  height: 100%;
-  width: 100px;
-  vertical-align: top;
-}
-
-.spacer {
-  flex-grow: 1;
-}
-
-.profileMenu {
-  align-self: center;
-  margin-right: 15px;
-  cursor: pointer;
-}
-
 .padded {
   padding: 15px;
 }
 
-.accessory > *{
+.accessory > * {
   margin-left: 12px;
 }
 

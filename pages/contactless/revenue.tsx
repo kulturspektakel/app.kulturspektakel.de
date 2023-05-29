@@ -1,13 +1,13 @@
 import {Col, Row, Select, Statistic, DatePicker} from 'antd';
 import React, {useMemo, useState} from 'react';
-import Page from '../../components/shared/Page';
+import Page from 'components/shared/Page';
 import {gql} from '@apollo/client';
-import {RevenueQuery, useRevenueQuery} from '../../types/graphql';
+import {RevenueQuery, useRevenueQuery} from 'types/graphql';
 import {useEffect} from 'react';
 import {useRouter} from 'next/router';
 import {isEqual, endOfDay, startOfDay} from 'date-fns';
-import RevenueTable from '../../components/products/RevenueTable';
-import currencyFormatter from '../../utils/currencyFormatter';
+import RevenueTable from 'components/contactless/RevenueTable';
+import currencyFormatter from 'utils/currencyFormatter';
 import {RangeValue} from 'rc-picker/lib/interface';
 import dayjs from 'dayjs';
 

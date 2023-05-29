@@ -1,12 +1,9 @@
-import {Modal, Button, Input, Spin, Empty, Layout} from 'antd';
+import {Modal, Button, Input, Spin, Empty} from 'antd';
 import React, {useState, useCallback} from 'react';
-import Page from '../../components/shared/Page';
+import Page from 'components/shared/Page';
 import {gql} from '@apollo/client';
-import {
-  useCreateProductListMutation,
-  useProductListQuery,
-} from '../../types/graphql';
-import ProductListContainer from '../../components/products/ProductListContainer';
+import {useCreateProductListMutation, useProductListQuery} from 'types/graphql';
+import ProductListContainer from 'components/contactless/ProductListContainer';
 
 gql`
   query ProductList {
@@ -50,14 +47,10 @@ export default function Lists() {
       padded
       accessory={
         <>
-          <Button key="1" href="/products/print" target="_blank">
+          <Button href="/products/print" target="_blank">
             Drucken
           </Button>
-          <Button
-            key="2"
-            type="primary"
-            onClick={() => setCreateModalVisible(true)}
-          >
+          <Button type="primary" onClick={() => setCreateModalVisible(true)}>
             Neue Preisliste
           </Button>
         </>

@@ -1,12 +1,9 @@
 import {gql} from '@apollo/client';
 import {Rate, theme} from 'antd';
 import React from 'react';
-import {
-  BandApplicationRatingDocument,
-  useBandApplicationRatingMutation,
-} from '../../types/graphql';
-import {RatingFragment} from '../../types/graphql';
-import useApolloClient from '../../utils/useApolloClient';
+import {BandApplicationRatingDocument} from 'types/graphql';
+import {RatingFragment} from 'types/graphql';
+import useApolloClient from 'utils/useApolloClient';
 import useViewerContext from '../../utils/useViewerContext';
 
 gql`

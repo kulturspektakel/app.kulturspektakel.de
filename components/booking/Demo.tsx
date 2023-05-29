@@ -2,7 +2,7 @@ import {LinkOutlined} from '@ant-design/icons';
 import {gql} from '@apollo/client';
 import {Typography} from 'antd';
 import React from 'react';
-import {DemoEmbedType, DemoFragment} from '../../types/graphql';
+import {DemoEmbedType, DemoFragment} from 'types/graphql';
 
 gql`
   fragment Demo on BandApplication {
@@ -80,7 +80,7 @@ export default function Demo({demo, demoEmbed, demoEmbedType}: DemoFragment) {
           target="_blank"
           rel="noreferrer"
         >
-          <LinkOutlined />
+          <LinkOutlined rev={undefined} />
           &nbsp;
           {demo}
         </a>

@@ -1,21 +1,19 @@
 import {Avatar, Table, theme, Tooltip, Typography} from 'antd';
-import React, {useMemo, useState} from 'react';
-import Page from '../../../components/shared/Page';
+import React, {useMemo, useRef, useState} from 'react';
 import {gql} from '@apollo/client';
 import {
   BandApplcationsQuery,
   GenreCategory,
   useBandApplcationsQuery,
-} from '../../../types/graphql';
-import Rater from '../../../components/booking/Rater';
-import BandApplicationDetails from '../../../components/booking/BandApplicationDetails';
-import AutoSizer from 'react-virtualized-auto-sizer';
+} from 'types/graphql';
+import Rater from 'components/booking/Rater';
+import BandApplicationDetails from 'components/booking/BandApplicationDetails';
 import {useRouter} from 'next/router';
-import {useEffect} from 'react';
-import useViewerContext from '../../../utils/useViewerContext';
-import Rating from '../../../components/booking/Rating';
+import Rating from 'components/booking/Rating';
 import {CommentOutlined} from '@ant-design/icons';
-import QuickType from '../../../components/booking/QuickType';
+import QuickType from 'components/booking/QuickType';
+import useResizeObserver from '@react-hook/resize-observer';
+import useViewerContext from 'utils/useViewerContext';
 
 gql`
   fragment Rating on BandApplication {
@@ -30,9 +28,6 @@ gql`
     rating
   }
   query BandApplcations($id: ID!) {
-    viewer {
-      id
-    }
     node(id: $id) {
       ... on Event {
         bandApplication {
@@ -88,6 +83,18 @@ export const GENRE_CATEGORIES: Map<GenreCategory, string> = new Map([
   [GenreCategory.Other, 'andere Musikrichtung'],
 ]);
 
+const useSize = (target: React.MutableRefObject<HTMLDivElement | null>) => {
+  const [size, setSize] = React.useState<DOMRect>();
+
+  React.useLayoutEffect(() => {
+    setSize(target.current?.getBoundingClientRect());
+  }, [target]);
+
+  // Where the magic happens
+  useResizeObserver(target, (entry) => setSize(entry.contentRect));
+  return size;
+};
+
 export default function Booking() {
   const router = useRouter();
   const {data, loading} = useBandApplcationsQuery({
@@ -95,44 +102,28 @@ export default function Booking() {
       id: `Event:${router.query.event}`,
     },
   });
-  const [selected, setSelected] = useState<string | null>(
-    router.query.band ? String(router.query.band) : null,
-  );
-  useEffect(() => {
-    router.push(
-      {
-        pathname: router.pathname,
-        query: {...router.query, band: selected},
-      },
-      undefined,
-      {shallow: true},
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selected]);
+  const [selected, setSelected] = useState<string | null>(null);
 
   const dataSource =
     data?.node?.__typename === 'Event' ? data.node.bandApplication : [];
 
+  const target = useRef<HTMLDivElement>(null);
+  const size = useSize(target);
+
   return (
-    <Page>
+    <div style={{width: '100%', height: '100vh'}} ref={target}>
       <QuickType data={dataSource} onSelect={setSelected} />
-      <AutoSizer>
-        {({height, width}) => (
-          <div style={{height, width}}>
-            <MemoizedTable
-              loading={loading}
-              dataSource={dataSource}
-              setSelected={setSelected}
-              height={height - 40}
-            />
-          </div>
-        )}
-      </AutoSizer>
+      <MemoizedTable
+        loading={loading}
+        dataSource={dataSource}
+        setSelected={setSelected}
+        height={(size?.height ?? 0) - 40}
+      />
       <BandApplicationDetails
         bandApplicationId={selected}
         onClose={() => setSelected(null)}
       />
-    </Page>
+    </div>
   );
 }
 
@@ -148,7 +139,6 @@ const MemoizedTable = React.memo(
     setSelected: (id: string) => void;
     height: number;
   }) => {
-    const viewer = useViewerContext();
     const {token} = theme.useToken();
     const ids = useMemo(
       () =>
@@ -158,6 +148,7 @@ const MemoizedTable = React.memo(
         ) ?? new Map(),
       [dataSource],
     );
+    const viewer = useViewerContext();
 
     return (
       <Table<RecordType>
@@ -305,6 +296,7 @@ const MemoizedTable = React.memo(
                 >
                   <CommentOutlined
                     style={{fontSize: 20, color: token.colorPrimary}}
+                    rev={undefined}
                   />
                 </Tooltip>
               ) : null,

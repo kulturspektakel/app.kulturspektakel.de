@@ -1,14 +1,11 @@
 import {Badge, message, Select, Table} from 'antd';
 import React from 'react';
-import Page from '../../components/shared/Page';
+import Page from 'components/shared/Page';
 import {gql} from '@apollo/client';
-import {
-  useDevicesQuery,
-  useUpdateDeviceListMutation,
-} from '../../types/graphql';
-import RelativeDate from '../../components/shared/RelativeDate';
+import {useDevicesQuery, useUpdateDeviceListMutation} from 'types/graphql';
+import RelativeDate from 'components/shared/RelativeDate';
 import {differenceInMinutes} from 'date-fns';
-import DeviceTransactions from '../../components/products/DeviceTransactions';
+import DeviceTransactions from 'components/contactless/DeviceTransactions';
 
 gql`
   query Devices {

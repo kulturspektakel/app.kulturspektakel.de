@@ -1,7 +1,8 @@
 import {Col, Form, Input, InputNumber, Row} from 'antd';
 import {useEffect} from 'react';
 import {ChangeEvent, useCallback, useState} from 'react';
-import Page from '../../components/shared/Page';
+import Page from 'components/shared/Page';
+import dynamic from 'next/dynamic';
 
 function buf2hex(buffer: Uint8Array): string {
   return [...buffer]
@@ -31,7 +32,7 @@ const DEPOSIT_LENGTH = 1;
 const BALANCE_LENGTH = 2;
 const SIGNATURE_LENGTH = 5;
 
-export default function CardToken() {
+function Token() {
   const [balance, setBalance] = useState(0);
   const [deposit, setDeposit] = useState(0);
   const [count, setCount] = useState(0);
@@ -209,3 +210,8 @@ export default function CardToken() {
     </Page>
   );
 }
+
+// Disable SSR, because localStorage is used
+export default dynamic(() => Promise.resolve(Token), {
+  ssr: false,
+});

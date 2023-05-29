@@ -1,6 +1,6 @@
 import React from 'react';
 import {gql} from '@apollo/client';
-import {useProductPrintQuery} from '../../types/graphql';
+import {useProductPrintQuery} from 'types/graphql';
 import styles from './print.module.css';
 import Head from 'next/head';
 

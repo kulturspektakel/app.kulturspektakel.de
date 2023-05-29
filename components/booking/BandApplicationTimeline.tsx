@@ -6,10 +6,9 @@ import {
   BandApplicationTimelineFragment,
   useBandApplicationCommentDeleteMutation,
   useBandApplicationCommentMutation,
-} from '../../types/graphql';
-import useViewerContext from '../../utils/useViewerContext';
-import RelativeDate from '../shared/RelativeDate';
-import ViewerAvatar from '../shared/ViewerAvatar';
+} from 'types/graphql';
+import RelativeDate from 'components/shared/RelativeDate';
+import ViewerAvatar from 'components/shared/ViewerAvatar';
 
 gql`
   fragment BandApplicationTimeline on BandApplication {
@@ -130,7 +129,7 @@ export default function BandApplicationTimeline(
               type="primary"
               htmlType="submit"
               shape="circle"
-              icon={<SendOutlined />}
+              icon={<SendOutlined rev={undefined} />}
             />
           </Form>
         </Timeline.Item>
@@ -145,7 +144,7 @@ export default function BandApplicationTimeline(
                 <Tooltip title="Kommentar löschen">
                   <Button
                     type="ghost"
-                    icon={<DeleteOutlined />}
+                    icon={<DeleteOutlined rev={undefined} />}
                     size="small"
                     loading={deleteResult.loading}
                     onClick={() =>
@@ -199,7 +198,7 @@ export default function BandApplicationTimeline(
                     {o.contactedByViewer != null && (
                       <>
                         <br />
-                        <MailTwoTone />
+                        <MailTwoTone rev={undefined} />
                         &nbsp;Kontaktiert von {o.contactedByViewer.displayName}
                       </>
                     )}
