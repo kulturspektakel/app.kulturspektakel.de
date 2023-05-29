@@ -74,21 +74,21 @@ export default function DeviceTransactions({deviceID}: {deviceID: string}) {
               case 'Charge':
                 return (
                   <div className={styles.charge}>
-                    <LogoutOutlined />
+                    <LogoutOutlined rev={undefined} />
                     &nbsp;Abbuchung
                   </div>
                 );
               case 'TopUp':
                 return (
                   <div className={styles.topup}>
-                    <LoginOutlined />
+                    <LoginOutlined rev={undefined} />
                     &nbsp;Aufladung
                   </div>
                 );
               case 'Cashout':
                 return (
                   <div className={styles.cashout}>
-                    <PoweroffOutlined />
+                    <PoweroffOutlined rev={undefined} />
                     &nbsp;Auszahlung
                   </div>
                 );

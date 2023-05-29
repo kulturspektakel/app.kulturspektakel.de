@@ -9,6 +9,7 @@ import {
 } from 'types/graphql';
 import RelativeDate from 'components/shared/RelativeDate';
 import ViewerAvatar from 'components/shared/ViewerAvatar';
+import useViewerContext from 'utils/useViewerContext';
 
 gql`
   fragment BandApplicationTimeline on BandApplication {

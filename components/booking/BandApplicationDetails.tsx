@@ -152,7 +152,7 @@ export default function BandApplicationDetails({
     >
       <Row gutter={24}>
         {data?.node?.__typename === 'BandApplication' ? (
-          <DrawerContent {...data?.node} viewerId={data?.viewer?.id} />
+          <DrawerContent {...data?.node} />
         ) : (
           <>
             <Col span={12}>
