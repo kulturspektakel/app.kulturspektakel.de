@@ -130,7 +130,7 @@ export default function Revenue() {
               const a = e?.[0];
               const b = e?.[1];
               if (a && b) {
-                setRange([a, b]);
+                setRange([a, b] as any);
               }
             }}
             value={range}
