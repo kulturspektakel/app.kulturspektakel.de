@@ -1,40 +1,17 @@
-.root {
-  border: none;
-  border-radius: 5px;
-  overflow: hidden;
-  box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.05);
-  margin-bottom: 20px;
-  break-inside: avoid;
-}
-
-.root :global(.ant-card-body) {
-  padding-bottom: 0;
-}
-
-.root :global(.ant-card-meta-title) {
-  margin-top: 2px;
-  margin-bottom: -4px !important;
-}
-
-.root :global(.ant-card-meta-description) {
-  margin-bottom: 14px;
-}
-
-.root :global(.ant-card-actions) :global(.ant-btn) {
-  max-width: 100%;
-  width: 100%;
-  justify-content: center;
+.header {
   display: flex;
   align-items: center;
+  padding-top: 12px;
+  padding-bottom: 12px;
 }
 
-.root :global(.ant-card-actions) :global(.ant-btn) span[role="img"] {
-  flex-shrink: 0;
-  margin-top: 2px;
+.titleGroup {
+  flex-grow: 1;
+  margin-left: 10px;
 }
 
-.root :global(.ant-card-actions) :global(.ant-btn) span {
-  overflow: hidden;
-  text-overflow: ellipsis;
+.title {
+  margin: 0 !important;
+  line-height: 100% !important;
+  padding-top: 7px;
 }
-

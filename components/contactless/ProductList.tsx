@@ -7,17 +7,13 @@ import {
 } from 'react-beautiful-dnd';
 import React, {useState, useCallback, useEffect} from 'react';
 import EmojiPicker from './EmojiPicker';
-import {Card, Button, message, Modal} from 'antd';
-import {
-  CheckCircleOutlined,
-  ExclamationCircleOutlined,
-  PlusCircleOutlined,
-  PoweroffOutlined,
-} from '@ant-design/icons';
+import {Dropdown, Button, message, Modal, Typography, Card} from 'antd';
+import {EllipsisOutlined, ExclamationCircleOutlined} from '@ant-design/icons';
 import styles from './ProductList.module.css';
-import {gql} from '@apollo/client';
+import {gql, useSuspenseQuery} from '@apollo/client';
 import {
-  ProductListFragment,
+  ProductListDocument,
+  ProductListQuery,
   ProductRowFragment,
   useUpsertProductListMutation,
 } from '../../types/graphql';
@@ -52,6 +48,14 @@ gql`
     }
   }
 
+  query ProductList($id: ID!) {
+    productList: node(id: $id) {
+      ... on ProductList {
+        ...ProductList
+      }
+    }
+  }
+
   mutation UpsertProductList(
     $id: ID
     $emoji: String
@@ -71,9 +75,20 @@ gql`
   }
 `;
 
-export default function ProductList({list}: {list: ProductListFragment}) {
+export default function ProductList({listId}: {listId: string}) {
   const [products, setProducts] = useState<ProductRowFragment[]>([]);
   const [dirty, setDirty] = useState(false);
+  const {data} = useSuspenseQuery<ProductListQuery>(ProductListDocument, {
+    variables: {
+      id: listId,
+    },
+  });
+  const list =
+    data.productList?.__typename === 'ProductList' ? data.productList : null;
+  if (!list) {
+    throw new Error('List not found');
+  }
+
   useEffect(() => {
     setProducts(list.product.map(generateRow));
   }, [list.product]);
@@ -109,93 +124,77 @@ export default function ProductList({list}: {list: ProductListFragment}) {
   );
 
   return (
-    <Card
-      className={styles.root}
-      size="small"
-      actions={[
-        <Button
-          key="save"
-          icon={<CheckCircleOutlined rev={undefined} />}
-          type="link"
-          disabled={!dirty}
-          onClick={async () => {
-            setDirty(false);
+    <>
+      <div className={styles.header}>
+        <EmojiPicker
+          key={list.id}
+          value={list.emoji ?? null}
+          onChange={async (emoji) => {
             await mutate({
               variables: {
                 id: list.id,
-                products: products
-                  .filter((p) => Boolean(p.name && p.price))
-                  .map(({id, __typename, ...data}) => data),
+                emoji,
               },
             });
-            message.success('Änderung gespeichert');
+            message.success('Emoji geändert');
           }}
-        >
-          Speichern
-        </Button>,
-        <Button
-          key="product"
-          icon={<PlusCircleOutlined rev={undefined} />}
-          type="link"
-          style={{color: products.length >= 30 ? undefined : '#52c41a'}}
-          disabled={products.length >= 30}
-          onClick={() => {
-            setProducts([...products, generateRow({})]);
-          }}
-        >
-          Produkt
-        </Button>,
-        <Button
-          key="disable"
-          icon={<PoweroffOutlined rev={undefined} />}
-          type="link"
-          danger={list.active}
-          style={list.active ? undefined : {color: '#52c41a'}}
-          onClick={() => {
-            if (list.active) {
-              return Modal.confirm({
-                title: 'Preisliste deaktivieren',
-                icon: <ExclamationCircleOutlined rev={undefined} />,
-                okText: 'Deaktivieren',
-                okButtonProps: {
-                  danger: true,
-                },
-                cancelText: 'Abbrechen',
-                content: `Soll die Preisliste ${list.name} wirklich deaktiviert werden? Sie wird dann von allen Geräten entfernt die sie verwenden.`,
-                onOk() {
-                  return mutate({variables: {id: list.id, active: false}});
-                },
-              });
-            } else {
-              return mutate({variables: {id: list.id, active: true}});
-            }
-          }}
-        >
-          {list.active ? 'Deaktivieren' : 'Aktivieren'}
-        </Button>,
-      ]}
-    >
-      <Card.Meta
-        avatar={
-          <EmojiPicker
-            key={list.id}
-            value={list.emoji ?? null}
-            onChange={async (emoji) => {
+        />
+        <div className={styles.titleGroup}>
+          <Typography.Title level={4} className={styles.title}>
+            {list.name}
+          </Typography.Title>
+          <Typography.Text type="secondary">{`${list.product.length} Produkt${
+            list.product.length !== 1 ? 'e' : ''
+          }`}</Typography.Text>
+        </div>
+        <div>
+          <Button
+            onClick={() => {
+              if (list.active) {
+                return Modal.confirm({
+                  title: 'Preisliste deaktivieren',
+                  icon: <ExclamationCircleOutlined rev={undefined} />,
+                  okText: 'Deaktivieren',
+                  okButtonProps: {
+                    danger: true,
+                  },
+                  cancelText: 'Abbrechen',
+                  content: `Soll die Preisliste ${list.name} wirklich deaktiviert werden? Sie wird dann von allen Geräten entfernt die sie verwenden.`,
+                  onOk() {
+                    return mutate({
+                      variables: {id: list.id, active: false},
+                    });
+                  },
+                });
+              } else {
+                return mutate({variables: {id: list.id, active: true}});
+              }
+            }}
+          >
+            {list.active ? 'Deaktivieren' : 'Aktivieren'}
+          </Button>
+          &nbsp;
+          <Button
+            disabled={!dirty}
+            type="primary"
+            onClick={async () => {
+              setDirty(false);
               await mutate({
                 variables: {
                   id: list.id,
-                  emoji,
+                  products: products
+                    .filter((p) => Boolean(p.name && p.price))
+                    .map(({id, __typename, ...data}) => data),
                 },
               });
-              message.success('Emoji geändert');
+              message.success('Änderung gespeichert');
             }}
-          />
-        }
-        title={list.name}
-        description={`${list.product.length} Produkt${
-          list.product.length !== 1 ? 'e' : ''
-        }`}
-      />
+          >
+            Speichern
+          </Button>
+        </div>
+      </div>
+
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="droppable">
           {(provided) => (
@@ -223,6 +222,16 @@ export default function ProductList({list}: {list: ProductListFragment}) {
           )}
         </Droppable>
       </DragDropContext>
-    </Card>
+      {products.length < 30 && (
+        <Button
+          type="link"
+          onClick={() => {
+            setProducts([...products, generateRow({})]);
+          }}
+        >
+          Neues Produkt hinzufügen
+        </Button>
+      )}
+    </>
   );
 }

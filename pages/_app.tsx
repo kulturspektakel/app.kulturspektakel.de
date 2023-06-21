@@ -33,6 +33,7 @@ const App = ({Component, pageProps}: AppProps & Props) => {
     () => ({
       token: {
         fontSizeHeading5: theme.defaultConfig.token.fontSize,
+        colorBgLayout: 'transparent',
       },
     }),
     [],

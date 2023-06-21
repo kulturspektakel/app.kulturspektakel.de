@@ -1,21 +1,26 @@
-import {Modal, Button, Input, Spin, Empty} from 'antd';
-import React, {useState, useCallback} from 'react';
+import {Modal, Button, Input, Spin, Empty, Menu, Typography, Card} from 'antd';
+import React, {useState, useCallback, Suspense} from 'react';
 import Page from 'components/shared/Page';
 import {gql} from '@apollo/client';
-import {useCreateProductListMutation, useProductListQuery} from 'types/graphql';
-import ProductListContainer from 'components/contactless/ProductListContainer';
+import {
+  useCreateProductListMutation,
+  useProductListsQuery,
+} from 'types/graphql';
+import ProductList from 'components/contactless/ProductList';
 
 gql`
-  query ProductList {
+  query ProductLists {
     productLists {
       id
-      ...ProductList
+      emoji
+      name
+      active
     }
   }
 
   mutation CreateProductList($name: String!) {
     upsertProductList(name: $name) {
-      ...ProductList
+      id
     }
   }
 `;
@@ -23,8 +28,9 @@ gql`
 export default function Lists() {
   const [createModalVisible, setCreateModalVisible] = useState(false);
   const [newListName, setNewListName] = useState<string | null>(null);
-  const {data} = useProductListQuery();
+  const {data} = useProductListsQuery();
   const [create] = useCreateProductListMutation({});
+  const [selectedListId, setSelectedListId] = useState<string | null>(null);
 
   const createList = useCallback(async () => {
     if (!newListName) {
@@ -86,26 +92,37 @@ export default function Lists() {
       {data?.productLists.length === 0 && (
         <Empty description="Keine Preislisten" />
       )}
-      {data?.productLists ? (
-        <>
-          <ProductListContainer
-            data={data?.productLists.filter((p) => p.active)}
-          />
-          <ProductListContainer
-            title="Deaktivierte Listen"
-            data={data?.productLists.filter((p) => !p.active)}
-          />
-        </>
-      ) : (
-        <div
-          style={{
-            textAlign: 'center',
-            padding: 50,
-          }}
-        >
-          <Spin size="large" />
-        </div>
-      )}
+      <Card bodyStyle={{padding: 12, paddingTop: 0}}>
+        <Menu
+          selectedKeys={selectedListId ? [selectedListId] : undefined}
+          onSelect={({key}) => setSelectedListId(key)}
+          items={[
+            ...(data?.productLists
+              .filter((l) => l.active)
+              .map((l) => ({
+                key: l.id,
+                label: <Typography.Text>{l.name}</Typography.Text>,
+              })) ?? []),
+            {type: 'divider'},
+            ...(data?.productLists
+              .filter((l) => !l.active)
+              .map((l) => ({
+                key: l.id,
+                label: (
+                  <Typography.Text type="secondary">{l.name}</Typography.Text>
+                ),
+              })) ?? []),
+          ]}
+          mode="horizontal"
+        />
+        {selectedListId != null ? (
+          <Suspense fallback={<Spin />}>
+            <ProductList listId={selectedListId} key={selectedListId} />
+          </Suspense>
+        ) : (
+          <Empty description="Preisliste auswählen" />
+        )}
+      </Card>
     </Page>
   );
 }

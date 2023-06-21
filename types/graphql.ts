@@ -1141,6 +1141,41 @@ export type ProductListFragment = {
   }>;
 };
 
+export type ProductListQueryVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+export type ProductListQuery = {
+  __typename?: 'Query';
+  productList?:
+    | {__typename?: 'Area'}
+    | {__typename?: 'BandApplication'}
+    | {__typename?: 'BandApplicationComment'}
+    | {__typename?: 'BandPlaying'}
+    | {__typename?: 'Card'}
+    | {__typename?: 'Device'}
+    | {__typename?: 'Event'}
+    | {__typename?: 'News'}
+    | {__typename?: 'NuclinoPage'}
+    | {__typename?: 'Product'}
+    | {
+        __typename?: 'ProductList';
+        id: string;
+        name: string;
+        emoji?: string | null;
+        active: boolean;
+        product: Array<{
+          __typename?: 'Product';
+          id: string;
+          name: string;
+          price: number;
+          requiresDeposit: boolean;
+        }>;
+      }
+    | {__typename?: 'Viewer'}
+    | null;
+};
+
 export type UpsertProductListMutationVariables = Exact<{
   id?: InputMaybe<Scalars['ID']['input']>;
   emoji?: InputMaybe<Scalars['String']['input']>;
@@ -1384,23 +1419,16 @@ export type UpdateDeviceListMutation = {
   };
 };
 
-export type ProductListQueryVariables = Exact<{[key: string]: never}>;
+export type ProductListsQueryVariables = Exact<{[key: string]: never}>;
 
-export type ProductListQuery = {
+export type ProductListsQuery = {
   __typename?: 'Query';
   productLists: Array<{
     __typename?: 'ProductList';
     id: string;
-    name: string;
     emoji?: string | null;
+    name: string;
     active: boolean;
-    product: Array<{
-      __typename?: 'Product';
-      id: string;
-      name: string;
-      price: number;
-      requiresDeposit: boolean;
-    }>;
   }>;
 };
 
@@ -1410,20 +1438,7 @@ export type CreateProductListMutationVariables = Exact<{
 
 export type CreateProductListMutation = {
   __typename?: 'Mutation';
-  upsertProductList: {
-    __typename?: 'ProductList';
-    id: string;
-    name: string;
-    emoji?: string | null;
-    active: boolean;
-    product: Array<{
-      __typename?: 'Product';
-      id: string;
-      name: string;
-      price: number;
-      requiresDeposit: boolean;
-    }>;
-  };
+  upsertProductList: {__typename?: 'ProductList'; id: string};
 };
 
 export type ProductPrintQueryVariables = Exact<{[key: string]: never}>;
@@ -2004,6 +2019,65 @@ export type DeviceTransactionsQueryResult = Apollo.QueryResult<
   DeviceTransactionsQuery,
   DeviceTransactionsQueryVariables
 >;
+export const ProductListDocument = gql`
+  query ProductList($id: ID!) {
+    productList: node(id: $id) {
+      ... on ProductList {
+        ...ProductList
+      }
+    }
+  }
+  ${ProductListFragmentDoc}
+`;
+
+/**
+ * __useProductListQuery__
+ *
+ * To run a query within a React component, call `useProductListQuery` and pass it any options that fit your needs.
+ * When your component renders, `useProductListQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useProductListQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useProductListQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    ProductListQuery,
+    ProductListQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useQuery<ProductListQuery, ProductListQueryVariables>(
+    ProductListDocument,
+    options,
+  );
+}
+export function useProductListLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    ProductListQuery,
+    ProductListQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useLazyQuery<ProductListQuery, ProductListQueryVariables>(
+    ProductListDocument,
+    options,
+  );
+}
+export type ProductListQueryHookResult = ReturnType<typeof useProductListQuery>;
+export type ProductListLazyQueryHookResult = ReturnType<
+  typeof useProductListLazyQuery
+>;
+export type ProductListQueryResult = Apollo.QueryResult<
+  ProductListQuery,
+  ProductListQueryVariables
+>;
 export const UpsertProductListDocument = gql`
   mutation UpsertProductList(
     $id: ID
@@ -2430,70 +2504,72 @@ export type UpdateDeviceListMutationOptions = Apollo.BaseMutationOptions<
   UpdateDeviceListMutation,
   UpdateDeviceListMutationVariables
 >;
-export const ProductListDocument = gql`
-  query ProductList {
+export const ProductListsDocument = gql`
+  query ProductLists {
     productLists {
       id
-      ...ProductList
+      emoji
+      name
+      active
     }
   }
-  ${ProductListFragmentDoc}
 `;
 
 /**
- * __useProductListQuery__
+ * __useProductListsQuery__
  *
- * To run a query within a React component, call `useProductListQuery` and pass it any options that fit your needs.
- * When your component renders, `useProductListQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useProductListsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useProductListsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useProductListQuery({
+ * const { data, loading, error } = useProductListsQuery({
  *   variables: {
  *   },
  * });
  */
-export function useProductListQuery(
+export function useProductListsQuery(
   baseOptions?: Apollo.QueryHookOptions<
-    ProductListQuery,
-    ProductListQueryVariables
+    ProductListsQuery,
+    ProductListsQueryVariables
   >,
 ) {
   const options = {...defaultOptions, ...baseOptions};
-  return Apollo.useQuery<ProductListQuery, ProductListQueryVariables>(
-    ProductListDocument,
+  return Apollo.useQuery<ProductListsQuery, ProductListsQueryVariables>(
+    ProductListsDocument,
     options,
   );
 }
-export function useProductListLazyQuery(
+export function useProductListsLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
-    ProductListQuery,
-    ProductListQueryVariables
+    ProductListsQuery,
+    ProductListsQueryVariables
   >,
 ) {
   const options = {...defaultOptions, ...baseOptions};
-  return Apollo.useLazyQuery<ProductListQuery, ProductListQueryVariables>(
-    ProductListDocument,
+  return Apollo.useLazyQuery<ProductListsQuery, ProductListsQueryVariables>(
+    ProductListsDocument,
     options,
   );
 }
-export type ProductListQueryHookResult = ReturnType<typeof useProductListQuery>;
-export type ProductListLazyQueryHookResult = ReturnType<
-  typeof useProductListLazyQuery
+export type ProductListsQueryHookResult = ReturnType<
+  typeof useProductListsQuery
 >;
-export type ProductListQueryResult = Apollo.QueryResult<
-  ProductListQuery,
-  ProductListQueryVariables
+export type ProductListsLazyQueryHookResult = ReturnType<
+  typeof useProductListsLazyQuery
+>;
+export type ProductListsQueryResult = Apollo.QueryResult<
+  ProductListsQuery,
+  ProductListsQueryVariables
 >;
 export const CreateProductListDocument = gql`
   mutation CreateProductList($name: String!) {
     upsertProductList(name: $name) {
-      ...ProductList
+      id
     }
   }
-  ${ProductListFragmentDoc}
 `;
 export type CreateProductListMutationFn = Apollo.MutationFunction<
   CreateProductListMutation,
