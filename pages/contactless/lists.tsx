@@ -1,4 +1,15 @@
-import {Modal, Button, Input, Spin, Empty, Menu, Typography, Card} from 'antd';
+import {
+  Modal,
+  Button,
+  Input,
+  Spin,
+  Empty,
+  Menu,
+  Typography,
+  Card,
+  Select,
+  Tabs,
+} from 'antd';
 import React, {useState, useCallback, Suspense} from 'react';
 import Page from 'components/shared/Page';
 import {gql} from '@apollo/client';
@@ -89,32 +100,37 @@ export default function Lists() {
         </form>
       </Modal>
 
+      <Tabs
+        tabPosition="left"
+        onTabClick={(key) => setSelectedListId(key)}
+        items={[
+          ...(data?.productLists
+            .filter((l) => l.active)
+            .map((l) => ({
+              key: l.id,
+              label: <Typography.Text>{l.name}</Typography.Text>,
+              chidren: 'test',
+            })) ?? []),
+          ...(data?.productLists
+            .filter((l) => !l.active)
+            .map((l) => ({
+              key: l.id,
+              chidren: 'test',
+              label: (
+                <Typography.Text type="secondary">{l.name}</Typography.Text>
+              ),
+            })) ?? []),
+        ]}
+      />
+
       {data?.productLists.length === 0 && (
         <Empty description="Keine Preislisten" />
       )}
-      <Card bodyStyle={{padding: 12, paddingTop: 0}}>
-        <Menu
-          selectedKeys={selectedListId ? [selectedListId] : undefined}
-          onSelect={({key}) => setSelectedListId(key)}
-          items={[
-            ...(data?.productLists
-              .filter((l) => l.active)
-              .map((l) => ({
-                key: l.id,
-                label: <Typography.Text>{l.name}</Typography.Text>,
-              })) ?? []),
-            {type: 'divider'},
-            ...(data?.productLists
-              .filter((l) => !l.active)
-              .map((l) => ({
-                key: l.id,
-                label: (
-                  <Typography.Text type="secondary">{l.name}</Typography.Text>
-                ),
-              })) ?? []),
-          ]}
-          mode="horizontal"
-        />
+      <Card
+        bordered={false}
+        style={{maxWidth: 400}}
+        bodyStyle={{padding: 12, paddingTop: 0}}
+      >
         {selectedListId != null ? (
           <Suspense fallback={<Spin />}>
             <ProductList listId={selectedListId} key={selectedListId} />

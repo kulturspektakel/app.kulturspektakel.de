@@ -18,7 +18,7 @@ export type Incremental<T> =
 const defaultOptions = {} as const;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: {input: string | number; output: string};
+  ID: {input: string; output: string};
   String: {input: string; output: string};
   Boolean: {input: boolean; output: boolean};
   Int: {input: number; output: number};
@@ -579,6 +579,7 @@ export enum PreviouslyPlayed {
 export type Product = Billable &
   Node & {
     __typename?: 'Product';
+    additives: Array<ProductAdditives>;
     id: Scalars['ID']['output'];
     name: Scalars['String']['output'];
     price: Scalars['Int']['output'];
@@ -592,10 +593,17 @@ export type ProductSalesNumbersArgs = {
   before: Scalars['DateTime']['input'];
 };
 
+export type ProductAdditives = {
+  __typename?: 'ProductAdditives';
+  displayName: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+};
+
 export type ProductInput = {
+  additives: Array<Scalars['ID']['input']>;
   name: Scalars['String']['input'];
   price: Scalars['Int']['input'];
-  requiresDeposit?: InputMaybe<Scalars['Boolean']['input']>;
+  requiresDeposit: Scalars['Boolean']['input'];
 };
 
 export type ProductList = Billable &
@@ -631,6 +639,7 @@ export type Query = {
   node?: Maybe<Node>;
   nodes: Array<Maybe<Node>>;
   nuclinoPages: Array<NuclinoSearchResult>;
+  productAdditives: Array<ProductAdditives>;
   productLists: Array<ProductList>;
   transactions: Transactions;
   viewer?: Maybe<Viewer>;
@@ -685,6 +694,10 @@ export type QueryNodesArgs = {
 
 export type QueryNuclinoPagesArgs = {
   query: Scalars['String']['input'];
+};
+
+export type QueryProductAdditivesArgs = {
+  type?: InputMaybe<DeviceType>;
 };
 
 export type QueryProductListsArgs = {
@@ -1088,6 +1101,17 @@ export type BandApplicationRatingMutation = {
   };
 };
 
+export type ProductAdditivesQueryVariables = Exact<{[key: string]: never}>;
+
+export type ProductAdditivesQuery = {
+  __typename?: 'Query';
+  productAdditives: Array<{
+    __typename?: 'ProductAdditives';
+    id: string;
+    displayName: string;
+  }>;
+};
+
 export type DeviceTransactionsQueryVariables = Exact<{
   deviceID: Scalars['ID']['input'];
 }>;
@@ -1138,6 +1162,7 @@ export type ProductListFragment = {
     name: string;
     price: number;
     requiresDeposit: boolean;
+    additives: Array<{__typename?: 'ProductAdditives'; id: string}>;
   }>;
 };
 
@@ -1170,10 +1195,16 @@ export type ProductListQuery = {
           name: string;
           price: number;
           requiresDeposit: boolean;
+          additives: Array<{__typename?: 'ProductAdditives'; id: string}>;
         }>;
       }
     | {__typename?: 'Viewer'}
     | null;
+  productAdditives: Array<{
+    __typename?: 'ProductAdditives';
+    id: string;
+    displayName: string;
+  }>;
 };
 
 export type UpsertProductListMutationVariables = Exact<{
@@ -1198,6 +1229,7 @@ export type UpsertProductListMutation = {
       name: string;
       price: number;
       requiresDeposit: boolean;
+      additives: Array<{__typename?: 'ProductAdditives'; id: string}>;
     }>;
   };
 };
@@ -1208,6 +1240,7 @@ export type ProductRowFragment = {
   name: string;
   price: number;
   requiresDeposit: boolean;
+  additives: Array<{__typename?: 'ProductAdditives'; id: string}>;
 };
 
 export type RevenueDetailsQueryVariables = Exact<{
@@ -1616,6 +1649,9 @@ export const ProductRowFragmentDoc = gql`
     name
     price
     requiresDeposit
+    additives {
+      id
+    }
   }
 `;
 export const ProductListFragmentDoc = gql`
@@ -1948,6 +1984,64 @@ export type BandApplicationRatingMutationOptions = Apollo.BaseMutationOptions<
   BandApplicationRatingMutation,
   BandApplicationRatingMutationVariables
 >;
+export const ProductAdditivesDocument = gql`
+  query ProductAdditives {
+    productAdditives {
+      id
+      displayName
+    }
+  }
+`;
+
+/**
+ * __useProductAdditivesQuery__
+ *
+ * To run a query within a React component, call `useProductAdditivesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useProductAdditivesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useProductAdditivesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useProductAdditivesQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    ProductAdditivesQuery,
+    ProductAdditivesQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useQuery<ProductAdditivesQuery, ProductAdditivesQueryVariables>(
+    ProductAdditivesDocument,
+    options,
+  );
+}
+export function useProductAdditivesLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    ProductAdditivesQuery,
+    ProductAdditivesQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useLazyQuery<
+    ProductAdditivesQuery,
+    ProductAdditivesQueryVariables
+  >(ProductAdditivesDocument, options);
+}
+export type ProductAdditivesQueryHookResult = ReturnType<
+  typeof useProductAdditivesQuery
+>;
+export type ProductAdditivesLazyQueryHookResult = ReturnType<
+  typeof useProductAdditivesLazyQuery
+>;
+export type ProductAdditivesQueryResult = Apollo.QueryResult<
+  ProductAdditivesQuery,
+  ProductAdditivesQueryVariables
+>;
 export const DeviceTransactionsDocument = gql`
   query DeviceTransactions($deviceID: ID!) {
     node(id: $deviceID) {
@@ -2025,6 +2119,10 @@ export const ProductListDocument = gql`
       ... on ProductList {
         ...ProductList
       }
+    }
+    productAdditives {
+      id
+      displayName
     }
   }
   ${ProductListFragmentDoc}

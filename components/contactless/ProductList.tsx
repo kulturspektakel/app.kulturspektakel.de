@@ -7,8 +7,8 @@ import {
 } from 'react-beautiful-dnd';
 import React, {useState, useCallback, useEffect} from 'react';
 import EmojiPicker from './EmojiPicker';
-import {Dropdown, Button, message, Modal, Typography, Card} from 'antd';
-import {EllipsisOutlined, ExclamationCircleOutlined} from '@ant-design/icons';
+import {Button, message, Modal, Typography, Card, Dropdown} from 'antd';
+import {ExclamationCircleOutlined} from '@ant-design/icons';
 import styles from './ProductList.module.css';
 import {gql, useSuspenseQuery} from '@apollo/client';
 import {
@@ -32,6 +32,7 @@ function generateRow(data: Partial<ProductRowFragment>): ProductRowFragment {
     name: '',
     price: 0,
     requiresDeposit: false,
+    additives: [],
     ...data,
   };
 }
@@ -53,6 +54,10 @@ gql`
       ... on ProductList {
         ...ProductList
       }
+    }
+    productAdditives {
+      id
+      displayName
     }
   }
 
@@ -95,7 +100,7 @@ export default function ProductList({listId}: {listId: string}) {
 
   useLeavePageConfirm(dirty, 'Änderungen an Preislisten nicht gespeichert');
 
-  const [mutate] = useUpsertProductListMutation({});
+  const [mutate, {loading}] = useUpsertProductListMutation({});
 
   const onDragEnd = useCallback<OnDragEndResponder>(
     (result) => {
@@ -114,9 +119,13 @@ export default function ProductList({listId}: {listId: string}) {
   );
 
   const onProductChange = useCallback(
-    (i: number, newProduct: Partial<ProductRowFragment>) => {
+    (i: number, newProduct: Partial<ProductRowFragment> | null) => {
       const newProducts = [...products];
-      newProducts.splice(i, 1, {...products[i], ...newProduct});
+      if (newProduct == null) {
+        newProducts.splice(i, 1);
+      } else {
+        newProducts.splice(i, 1, {...products[i], ...newProduct});
+      }
       setProducts(newProducts);
       setDirty(true);
     },
@@ -148,50 +157,65 @@ export default function ProductList({listId}: {listId: string}) {
           }`}</Typography.Text>
         </div>
         <div>
-          <Button
-            onClick={() => {
-              if (list.active) {
-                return Modal.confirm({
-                  title: 'Preisliste deaktivieren',
-                  icon: <ExclamationCircleOutlined rev={undefined} />,
-                  okText: 'Deaktivieren',
-                  okButtonProps: {
-                    danger: true,
+          <Dropdown.Button
+            loading={loading}
+            menu={{
+              items: [
+                {
+                  key: 1,
+                  disabled: products.length >= 30,
+                  label: 'Neues Produkt',
+                  onClick: () => setProducts([...products, generateRow({})]),
+                },
+                {
+                  key: 2,
+                  danger: list.active,
+                  label: list.active
+                    ? 'Preisliste deaktivieren'
+                    : 'Preisliste aktivieren',
+                  onClick: () => {
+                    if (list.active) {
+                      return Modal.confirm({
+                        title: 'Preisliste deaktivieren',
+                        icon: <ExclamationCircleOutlined rev={undefined} />,
+                        okText: 'Deaktivieren',
+                        okButtonProps: {
+                          danger: true,
+                        },
+                        cancelText: 'Abbrechen',
+                        content: `Soll die Preisliste ${list.name} wirklich deaktiviert werden? Sie wird dann von allen Geräten entfernt die sie verwenden.`,
+                        onOk() {
+                          return mutate({
+                            variables: {id: list.id, active: false},
+                          });
+                        },
+                      });
+                    } else {
+                      return mutate({variables: {id: list.id, active: true}});
+                    }
                   },
-                  cancelText: 'Abbrechen',
-                  content: `Soll die Preisliste ${list.name} wirklich deaktiviert werden? Sie wird dann von allen Geräten entfernt die sie verwenden.`,
-                  onOk() {
-                    return mutate({
-                      variables: {id: list.id, active: false},
-                    });
-                  },
-                });
-              } else {
-                return mutate({variables: {id: list.id, active: true}});
-              }
+                },
+              ],
             }}
-          >
-            {list.active ? 'Deaktivieren' : 'Aktivieren'}
-          </Button>
-          &nbsp;
-          <Button
-            disabled={!dirty}
-            type="primary"
+            type={dirty ? 'primary' : undefined}
             onClick={async () => {
               setDirty(false);
               await mutate({
                 variables: {
                   id: list.id,
-                  products: products
-                    .filter((p) => Boolean(p.name && p.price))
-                    .map(({id, __typename, ...data}) => data),
+                  products: products.map(
+                    ({id, __typename, additives, ...data}) => ({
+                      ...data,
+                      additives: additives.map((a) => a.id),
+                    }),
+                  ),
                 },
               });
               message.success('Änderung gespeichert');
             }}
           >
             Speichern
-          </Button>
+          </Dropdown.Button>
         </div>
       </div>
 
@@ -222,16 +246,6 @@ export default function ProductList({listId}: {listId: string}) {
           )}
         </Droppable>
       </DragDropContext>
-      {products.length < 30 && (
-        <Button
-          type="link"
-          onClick={() => {
-            setProducts([...products, generateRow({})]);
-          }}
-        >
-          Neues Produkt hinzufügen
-        </Button>
-      )}
     </>
   );
 }
