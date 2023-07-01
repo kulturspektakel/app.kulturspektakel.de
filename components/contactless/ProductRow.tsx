@@ -1,13 +1,5 @@
 import styles from './ProductRow.module.css';
-import {
-  Badge,
-  Button,
-  Checkbox,
-  Input,
-  Popconfirm,
-  Switch,
-  Tooltip,
-} from 'antd';
+import {Button, Checkbox, Input, Popconfirm} from 'antd';
 import React, {useRef, useState} from 'react';
 import {gql} from '@apollo/client';
 import {ProductRowFragment} from '../../types/graphql';

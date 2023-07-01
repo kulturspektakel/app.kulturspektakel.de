@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: row;
   border-top: 1px solid #f0f0f0;
-  padding: 6px 12px;
+  padding: 12px 12px;
   margin-left: -12px;
   margin-right: -12px;
 }
@@ -40,6 +40,26 @@
   align-items: center;
   margin-right: 10px;
   flex-grow: 0;
+  position: relative;
+}
+
+.index::after,
+.index::before {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 3px;
+  height: 1px;
+  left: 7px;
+  right: 7px;
+  transform: translateY(-50%);
+  border-top: 1px solid #d9d9d9;
+  border-bottom: 1px solid #d9d9d9;
+}
+
+.index::after {
+  bottom: 0px;
+  top: auto;
 }
 
 .deposit {

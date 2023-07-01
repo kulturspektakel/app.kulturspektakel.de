@@ -1,16 +1,5 @@
-import {
-  Modal,
-  Button,
-  Input,
-  Spin,
-  Empty,
-  Menu,
-  Typography,
-  Card,
-  Select,
-  Tabs,
-} from 'antd';
-import React, {useState, useCallback, Suspense} from 'react';
+import {Modal, Button, Input, Empty, Typography, Tabs} from 'antd';
+import React, {useState, useCallback} from 'react';
 import Page from 'components/shared/Page';
 import {gql} from '@apollo/client';
 import {
@@ -18,6 +7,7 @@ import {
   useProductListsQuery,
 } from 'types/graphql';
 import ProductList from 'components/contactless/ProductList';
+import styles from './lists.module.css';
 
 gql`
   query ProductLists {
@@ -41,7 +31,6 @@ export default function Lists() {
   const [newListName, setNewListName] = useState<string | null>(null);
   const {data} = useProductListsQuery();
   const [create] = useCreateProductListMutation({});
-  const [selectedListId, setSelectedListId] = useState<string | null>(null);
 
   const createList = useCallback(async () => {
     if (!newListName) {
@@ -101,23 +90,32 @@ export default function Lists() {
       </Modal>
 
       <Tabs
-        tabPosition="left"
-        onTabClick={(key) => setSelectedListId(key)}
+        tabPosition={document.body.clientWidth < 600 ? 'top' : 'left'}
+        size="small"
+        onTabClick={() => window.scrollTo(0, 0)}
+        className={styles.tabs}
         items={[
           ...(data?.productLists
             .filter((l) => l.active)
             .map((l) => ({
               key: l.id,
-              label: <Typography.Text>{l.name}</Typography.Text>,
-              chidren: 'test',
+              label: (
+                <Typography.Text>
+                  {l.emoji}&ensp;
+                  {l.name}
+                </Typography.Text>
+              ),
+              children: <ProductList listId={l.id} />,
             })) ?? []),
           ...(data?.productLists
             .filter((l) => !l.active)
             .map((l) => ({
               key: l.id,
-              chidren: 'test',
+              children: <ProductList listId={l.id} />,
               label: (
-                <Typography.Text type="secondary">{l.name}</Typography.Text>
+                <Typography.Text type="secondary">
+                  {l.emoji}&ensp;{l.name}
+                </Typography.Text>
               ),
             })) ?? []),
         ]}
@@ -126,19 +124,6 @@ export default function Lists() {
       {data?.productLists.length === 0 && (
         <Empty description="Keine Preislisten" />
       )}
-      <Card
-        bordered={false}
-        style={{maxWidth: 400}}
-        bodyStyle={{padding: 12, paddingTop: 0}}
-      >
-        {selectedListId != null ? (
-          <Suspense fallback={<Spin />}>
-            <ProductList listId={selectedListId} key={selectedListId} />
-          </Suspense>
-        ) : (
-          <Empty description="Preisliste auswählen" />
-        )}
-      </Card>
     </Page>
   );
 }

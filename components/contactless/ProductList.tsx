@@ -5,9 +5,9 @@ import {
   Draggable,
   OnDragEndResponder,
 } from 'react-beautiful-dnd';
-import React, {useState, useCallback, useEffect} from 'react';
+import React, {useState, useCallback, useEffect, Suspense} from 'react';
 import EmojiPicker from './EmojiPicker';
-import {Button, message, Modal, Typography, Card, Dropdown} from 'antd';
+import {Button, message, Modal, Typography, Card, Dropdown, Spin} from 'antd';
 import {ExclamationCircleOutlined} from '@ant-design/icons';
 import styles from './ProductList.module.css';
 import {gql, useSuspenseQuery} from '@apollo/client';
@@ -80,7 +80,9 @@ gql`
   }
 `;
 
-export default function ProductList({listId}: {listId: string}) {
+type Props = {listId: string};
+
+function ProductList({listId}: Props) {
   const [products, setProducts] = useState<ProductRowFragment[]>([]);
   const [dirty, setDirty] = useState(false);
   const {data} = useSuspenseQuery<ProductListQuery>(ProductListDocument, {
@@ -133,7 +135,16 @@ export default function ProductList({listId}: {listId: string}) {
   );
 
   return (
-    <>
+    <Card
+      bordered={false}
+      className={styles.container}
+      bodyStyle={{
+        paddingLeft: 12,
+        paddingRight: 12,
+        paddingTop: 0,
+        paddingBottom: 0,
+      }}
+    >
       <div className={styles.header}>
         <EmojiPicker
           key={list.id}
@@ -246,6 +257,14 @@ export default function ProductList({listId}: {listId: string}) {
           )}
         </Droppable>
       </DragDropContext>
-    </>
+    </Card>
+  );
+}
+
+export default function ProductListLazy(props: Props) {
+  return (
+    <Suspense fallback={<Spin />}>
+      <ProductList {...props} />
+    </Suspense>
   );
 }
