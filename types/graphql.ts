@@ -1490,9 +1490,15 @@ export type ProductPrintQuery = {
       name: string;
       price: number;
       requiresDeposit: boolean;
+      additives: Array<{__typename?: 'ProductAdditives'; id: string}>;
     }>;
   }>;
   config: {__typename?: 'Config'; depositValue: number};
+  productAdditives: Array<{
+    __typename?: 'ProductAdditives';
+    id: string;
+    displayName: string;
+  }>;
 };
 
 export type RevenueQueryVariables = Exact<{
@@ -2724,10 +2730,17 @@ export const ProductPrintDocument = gql`
         name
         price
         requiresDeposit
+        additives {
+          id
+        }
       }
     }
     config {
       depositValue
+    }
+    productAdditives {
+      id
+      displayName
     }
   }
 `;

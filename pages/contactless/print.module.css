@@ -30,18 +30,27 @@
   font-family: 'Lato';
 }
 
+.page sup {
+  font-size: 0.8em;
+  vertical-align: top;
+  position: relative;
+  top: -0.4em;
+}
+
 .title {
   text-transform: uppercase;
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
   font-family: 'nexalight';
+  font-weight: normal;
   line-height: 1em;
   padding-bottom: 0.2em;
 }
 
 .title strong {
   font-family: 'nexabold';
+  font-weight: normal;
 }
 
 .title img {
@@ -73,9 +82,10 @@
 }
 
 .list h2 {
-  margin-bottom: -0.2em;
+  margin-bottom: 0;
   text-transform: uppercase;
-  font-family: 'nexalight';
+  font-weight: normal;
+  font-family: 'nexabold';
 }
 
 .emoji {
@@ -88,6 +98,7 @@
 
 .list li {
   display: flex;
+  line-height: 150%;
 }
 
 .name {
@@ -116,4 +127,16 @@
   font-style: italic;
   font-weight: 300;
   margin-bottom: -0.2em;
+}
+
+.additives {
+  list-style: none;
+  padding: 0;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.additives li {
+  display: inline-block;
+  margin-right: 10px;
 }

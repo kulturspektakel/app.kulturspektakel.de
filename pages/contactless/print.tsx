@@ -16,10 +16,17 @@ gql`
         name
         price
         requiresDeposit
+        additives {
+          id
+        }
       }
     }
     config {
       depositValue
+    }
+    productAdditives {
+      id
+      displayName
     }
   }
 `;
@@ -56,7 +63,17 @@ export default function Lists() {
               <ul>
                 {list.product.map((p) => (
                   <li key={p.id}>
-                    <span className={styles.product}>{p.name}</span>
+                    <span className={styles.product}>
+                      {p.name}
+                      {p.additives.length > 0 && (
+                        <sup>
+                          &nbsp;
+                          {p.additives
+                            .map((a) => a.id.replace(/^0/, ''))
+                            .join(', ')}
+                        </sup>
+                      )}
+                    </span>
                     <span className={styles.spacer} />
                     <span className={styles.price}>
                       {p.requiresDeposit ? <>*&nbsp;</> : ''}
@@ -74,6 +91,13 @@ export default function Lists() {
             </div>
           ))}
       </div>
+      <ul className={styles.additives}>
+        {data?.productAdditives.map((p) => (
+          <li key={p.id}>
+            <sup>{p.id.replace(/^0/, '')}</sup>&nbsp;{p.displayName}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
