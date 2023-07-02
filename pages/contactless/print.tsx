@@ -69,7 +69,9 @@ export default function Lists() {
                         <sup>
                           &nbsp;
                           {p.additives
-                            .map((a) => a.id.replace(/^0/, ''))
+                            .map((a) => a.id)
+                            .sort()
+                            .map((a) => a.replace(/^0/, ''))
                             .join(', ')}
                         </sup>
                       )}
