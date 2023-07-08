@@ -1474,9 +1474,9 @@ export type CreateProductListMutation = {
   upsertProductList: {__typename?: 'ProductList'; id: string};
 };
 
-export type ProductPrintQueryVariables = Exact<{[key: string]: never}>;
+export type PublicProductPrintQueryVariables = Exact<{[key: string]: never}>;
 
-export type ProductPrintQuery = {
+export type PublicProductPrintQuery = {
   __typename?: 'Query';
   productLists: Array<{
     __typename?: 'ProductList';
@@ -2718,8 +2718,8 @@ export type CreateProductListMutationOptions = Apollo.BaseMutationOptions<
   CreateProductListMutation,
   CreateProductListMutationVariables
 >;
-export const ProductPrintDocument = gql`
-  query ProductPrint {
+export const PublicProductPrintDocument = gql`
+  query PublicProductPrint {
     productLists {
       id
       emoji
@@ -2746,53 +2746,53 @@ export const ProductPrintDocument = gql`
 `;
 
 /**
- * __useProductPrintQuery__
+ * __usePublicProductPrintQuery__
  *
- * To run a query within a React component, call `useProductPrintQuery` and pass it any options that fit your needs.
- * When your component renders, `useProductPrintQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `usePublicProductPrintQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePublicProductPrintQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useProductPrintQuery({
+ * const { data, loading, error } = usePublicProductPrintQuery({
  *   variables: {
  *   },
  * });
  */
-export function useProductPrintQuery(
+export function usePublicProductPrintQuery(
   baseOptions?: Apollo.QueryHookOptions<
-    ProductPrintQuery,
-    ProductPrintQueryVariables
+    PublicProductPrintQuery,
+    PublicProductPrintQueryVariables
   >,
 ) {
   const options = {...defaultOptions, ...baseOptions};
-  return Apollo.useQuery<ProductPrintQuery, ProductPrintQueryVariables>(
-    ProductPrintDocument,
-    options,
-  );
+  return Apollo.useQuery<
+    PublicProductPrintQuery,
+    PublicProductPrintQueryVariables
+  >(PublicProductPrintDocument, options);
 }
-export function useProductPrintLazyQuery(
+export function usePublicProductPrintLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
-    ProductPrintQuery,
-    ProductPrintQueryVariables
+    PublicProductPrintQuery,
+    PublicProductPrintQueryVariables
   >,
 ) {
   const options = {...defaultOptions, ...baseOptions};
-  return Apollo.useLazyQuery<ProductPrintQuery, ProductPrintQueryVariables>(
-    ProductPrintDocument,
-    options,
-  );
+  return Apollo.useLazyQuery<
+    PublicProductPrintQuery,
+    PublicProductPrintQueryVariables
+  >(PublicProductPrintDocument, options);
 }
-export type ProductPrintQueryHookResult = ReturnType<
-  typeof useProductPrintQuery
+export type PublicProductPrintQueryHookResult = ReturnType<
+  typeof usePublicProductPrintQuery
 >;
-export type ProductPrintLazyQueryHookResult = ReturnType<
-  typeof useProductPrintLazyQuery
+export type PublicProductPrintLazyQueryHookResult = ReturnType<
+  typeof usePublicProductPrintLazyQuery
 >;
-export type ProductPrintQueryResult = Apollo.QueryResult<
-  ProductPrintQuery,
-  ProductPrintQueryVariables
+export type PublicProductPrintQueryResult = Apollo.QueryResult<
+  PublicProductPrintQuery,
+  PublicProductPrintQueryVariables
 >;
 export const RevenueDocument = gql`
   query Revenue($after: DateTime!, $before: DateTime!) {

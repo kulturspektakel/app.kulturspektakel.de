@@ -1,11 +1,11 @@
 import React from 'react';
 import {gql} from '@apollo/client';
-import {useProductPrintQuery} from 'types/graphql';
+import {usePublicProductPrintQuery} from 'types/graphql';
 import styles from './print.module.css';
 import Head from 'next/head';
 
 gql`
-  query ProductPrint {
+  query PublicProductPrint {
     productLists {
       id
       emoji
@@ -37,7 +37,7 @@ const formatter = new Intl.NumberFormat('de-DE', {
 });
 
 export default function Lists() {
-  const {data} = useProductPrintQuery();
+  const {data} = usePublicProductPrintQuery();
 
   return (
     <div className={styles.page}>

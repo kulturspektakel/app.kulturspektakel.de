@@ -16,7 +16,10 @@ let token: string | null = null;
 // prevent multiple refresh operations to run in parallel
 let refresher: Promise<Response> | null = null;
 
-const authMiddleware = setContext(async () => {
+const authMiddleware = setContext(async (operation) => {
+  if (operation.operationName?.startsWith('Public')) {
+    return;
+  }
   if (
     token == null ||
     jwtDecode<{exp: number}>(token).exp < new Date().getTime() / 1000
@@ -33,7 +36,7 @@ const authMiddleware = setContext(async () => {
     token = null;
     if (res.status === 400) {
       // tried refreshing, but couldn't
-      location.href = 'https://google.com';
+      location.href = 'https://crew.kulturspektakel.de/admin/login';
     } else {
       token = (await res?.json())?.data?.access_token ?? null;
     }
