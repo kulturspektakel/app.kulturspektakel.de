@@ -2,11 +2,7 @@ import '../styles/globals.css';
 
 import React, {Suspense, useMemo} from 'react';
 import {AppProps} from 'next/app';
-import {
-  ApolloProvider,
-  NormalizedCacheObject,
-  SuspenseCache,
-} from '@apollo/client';
+import {ApolloProvider, NormalizedCacheObject} from '@apollo/client';
 import useApolloClient from '../utils/useApolloClient';
 import dynamic from 'next/dynamic';
 
@@ -27,7 +23,6 @@ type Props = {
 
 const App = ({Component, pageProps}: AppProps & Props) => {
   const client = useApolloClient();
-  const suspenseCache = useMemo(() => new SuspenseCache(), []);
 
   const customTheme = useMemo(
     () => ({
@@ -40,7 +35,7 @@ const App = ({Component, pageProps}: AppProps & Props) => {
   );
 
   return (
-    <ApolloProvider client={client} suspenseCache={suspenseCache}>
+    <ApolloProvider client={client}>
       <ConfigProvider locale={deDE} theme={customTheme}>
         <Suspense fallback={null}>
           <Component {...pageProps} />

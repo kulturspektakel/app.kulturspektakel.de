@@ -88,6 +88,8 @@ export type BandApplication = Node & {
   pastApplications: Array<BandApplication>;
   pastPerformances: Array<BandPlaying>;
   rating?: Maybe<Scalars['Float']['output']>;
+  repertoire?: Maybe<BandRepertoireType>;
+  spotifyArtist?: Maybe<Scalars['String']['output']>;
   website?: Maybe<Scalars['String']['output']>;
 };
 
@@ -150,6 +152,13 @@ export type BandPlaying = Node & {
   slug: Scalars['String']['output'];
   startTime: Scalars['DateTime']['output'];
 };
+
+export enum BandRepertoireType {
+  ExclusivelyCoverSongs = 'ExclusivelyCoverSongs',
+  ExclusivelyOwnSongs = 'ExclusivelyOwnSongs',
+  MostlyCoverSongs = 'MostlyCoverSongs',
+  MostlyOwnSongs = 'MostlyOwnSongs',
+}
 
 export type Billable = {
   salesNumbers: Array<SalesNumber>;
@@ -248,6 +257,8 @@ export type CreateBandApplicationInput = {
   knowsKultFrom?: InputMaybe<Scalars['String']['input']>;
   numberOfArtists?: InputMaybe<Scalars['Int']['input']>;
   numberOfNonMaleArtists?: InputMaybe<Scalars['Int']['input']>;
+  repertoire?: InputMaybe<BandRepertoireType>;
+  spotifyArtist?: InputMaybe<Scalars['String']['input']>;
   website?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -300,6 +311,7 @@ export type Event = Node & {
   bandsPlaying: EventBandsPlayingConnection;
   description?: Maybe<Scalars['String']['output']>;
   djApplicationEnd?: Maybe<Scalars['DateTime']['output']>;
+  djApplicationStart?: Maybe<Scalars['DateTime']['output']>;
   end: Scalars['DateTime']['output'];
   id: Scalars['ID']['output'];
   media: EventMediaConnection;
@@ -413,6 +425,7 @@ export type Mutation = {
 
 export type MutationCreateBandApplicationArgs = {
   data: CreateBandApplicationInput;
+  eventId: Scalars['ID']['input'];
 };
 
 export type MutationCreateBandApplicationCommentArgs = {
@@ -641,6 +654,7 @@ export type Query = {
   nuclinoPages: Array<NuclinoSearchResult>;
   productAdditives: Array<ProductAdditives>;
   productLists: Array<ProductList>;
+  spotifyArtist: Array<SpotifyArtist>;
   transactions: Transactions;
   viewer?: Maybe<Viewer>;
 };
@@ -704,6 +718,11 @@ export type QueryProductListsArgs = {
   activeOnly?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
+export type QuerySpotifyArtistArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  query: Scalars['String']['input'];
+};
+
 export type QueryNewsConnection = {
   __typename?: 'QueryNewsConnection';
   edges: Array<QueryNewsConnectionEdge>;
@@ -727,6 +746,14 @@ export type SalesNumber = {
 
 export type SalesNumberTimeSeriesArgs = {
   grouping?: InputMaybe<TimeGrouping>;
+};
+
+export type SpotifyArtist = {
+  __typename?: 'SpotifyArtist';
+  genre?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
+  image?: Maybe<Scalars['String']['output']>;
+  name: Scalars['String']['output'];
 };
 
 export enum TimeGrouping {
@@ -806,6 +833,8 @@ export type ApplicationDetailsQuery = {
         numberOfArtists?: number | null;
         numberOfNonMaleArtists?: number | null;
         hasPreviouslyPlayed?: PreviouslyPlayed | null;
+        repertoire?: BandRepertoireType | null;
+        spotifyArtist?: string | null;
         website?: string | null;
         genre?: string | null;
         genreCategory: GenreCategory;
@@ -1709,6 +1738,8 @@ export const ApplicationDetailsDocument = gql`
         numberOfArtists
         numberOfNonMaleArtists
         hasPreviouslyPlayed
+        repertoire
+        spotifyArtist
         contactedByViewer {
           id
         }
