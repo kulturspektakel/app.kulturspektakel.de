@@ -144,7 +144,7 @@ export default function BandApplicationTimeline(
               {node.user.id === viewer!.id && (
                 <Tooltip title="Kommentar löschen">
                   <Button
-                    type="ghost"
+                    type="text"
                     icon={<DeleteOutlined rev={undefined} />}
                     size="small"
                     loading={deleteResult.loading}
