@@ -90,6 +90,7 @@ export type BandApplication = Node & {
   rating?: Maybe<Scalars['Float']['output']>;
   repertoire?: Maybe<BandRepertoireType>;
   spotifyArtist?: Maybe<Scalars['String']['output']>;
+  spotifyMonthlyListeners?: Maybe<Scalars['Int']['output']>;
   website?: Maybe<Scalars['String']['output']>;
 };
 
@@ -144,13 +145,19 @@ export type BandPlaying = Node & {
   endTime: Scalars['DateTime']['output'];
   event: Event;
   eventId: Scalars['ID']['output'];
+  facebook?: Maybe<Scalars['String']['output']>;
   genre?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
+  instagram?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
   photo?: Maybe<PixelImage>;
   shortDescription?: Maybe<Scalars['String']['output']>;
   slug: Scalars['String']['output'];
+  soundcloud?: Maybe<Scalars['String']['output']>;
+  spotify?: Maybe<Scalars['String']['output']>;
   startTime: Scalars['DateTime']['output'];
+  website?: Maybe<Scalars['String']['output']>;
+  youtube?: Maybe<Scalars['String']['output']>;
 };
 
 export enum BandRepertoireType {
@@ -558,6 +565,16 @@ export enum OrderPayment {
   Voucher = 'VOUCHER',
 }
 
+export type Page = Node & {
+  __typename?: 'Page';
+  bottom?: Maybe<Scalars['String']['output']>;
+  content?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  left?: Maybe<Scalars['String']['output']>;
+  right?: Maybe<Scalars['String']['output']>;
+  title: Scalars['String']['output'];
+};
+
 export type PageInfo = {
   __typename?: 'PageInfo';
   endCursor?: Maybe<Scalars['String']['output']>;
@@ -835,6 +852,7 @@ export type ApplicationDetailsQuery = {
         hasPreviouslyPlayed?: PreviouslyPlayed | null;
         repertoire?: BandRepertoireType | null;
         spotifyArtist?: string | null;
+        spotifyMonthlyListeners?: number | null;
         website?: string | null;
         genre?: string | null;
         genreCategory: GenreCategory;
@@ -917,6 +935,7 @@ export type ApplicationDetailsQuery = {
     | {__typename: 'Event'}
     | {__typename: 'News'}
     | {__typename: 'NuclinoPage'}
+    | {__typename: 'Page'}
     | {__typename: 'Product'}
     | {__typename: 'ProductList'}
     | {__typename: 'Viewer'}
@@ -1173,6 +1192,7 @@ export type DeviceTransactionsQuery = {
     | {__typename?: 'Event'}
     | {__typename?: 'News'}
     | {__typename?: 'NuclinoPage'}
+    | {__typename?: 'Page'}
     | {__typename?: 'Product'}
     | {__typename?: 'ProductList'}
     | {__typename?: 'Viewer'}
@@ -1211,6 +1231,7 @@ export type ProductListQuery = {
     | {__typename?: 'Event'}
     | {__typename?: 'News'}
     | {__typename?: 'NuclinoPage'}
+    | {__typename?: 'Page'}
     | {__typename?: 'Product'}
     | {
         __typename?: 'ProductList';
@@ -1291,6 +1312,7 @@ export type RevenueDetailsQuery = {
     | {__typename?: 'Event'}
     | {__typename?: 'News'}
     | {__typename?: 'NuclinoPage'}
+    | {__typename?: 'Page'}
     | {__typename?: 'Product'}
     | {
         __typename?: 'ProductList';
@@ -1388,6 +1410,7 @@ export type BandApplcationsQuery = {
       }
     | {__typename?: 'News'}
     | {__typename?: 'NuclinoPage'}
+    | {__typename?: 'Page'}
     | {__typename?: 'Product'}
     | {__typename?: 'ProductList'}
     | {__typename?: 'Viewer'}
@@ -1442,6 +1465,7 @@ export type CardInfoQuery = {
     | {__typename?: 'Event'}
     | {__typename?: 'News'}
     | {__typename?: 'NuclinoPage'}
+    | {__typename?: 'Page'}
     | {__typename?: 'Product'}
     | {__typename?: 'ProductList'}
     | {__typename?: 'Viewer'}
@@ -1740,6 +1764,7 @@ export const ApplicationDetailsDocument = gql`
         hasPreviouslyPlayed
         repertoire
         spotifyArtist
+        spotifyMonthlyListeners
         contactedByViewer {
           id
         }

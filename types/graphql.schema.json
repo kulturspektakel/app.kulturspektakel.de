@@ -625,6 +625,14 @@
             "deprecationReason": null
           },
           {
+            "name": "spotifyMonthlyListeners",
+            "description": null,
+            "args": [],
+            "type": {"kind": "SCALAR", "name": "Int", "ofType": null},
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "website",
             "description": null,
             "args": [],
@@ -954,6 +962,14 @@
             "deprecationReason": null
           },
           {
+            "name": "facebook",
+            "description": null,
+            "args": [],
+            "type": {"kind": "SCALAR", "name": "String", "ofType": null},
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "genre",
             "description": null,
             "args": [],
@@ -970,6 +986,14 @@
               "name": null,
               "ofType": {"kind": "SCALAR", "name": "ID", "ofType": null}
             },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "instagram",
+            "description": null,
+            "args": [],
+            "type": {"kind": "SCALAR", "name": "String", "ofType": null},
             "isDeprecated": false,
             "deprecationReason": null
           },
@@ -1014,6 +1038,22 @@
             "deprecationReason": null
           },
           {
+            "name": "soundcloud",
+            "description": null,
+            "args": [],
+            "type": {"kind": "SCALAR", "name": "String", "ofType": null},
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "spotify",
+            "description": null,
+            "args": [],
+            "type": {"kind": "SCALAR", "name": "String", "ofType": null},
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "startTime",
             "description": null,
             "args": [],
@@ -1022,6 +1062,22 @@
               "name": null,
               "ofType": {"kind": "SCALAR", "name": "DateTime", "ofType": null}
             },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "website",
+            "description": null,
+            "args": [],
+            "type": {"kind": "SCALAR", "name": "String", "ofType": null},
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "youtube",
+            "description": null,
+            "args": [],
+            "type": {"kind": "SCALAR", "name": "String", "ofType": null},
             "isDeprecated": false,
             "deprecationReason": null
           }
@@ -3477,6 +3533,7 @@
           {"kind": "OBJECT", "name": "Event", "ofType": null},
           {"kind": "OBJECT", "name": "News", "ofType": null},
           {"kind": "OBJECT", "name": "NuclinoPage", "ofType": null},
+          {"kind": "OBJECT", "name": "Page", "ofType": null},
           {"kind": "OBJECT", "name": "Product", "ofType": null},
           {"kind": "OBJECT", "name": "ProductList", "ofType": null},
           {"kind": "OBJECT", "name": "Viewer", "ofType": null}
@@ -4013,6 +4070,73 @@
             "deprecationReason": null
           }
         ],
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "Page",
+        "description": null,
+        "fields": [
+          {
+            "name": "bottom",
+            "description": null,
+            "args": [],
+            "type": {"kind": "SCALAR", "name": "String", "ofType": null},
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "content",
+            "description": null,
+            "args": [],
+            "type": {"kind": "SCALAR", "name": "String", "ofType": null},
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "id",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {"kind": "SCALAR", "name": "ID", "ofType": null}
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "left",
+            "description": null,
+            "args": [],
+            "type": {"kind": "SCALAR", "name": "String", "ofType": null},
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "right",
+            "description": null,
+            "args": [],
+            "type": {"kind": "SCALAR", "name": "String", "ofType": null},
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "title",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {"kind": "SCALAR", "name": "String", "ofType": null}
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [{"kind": "INTERFACE", "name": "Node", "ofType": null}],
+        "enumValues": null,
         "possibleTypes": null
       },
       {
