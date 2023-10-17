@@ -1,5 +1,6 @@
 import {gql} from '@apollo/client';
 import {Wrapper} from '@googlemaps/react-wrapper';
+import React from 'react';
 import {useRef, useEffect} from 'react';
 import {GoogleMapsFragment} from 'types/graphql';
 
@@ -10,13 +11,15 @@ gql`
   }
 `;
 
-export default function GoogleMaps(props: GoogleMapsFragment) {
+function GoogleMaps(props: GoogleMapsFragment) {
   return (
     <Wrapper apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY ?? ''}>
       <MapComponent {...props} />
     </Wrapper>
   );
 }
+
+export default React.memo(GoogleMaps);
 
 function MapComponent({latitude, longitude}: GoogleMapsFragment) {
   const ref = useRef<HTMLDivElement | null>(null);

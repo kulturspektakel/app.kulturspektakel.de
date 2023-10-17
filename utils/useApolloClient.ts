@@ -1,4 +1,4 @@
-import {useMemo} from 'react';
+import {useRef} from 'react';
 import {
   ApolloClient,
   ApolloLink,
@@ -53,29 +53,27 @@ const authMiddleware = setContext(async (operation) => {
 });
 
 export default function useApolloClient() {
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const client = useMemo(
-    () =>
-      new ApolloClient({
-        link: ApolloLink.from([
-          withScalars({
-            schema: buildClientSchema(
-              introspectionResult as unknown as IntrospectionQuery,
-            ),
-            typesMap: {
-              DateTime: GraphQLDateTime,
-              Date: GraphQLDate,
-            },
-          }),
-          authMiddleware,
-          new HttpLink({
-            uri: 'https://api.kulturspektakel.de/graphql',
-            credentials: 'include',
-          }),
-        ]),
-        cache: new InMemoryCache(),
-      }),
-    [],
+  const client = useRef(
+    new ApolloClient({
+      link: ApolloLink.from([
+        withScalars({
+          schema: buildClientSchema(
+            introspectionResult as unknown as IntrospectionQuery,
+          ),
+          typesMap: {
+            DateTime: GraphQLDateTime,
+            Date: GraphQLDate,
+          },
+        }),
+        authMiddleware,
+        new HttpLink({
+          uri: 'https://api.kulturspektakel.de/graphql',
+          credentials: 'include',
+        }),
+      ]),
+      cache: new InMemoryCache(),
+    }),
   );
-  return client;
+
+  return client.current;
 }

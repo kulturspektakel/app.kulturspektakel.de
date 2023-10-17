@@ -1,9 +1,8 @@
 import {gql} from '@apollo/client';
 import {Rate, theme} from 'antd';
 import React from 'react';
-import {BandApplicationRatingDocument} from 'types/graphql';
+import {useBandApplicationRatingMutation} from 'types/graphql';
 import {RatingFragment} from 'types/graphql';
-import useApolloClient from 'utils/useApolloClient';
 import useViewerContext from '../../utils/useViewerContext';
 
 gql`
@@ -24,7 +23,7 @@ export default function Rater({
   bandApplicationRating: RatingFragment['bandApplicationRating'];
   value?: number;
 }) {
-  const client = useApolloClient();
+  const [mutate] = useBandApplicationRatingMutation();
   const viewer = useViewerContext();
   const {token} = theme.useToken();
 
@@ -40,10 +39,7 @@ export default function Rater({
         'Auf jeden Fall',
       ]}
       onChange={(rating) =>
-        // using generated mutation hook caused unnecessary rerenders
-        // https://github.com/apollographql/apollo-client/issues/7626
-        client.mutate({
-          mutation: BandApplicationRatingDocument,
+        mutate({
           variables: {
             id: bandApplicationId,
             rating: rating === 0 ? null : rating,

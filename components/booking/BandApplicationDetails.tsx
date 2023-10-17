@@ -361,9 +361,9 @@ function DrawerContent(props: Props) {
                 >
                   <Statistic
                     valueStyle={{color: token.colorPrimary}}
-                    value=" "
+                    value={props.spotifyMonthlyListeners ?? ' '}
                     prefix={
-                      props.spotifyMonthlyListeners ?? (
+                      props.spotifyMonthlyListeners ? null : (
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           viewBox="0 0 496 512"
