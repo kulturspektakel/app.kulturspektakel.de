@@ -360,6 +360,7 @@ export type EventMediaConnection = {
   __typename?: 'EventMediaConnection';
   edges: Array<EventMediaConnectionEdge>;
   pageInfo: PageInfo;
+  totalCount: Scalars['Int']['output'];
 };
 
 export type EventMediaConnectionEdge = {
@@ -661,9 +662,12 @@ export type Query = {
   cardStatus: CardStatus;
   checkDuplicateApplication?: Maybe<ObfuscatedBandApplication>;
   config: Config;
+  crewCalendar: Array<VEvent>;
   devices: Array<Device>;
   distanceToKult?: Maybe<Scalars['Float']['output']>;
+  /** @deprecated Use `eventsConnection` instead. */
   events: Array<Event>;
+  eventsConnection: QueryEventsConnection;
   findBandPlaying: Array<BandPlaying>;
   news: QueryNewsConnection;
   node?: Maybe<Node>;
@@ -690,6 +694,10 @@ export type QueryCheckDuplicateApplicationArgs = {
   eventId: Scalars['ID']['input'];
 };
 
+export type QueryCrewCalendarArgs = {
+  includePastEvents?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
 export type QueryDevicesArgs = {
   type?: InputMaybe<DeviceType>;
 };
@@ -699,7 +707,17 @@ export type QueryDistanceToKultArgs = {
 };
 
 export type QueryEventsArgs = {
+  hasBandsPlaying?: InputMaybe<Scalars['Boolean']['input']>;
   limit?: InputMaybe<Scalars['Int']['input']>;
+  type?: InputMaybe<EventType>;
+};
+
+export type QueryEventsConnectionArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  before?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  hasBandsPlaying?: InputMaybe<Scalars['Boolean']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
   type?: InputMaybe<EventType>;
 };
 
@@ -738,6 +756,18 @@ export type QueryProductListsArgs = {
 export type QuerySpotifyArtistArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>;
   query: Scalars['String']['input'];
+};
+
+export type QueryEventsConnection = {
+  __typename?: 'QueryEventsConnection';
+  edges: Array<QueryEventsConnectionEdge>;
+  pageInfo: PageInfo;
+};
+
+export type QueryEventsConnectionEdge = {
+  __typename?: 'QueryEventsConnectionEdge';
+  cursor: Scalars['String']['output'];
+  node: Event;
 };
 
 export type QueryNewsConnection = {
@@ -812,6 +842,17 @@ export type TransactionsTransactionsArgs = {
   before?: InputMaybe<Scalars['DateTime']['input']>;
   limit?: InputMaybe<Scalars['Int']['input']>;
   type?: InputMaybe<CardTransactionType>;
+};
+
+export type VEvent = {
+  __typename?: 'VEvent';
+  comment?: Maybe<Scalars['String']['output']>;
+  end: Scalars['DateTime']['output'];
+  location?: Maybe<Scalars['String']['output']>;
+  start: Scalars['DateTime']['output'];
+  summary: Scalars['String']['output'];
+  uid: Scalars['String']['output'];
+  url?: Maybe<Scalars['String']['output']>;
 };
 
 export type Viewer = Node & {
@@ -1387,6 +1428,11 @@ export type BandApplcationsQuery = {
           genre?: string | null;
           genreCategory: GenreCategory;
           distance?: number | null;
+          instagramFollower?: number | null;
+          facebookLikes?: number | null;
+          spotifyMonthlyListeners?: number | null;
+          numberOfArtists?: number | null;
+          numberOfNonMaleArtists?: number | null;
           comments: {
             __typename?: 'BandApplicationCommentsConnection';
             totalCount: number;
@@ -1824,11 +1870,26 @@ export function useApplicationDetailsLazyQuery(
     ApplicationDetailsQueryVariables
   >(ApplicationDetailsDocument, options);
 }
+export function useApplicationDetailsSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    ApplicationDetailsQuery,
+    ApplicationDetailsQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useSuspenseQuery<
+    ApplicationDetailsQuery,
+    ApplicationDetailsQueryVariables
+  >(ApplicationDetailsDocument, options);
+}
 export type ApplicationDetailsQueryHookResult = ReturnType<
   typeof useApplicationDetailsQuery
 >;
 export type ApplicationDetailsLazyQueryHookResult = ReturnType<
   typeof useApplicationDetailsLazyQuery
+>;
+export type ApplicationDetailsSuspenseQueryHookResult = ReturnType<
+  typeof useApplicationDetailsSuspenseQuery
 >;
 export type ApplicationDetailsQueryResult = Apollo.QueryResult<
   ApplicationDetailsQuery,
@@ -2094,11 +2155,26 @@ export function useProductAdditivesLazyQuery(
     ProductAdditivesQueryVariables
   >(ProductAdditivesDocument, options);
 }
+export function useProductAdditivesSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    ProductAdditivesQuery,
+    ProductAdditivesQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useSuspenseQuery<
+    ProductAdditivesQuery,
+    ProductAdditivesQueryVariables
+  >(ProductAdditivesDocument, options);
+}
 export type ProductAdditivesQueryHookResult = ReturnType<
   typeof useProductAdditivesQuery
 >;
 export type ProductAdditivesLazyQueryHookResult = ReturnType<
   typeof useProductAdditivesLazyQuery
+>;
+export type ProductAdditivesSuspenseQueryHookResult = ReturnType<
+  typeof useProductAdditivesSuspenseQuery
 >;
 export type ProductAdditivesQueryResult = Apollo.QueryResult<
   ProductAdditivesQuery,
@@ -2165,11 +2241,26 @@ export function useDeviceTransactionsLazyQuery(
     DeviceTransactionsQueryVariables
   >(DeviceTransactionsDocument, options);
 }
+export function useDeviceTransactionsSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    DeviceTransactionsQuery,
+    DeviceTransactionsQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useSuspenseQuery<
+    DeviceTransactionsQuery,
+    DeviceTransactionsQueryVariables
+  >(DeviceTransactionsDocument, options);
+}
 export type DeviceTransactionsQueryHookResult = ReturnType<
   typeof useDeviceTransactionsQuery
 >;
 export type DeviceTransactionsLazyQueryHookResult = ReturnType<
   typeof useDeviceTransactionsLazyQuery
+>;
+export type DeviceTransactionsSuspenseQueryHookResult = ReturnType<
+  typeof useDeviceTransactionsSuspenseQuery
 >;
 export type DeviceTransactionsQueryResult = Apollo.QueryResult<
   DeviceTransactionsQuery,
@@ -2230,9 +2321,24 @@ export function useProductListLazyQuery(
     options,
   );
 }
+export function useProductListSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    ProductListQuery,
+    ProductListQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useSuspenseQuery<ProductListQuery, ProductListQueryVariables>(
+    ProductListDocument,
+    options,
+  );
+}
 export type ProductListQueryHookResult = ReturnType<typeof useProductListQuery>;
 export type ProductListLazyQueryHookResult = ReturnType<
   typeof useProductListLazyQuery
+>;
+export type ProductListSuspenseQueryHookResult = ReturnType<
+  typeof useProductListSuspenseQuery
 >;
 export type ProductListQueryResult = Apollo.QueryResult<
   ProductListQuery,
@@ -2379,11 +2485,26 @@ export function useRevenueDetailsLazyQuery(
     options,
   );
 }
+export function useRevenueDetailsSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    RevenueDetailsQuery,
+    RevenueDetailsQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useSuspenseQuery<
+    RevenueDetailsQuery,
+    RevenueDetailsQueryVariables
+  >(RevenueDetailsDocument, options);
+}
 export type RevenueDetailsQueryHookResult = ReturnType<
   typeof useRevenueDetailsQuery
 >;
 export type RevenueDetailsLazyQueryHookResult = ReturnType<
   typeof useRevenueDetailsLazyQuery
+>;
+export type RevenueDetailsSuspenseQueryHookResult = ReturnType<
+  typeof useRevenueDetailsSuspenseQuery
 >;
 export type RevenueDetailsQueryResult = Apollo.QueryResult<
   RevenueDetailsQuery,
@@ -2401,6 +2522,11 @@ export const BandApplcationsDocument = gql`
           genre
           genreCategory
           distance
+          instagramFollower
+          facebookLikes
+          spotifyMonthlyListeners
+          numberOfArtists
+          numberOfNonMaleArtists
           comments {
             totalCount
           }
@@ -2454,11 +2580,26 @@ export function useBandApplcationsLazyQuery(
     BandApplcationsQueryVariables
   >(BandApplcationsDocument, options);
 }
+export function useBandApplcationsSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    BandApplcationsQuery,
+    BandApplcationsQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useSuspenseQuery<
+    BandApplcationsQuery,
+    BandApplcationsQueryVariables
+  >(BandApplcationsDocument, options);
+}
 export type BandApplcationsQueryHookResult = ReturnType<
   typeof useBandApplcationsQuery
 >;
 export type BandApplcationsLazyQueryHookResult = ReturnType<
   typeof useBandApplcationsLazyQuery
+>;
+export type BandApplcationsSuspenseQueryHookResult = ReturnType<
+  typeof useBandApplcationsSuspenseQuery
 >;
 export type BandApplcationsQueryResult = Apollo.QueryResult<
   BandApplcationsQuery,
@@ -2537,9 +2678,24 @@ export function useCardInfoLazyQuery(
     options,
   );
 }
+export function useCardInfoSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    CardInfoQuery,
+    CardInfoQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useSuspenseQuery<CardInfoQuery, CardInfoQueryVariables>(
+    CardInfoDocument,
+    options,
+  );
+}
 export type CardInfoQueryHookResult = ReturnType<typeof useCardInfoQuery>;
 export type CardInfoLazyQueryHookResult = ReturnType<
   typeof useCardInfoLazyQuery
+>;
+export type CardInfoSuspenseQueryHookResult = ReturnType<
+  typeof useCardInfoSuspenseQuery
 >;
 export type CardInfoQueryResult = Apollo.QueryResult<
   CardInfoQuery,
@@ -2600,8 +2756,23 @@ export function useDevicesLazyQuery(
     options,
   );
 }
+export function useDevicesSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    DevicesQuery,
+    DevicesQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useSuspenseQuery<DevicesQuery, DevicesQueryVariables>(
+    DevicesDocument,
+    options,
+  );
+}
 export type DevicesQueryHookResult = ReturnType<typeof useDevicesQuery>;
 export type DevicesLazyQueryHookResult = ReturnType<typeof useDevicesLazyQuery>;
+export type DevicesSuspenseQueryHookResult = ReturnType<
+  typeof useDevicesSuspenseQuery
+>;
 export type DevicesQueryResult = Apollo.QueryResult<
   DevicesQuery,
   DevicesQueryVariables
@@ -2714,11 +2885,26 @@ export function useProductListsLazyQuery(
     options,
   );
 }
+export function useProductListsSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    ProductListsQuery,
+    ProductListsQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useSuspenseQuery<ProductListsQuery, ProductListsQueryVariables>(
+    ProductListsDocument,
+    options,
+  );
+}
 export type ProductListsQueryHookResult = ReturnType<
   typeof useProductListsQuery
 >;
 export type ProductListsLazyQueryHookResult = ReturnType<
   typeof useProductListsLazyQuery
+>;
+export type ProductListsSuspenseQueryHookResult = ReturnType<
+  typeof useProductListsSuspenseQuery
 >;
 export type ProductListsQueryResult = Apollo.QueryResult<
   ProductListsQuery,
@@ -2840,11 +3026,26 @@ export function usePublicProductPrintLazyQuery(
     PublicProductPrintQueryVariables
   >(PublicProductPrintDocument, options);
 }
+export function usePublicProductPrintSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    PublicProductPrintQuery,
+    PublicProductPrintQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useSuspenseQuery<
+    PublicProductPrintQuery,
+    PublicProductPrintQueryVariables
+  >(PublicProductPrintDocument, options);
+}
 export type PublicProductPrintQueryHookResult = ReturnType<
   typeof usePublicProductPrintQuery
 >;
 export type PublicProductPrintLazyQueryHookResult = ReturnType<
   typeof usePublicProductPrintLazyQuery
+>;
+export type PublicProductPrintSuspenseQueryHookResult = ReturnType<
+  typeof usePublicProductPrintSuspenseQuery
 >;
 export type PublicProductPrintQueryResult = Apollo.QueryResult<
   PublicProductPrintQuery,
@@ -2936,8 +3137,23 @@ export function useRevenueLazyQuery(
     options,
   );
 }
+export function useRevenueSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    RevenueQuery,
+    RevenueQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useSuspenseQuery<RevenueQuery, RevenueQueryVariables>(
+    RevenueDocument,
+    options,
+  );
+}
 export type RevenueQueryHookResult = ReturnType<typeof useRevenueQuery>;
 export type RevenueLazyQueryHookResult = ReturnType<typeof useRevenueLazyQuery>;
+export type RevenueSuspenseQueryHookResult = ReturnType<
+  typeof useRevenueSuspenseQuery
+>;
 export type RevenueQueryResult = Apollo.QueryResult<
   RevenueQuery,
   RevenueQueryVariables
@@ -2985,8 +3201,23 @@ export function useViewerLazyQuery(
     options,
   );
 }
+export function useViewerSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    ViewerQuery,
+    ViewerQueryVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useSuspenseQuery<ViewerQuery, ViewerQueryVariables>(
+    ViewerDocument,
+    options,
+  );
+}
 export type ViewerQueryHookResult = ReturnType<typeof useViewerQuery>;
 export type ViewerLazyQueryHookResult = ReturnType<typeof useViewerLazyQuery>;
+export type ViewerSuspenseQueryHookResult = ReturnType<
+  typeof useViewerSuspenseQuery
+>;
 export type ViewerQueryResult = Apollo.QueryResult<
   ViewerQuery,
   ViewerQueryVariables

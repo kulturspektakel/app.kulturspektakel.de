@@ -29,6 +29,7 @@ import Clipboard from 'components/shared/Clipboard';
 import {GENRE_CATEGORIES, GENRE_ICONS} from 'pages/booking/[event]';
 import dynamic from 'next/dynamic';
 import useViewerContext from 'utils/useViewerContext';
+import NonMale from './NonMale';
 
 const LazyGoogleMap = dynamic(() => import('./GoogleMaps'), {
   loading: () => <Skeleton.Image active className={styles.mapInner} />,
@@ -235,15 +236,10 @@ function DrawerContent(props: Props) {
             <Typography.Title level={5}>
               Bandgröße:&nbsp;
               <span className={styles.inlineHeading}>
-                {props.numberOfArtists} Personen (
-                {(
-                  (props.numberOfArtists! - props.numberOfNonMaleArtists!) /
-                  props.numberOfArtists!
-                ).toLocaleString(undefined, {
-                  style: 'percent',
-                  maximumFractionDigits: 1,
-                })}
-                &nbsp;männlich)
+                <NonMale
+                  numberOfArtists={props.numberOfArtists}
+                  numberOfNonMaleArtists={props.numberOfNonMaleArtists}
+                />
               </span>
             </Typography.Title>
           )}

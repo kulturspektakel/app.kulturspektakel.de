@@ -14,6 +14,8 @@ import {CommentOutlined} from '@ant-design/icons';
 import QuickType from 'components/booking/QuickType';
 import useResizeObserver from '@react-hook/resize-observer';
 import useViewerContext from 'utils/useViewerContext';
+import {FireFilled} from '@ant-design/icons';
+import NonMale from 'components/booking/NonMale';
 
 gql`
   fragment Rating on BandApplication {
@@ -38,6 +40,11 @@ gql`
           genre
           genreCategory
           distance
+          instagramFollower
+          facebookLikes
+          spotifyMonthlyListeners
+          numberOfArtists
+          numberOfNonMaleArtists
           comments {
             totalCount
           }
@@ -127,6 +134,38 @@ export default function Booking() {
   );
 }
 
+const getMax = (dataSource: RecordType[], value: keyof RecordType) =>
+  dataSource.reduce<number>(
+    (max, cv) => Math.max((cv[value] as number) ?? 0, max),
+    0,
+  );
+
+type Maxima = {
+  instagramFollower: number;
+  facebookLikes: number;
+  spotifyMonthlyListeners: number;
+};
+
+// probably could use memoization here
+const popularityScore = (maxima: Maxima, record: RecordType) => {
+  return Math.pow(
+    Object.keys(maxima).reduce(
+      (acc, key) =>
+        acc +
+        (record[key as keyof Maxima] as number) / maxima[key as keyof Maxima],
+      0,
+    ) /
+      Math.max(
+        Object.keys(maxima).reduce(
+          (acc, key) => acc + (record[key as keyof Maxima] ? 1 : 0),
+          0,
+        ),
+        1,
+      ),
+    1 / 6,
+  );
+};
+
 const MemoizedTable = React.memo(
   ({
     setSelected,
@@ -149,6 +188,15 @@ const MemoizedTable = React.memo(
       [dataSource],
     );
     const viewer = useViewerContext();
+
+    const maxima = useMemo(
+      () => ({
+        instagramFollower: getMax(dataSource, 'instagramFollower'),
+        facebookLikes: getMax(dataSource, 'facebookLikes'),
+        spotifyMonthlyListeners: getMax(dataSource, 'spotifyMonthlyListeners'),
+      }),
+      [dataSource],
+    );
 
     return (
       <Table<RecordType>
@@ -199,9 +247,29 @@ const MemoizedTable = React.memo(
             key: 'bandname',
             title: 'Name',
             dataIndex: 'bandname',
-            render: (_, {bandname, genre}) => (
+            render: (
+              _,
+              {bandname, genre, numberOfArtists, numberOfNonMaleArtists},
+            ) => (
               <>
                 <strong>{bandname}</strong>
+                {numberOfArtists != null &&
+                numberOfNonMaleArtists != null &&
+                numberOfNonMaleArtists > 0 ? (
+                  <>
+                    &nbsp;
+                    <Tooltip
+                      title={
+                        <NonMale
+                          numberOfArtists={numberOfArtists}
+                          numberOfNonMaleArtists={numberOfNonMaleArtists}
+                        />
+                      }
+                    >
+                      ⚧️
+                    </Tooltip>
+                  </>
+                ) : null}
                 {genre && (
                   <>
                     <br />
@@ -232,9 +300,28 @@ const MemoizedTable = React.memo(
             ),
           },
           {
+            key: 'popularity',
+            title: 'Popularität',
+            align: 'center',
+            width: 100,
+            sorter: (a, b) =>
+              popularityScore(maxima, a) > popularityScore(maxima, b) ? 1 : -1,
+            render: (_, record) => (
+              <FireFilled
+                rev={null}
+                style={{
+                  transform: `scale(${popularityScore(maxima, record) * 2})`,
+                  color: `hsl(${
+                    220 + popularityScore(maxima, record) * 120
+                  }, 100%, 50%)`,
+                }}
+              />
+            ),
+          },
+          {
             key: 'rating',
             title: 'Bewertung',
-            width: 150,
+            width: 120,
             dataIndex: 'rating',
             sorter: (a, b) => (a.rating ?? 0) - (b.rating ?? 0),
             align: 'right',
