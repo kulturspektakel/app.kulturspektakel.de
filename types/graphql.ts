@@ -217,7 +217,6 @@ export type CardTransaction = Transaction & {
   balanceBefore: Scalars['Int']['output'];
   cardId: Scalars['String']['output'];
   clientId: Scalars['String']['output'];
-  createdAt: Scalars['DateTime']['output'];
   depositAfter: Scalars['Int']['output'];
   depositBefore: Scalars['Int']['output'];
   deviceTime: Scalars['DateTime']['output'];
@@ -321,6 +320,9 @@ export type Event = Node & {
   djApplicationStart?: Maybe<Scalars['DateTime']['output']>;
   end: Scalars['DateTime']['output'];
   id: Scalars['ID']['output'];
+  latitude?: Maybe<Scalars['Float']['output']>;
+  location?: Maybe<Scalars['String']['output']>;
+  longitude?: Maybe<Scalars['Float']['output']>;
   media: EventMediaConnection;
   name: Scalars['String']['output'];
   poster?: Maybe<PixelImage>;
@@ -409,6 +411,13 @@ export type HistoricalProductSalesNumbersArgs = {
   before: Scalars['DateTime']['input'];
 };
 
+export type MarkdownString = {
+  __typename?: 'MarkdownString';
+  images: Array<PixelImage>;
+  markdown: Scalars['String']['output'];
+  plainText: Scalars['String']['output'];
+};
+
 export type MissingTransaction = Transaction & {
   __typename?: 'MissingTransaction';
   balanceAfter: Scalars['Int']['output'];
@@ -422,9 +431,11 @@ export type Mutation = {
   __typename?: 'Mutation';
   createBandApplication: BandApplication;
   createBandApplicationComment: BandApplication;
+  createNonceRequest?: Maybe<Scalars['String']['output']>;
   createOrder: Order;
   deleteBandApplicationComment: BandApplication;
   markBandApplicationContacted: BandApplication;
+  nonceFromRequest?: Maybe<Scalars['String']['output']>;
   rateBandApplication: BandApplication;
   updateBandApplication: BandApplication;
   updateDeviceProductList: Device;
@@ -438,6 +449,10 @@ export type MutationCreateBandApplicationArgs = {
 
 export type MutationCreateBandApplicationCommentArgs = {
   input: BandApplicationCommentInput;
+};
+
+export type MutationCreateNonceRequestArgs = {
+  email: Scalars['String']['input'];
 };
 
 export type MutationCreateOrderArgs = {
@@ -454,6 +469,10 @@ export type MutationDeleteBandApplicationCommentArgs = {
 export type MutationMarkBandApplicationContactedArgs = {
   bandApplicationId: Scalars['ID']['input'];
   contacted: Scalars['Boolean']['input'];
+};
+
+export type MutationNonceFromRequestArgs = {
+  nonceRequestId: Scalars['String']['input'];
 };
 
 export type MutationRateBandApplicationArgs = {
@@ -481,7 +500,7 @@ export type MutationUpsertProductListArgs = {
 
 export type News = Node & {
   __typename?: 'News';
-  content: Scalars['String']['output'];
+  content: MarkdownString;
   createdAt: Scalars['Date']['output'];
   id: Scalars['ID']['output'];
   slug: Scalars['String']['output'];
@@ -568,11 +587,11 @@ export enum OrderPayment {
 
 export type Page = Node & {
   __typename?: 'Page';
-  bottom?: Maybe<Scalars['String']['output']>;
-  content?: Maybe<Scalars['String']['output']>;
+  bottom?: Maybe<MarkdownString>;
+  content?: Maybe<MarkdownString>;
   id: Scalars['ID']['output'];
-  left?: Maybe<Scalars['String']['output']>;
-  right?: Maybe<Scalars['String']['output']>;
+  left?: Maybe<MarkdownString>;
+  right?: Maybe<MarkdownString>;
   title: Scalars['String']['output'];
 };
 
@@ -846,6 +865,7 @@ export type TransactionsTransactionsArgs = {
 
 export type VEvent = {
   __typename?: 'VEvent';
+  allDay: Scalars['Boolean']['output'];
   comment?: Maybe<Scalars['String']['output']>;
   end: Scalars['DateTime']['output'];
   location?: Maybe<Scalars['String']['output']>;
