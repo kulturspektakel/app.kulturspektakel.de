@@ -86,7 +86,7 @@ export default function QuickType(props: {
         <Input
           size="large"
           placeholder="Bandsuche..."
-          ref={(input) => input && input.focus()}
+          ref={(input) => input?.focus()}
         />
       </AutoComplete>
     </Modal>

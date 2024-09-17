@@ -127,7 +127,7 @@ export default function RevenueDetails({
           legend={{
             position: 'bottom',
             itemName: {
-              formatter: (t) => paymentName(t as OrderPayment),
+              formatter: (t: OrderPayment) => paymentName(t),
             },
           }}
         />

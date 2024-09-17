@@ -4,7 +4,6 @@ import {Billable, RevenueQuery} from '../../types/graphql';
 import currencyFormatter from '../../utils/currencyFormatter';
 import {isRevenue} from '../../utils/payments';
 import styles from './RevenueTable.module.css';
-import {RangeValue} from 'rc-picker/lib/interface';
 import {ColumnType} from 'antd/es/table';
 import dayjs from 'dayjs';
 import dynamic from 'next/dynamic';
@@ -23,7 +22,7 @@ export default function RevenueTable({
   productLists,
   range,
 }: {
-  range: RangeValue<dayjs.Dayjs>;
+  range: [dayjs.Dayjs, dayjs.Dayjs];
   loading: boolean;
   productLists: RevenueQuery['productLists'];
 }) {

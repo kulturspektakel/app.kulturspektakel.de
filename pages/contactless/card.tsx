@@ -81,11 +81,11 @@ export default function CardInfo() {
             {
               title: 'Bude',
               render: (_, r) => {
-                const productList = r.Order[0]?.items[0]?.productList;
+                const productList = r.Order?.items[0]?.productList;
                 if (productList) {
                   return (
                     <Tooltip
-                      title={r.Order[0].items.map((i) => (
+                      title={r.Order?.items.map((i) => (
                         <div key={i.name}>
                           {i.amount}× {i.name}
                         </div>

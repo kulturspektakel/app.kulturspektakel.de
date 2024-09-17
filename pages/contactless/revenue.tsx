@@ -8,7 +8,6 @@ import {useRouter} from 'next/router';
 import {isEqual, endOfDay, startOfDay} from 'date-fns';
 import RevenueTable from 'components/contactless/RevenueTable';
 import currencyFormatter from 'utils/currencyFormatter';
-import {RangeValue} from 'rc-picker/lib/interface';
 import dayjs from 'dayjs';
 
 const {RangePicker} = DatePicker;
@@ -63,7 +62,7 @@ gql`
 
 export default function Revenue() {
   const router = useRouter();
-  const [range, setRange] = useState<RangeValue<dayjs.Dayjs>>([
+  const [range, setRange] = useState<[dayjs.Dayjs, dayjs.Dayjs]>([
     dayjs(router.query.after?.toString() || startOfDay(new Date())),
     dayjs(router.query.before?.toString() || endOfDay(new Date())),
   ]);
