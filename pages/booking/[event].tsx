@@ -16,6 +16,7 @@ import useResizeObserver from '@react-hook/resize-observer';
 import useViewerContext from 'utils/useViewerContext';
 import {FireFilled} from '@ant-design/icons';
 import NonMale from 'components/booking/NonMale';
+import Center from 'components/booking/Center';
 
 gql`
   fragment Rating on BandApplication {
@@ -30,6 +31,7 @@ gql`
     rating
   }
   query BandApplcations($id: ID!) {
+    bandApplicationTags
     node(id: $id) {
       ... on Event {
         bandApplication {
@@ -48,6 +50,7 @@ gql`
           comments {
             totalCount
           }
+          tags
           ...ContactedBy
           ...Rating
         }
@@ -202,6 +205,7 @@ const MemoizedTable = React.memo(
       <Table<RecordType>
         loading={loading}
         pagination={false}
+        virtual
         scroll={{y: height}}
         onRow={(r) => ({
           onClick: (e) =>
@@ -215,9 +219,8 @@ const MemoizedTable = React.memo(
             key: 'index',
             title: '',
             dataIndex: 'id',
-            align: 'center',
             width: 50,
-            render: (id) => ids.get(id),
+            render: (id) => <Center align="center">{ids.get(id)}</Center>,
           },
           {
             key: 'genreCategory',
@@ -230,17 +233,19 @@ const MemoizedTable = React.memo(
             ),
             onFilter: (value, {genreCategory}) => value === genreCategory,
             render: (_, {genreCategory}) => (
-              <Tooltip
-                title={GENRE_CATEGORIES.get(genreCategory)}
-                placement="topRight"
-              >
-                <img
-                  src={`/genre/${GENRE_ICONS.get(genreCategory)}`}
-                  width="32px"
-                  height="32px"
-                  alt="Genre"
-                />
-              </Tooltip>
+              <Center align="center">
+                <Tooltip
+                  title={GENRE_CATEGORIES.get(genreCategory)}
+                  placement="topRight"
+                >
+                  <img
+                    src={`/genre/${GENRE_ICONS.get(genreCategory)}`}
+                    width="32px"
+                    height="32px"
+                    alt="Genre"
+                  />
+                </Tooltip>
+              </Center>
             ),
           },
           {
@@ -307,15 +312,16 @@ const MemoizedTable = React.memo(
             sorter: (a, b) =>
               popularityScore(maxima, a) > popularityScore(maxima, b) ? 1 : -1,
             render: (_, record) => (
-              <FireFilled
-                rev={null}
-                style={{
-                  transform: `scale(${popularityScore(maxima, record) * 2})`,
-                  color: `hsl(${
-                    220 + popularityScore(maxima, record) * 120
-                  }, 100%, 50%)`,
-                }}
-              />
+              <Center align="center">
+                <FireFilled
+                  style={{
+                    transform: `scale(${popularityScore(maxima, record) * 2})`,
+                    color: `hsl(${
+                      220 + popularityScore(maxima, record) * 120
+                    }, 100%, 50%)`,
+                  }}
+                />
+              </Center>
             ),
           },
           {
@@ -327,10 +333,12 @@ const MemoizedTable = React.memo(
             align: 'right',
             render: (_, {rating, bandApplicationRating}) =>
               rating ? (
-                <Rating
-                  rating={rating}
-                  bandApplicationRating={bandApplicationRating}
-                />
+                <Center>
+                  <Rating
+                    rating={rating}
+                    bandApplicationRating={bandApplicationRating}
+                  />
+                </Center>
               ) : null,
           },
           {
@@ -339,15 +347,17 @@ const MemoizedTable = React.memo(
             dataIndex: 'rating',
             width: 150,
             render: (_, {id, bandApplicationRating}) => (
-              <Rater
-                bandApplicationRating={bandApplicationRating}
-                bandApplicationId={id}
-                value={
-                  bandApplicationRating.find(
-                    ({viewer: {id}}) => id === viewer?.id,
-                  )?.rating
-                }
-              />
+              <Center>
+                <Rater
+                  bandApplicationRating={bandApplicationRating}
+                  bandApplicationId={id}
+                  value={
+                    bandApplicationRating.find(
+                      ({viewer: {id}}) => id === viewer?.id,
+                    )?.rating
+                  }
+                />
+              </Center>
             ),
           },
           {
@@ -356,17 +366,19 @@ const MemoizedTable = React.memo(
             dataIndex: 'rating',
             width: 150,
             render: (_, {bandApplicationRating}) => (
-              <Avatar.Group>
-                {bandApplicationRating.map((r) => (
-                  <Tooltip
-                    key={r.viewer.id}
-                    title={r.viewer.displayName}
-                    placement="topLeft"
-                  >
-                    <Avatar src={r.viewer.profilePicture} size="small" />
-                  </Tooltip>
-                ))}
-              </Avatar.Group>
+              <Center>
+                <Avatar.Group>
+                  {bandApplicationRating.map((r) => (
+                    <Tooltip
+                      key={r.viewer.id}
+                      title={r.viewer.displayName}
+                      placement="topLeft"
+                    >
+                      <Avatar src={r.viewer.profilePicture} size="small" />
+                    </Tooltip>
+                  ))}
+                </Avatar.Group>
+              </Center>
             ),
           },
           {
@@ -375,17 +387,19 @@ const MemoizedTable = React.memo(
             width: 50,
             render: (_, {comments}) =>
               comments.totalCount > 0 ? (
-                <Tooltip
-                  title={`${comments.totalCount} Kommentar${
-                    comments.totalCount !== 1 ? 'e' : ''
-                  }`}
-                  placement="left"
-                >
-                  <CommentOutlined
-                    style={{fontSize: 20, color: token.colorPrimary}}
-                    rev={undefined}
-                  />
-                </Tooltip>
+                <Center>
+                  <Tooltip
+                    title={`${comments.totalCount} Kommentar${
+                      comments.totalCount !== 1 ? 'e' : ''
+                    }`}
+                    placement="left"
+                  >
+                    <CommentOutlined
+                      style={{fontSize: 20, color: token.colorPrimary}}
+                      rev={undefined}
+                    />
+                  </Tooltip>
+                </Center>
               ) : null,
           },
         ]}

@@ -27,7 +27,7 @@ export default function useApolloClient() {
         onError(({graphQLErrors}) => {
           if (
             graphQLErrors?.some(
-              ({extensions}) => extensions.code === 'UNAUTHORIZED',
+              ({extensions}) => extensions?.code === 'UNAUTHORIZED',
             )
           ) {
             location.href = 'https://crew.kulturspektakel.de/admin/login';

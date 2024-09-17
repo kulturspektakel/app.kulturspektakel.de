@@ -91,6 +91,7 @@ export type BandApplication = Node & {
   repertoire?: Maybe<BandRepertoireType>;
   spotifyArtist?: Maybe<Scalars['String']['output']>;
   spotifyMonthlyListeners?: Maybe<Scalars['Int']['output']>;
+  tags: Array<Scalars['String']['output']>;
   website?: Maybe<Scalars['String']['output']>;
 };
 
@@ -212,7 +213,7 @@ export type CardStatus = {
 
 export type CardTransaction = Transaction & {
   __typename?: 'CardTransaction';
-  Order: Array<Order>;
+  Order?: Maybe<Order>;
   balanceAfter: Scalars['Int']['output'];
   balanceBefore: Scalars['Int']['output'];
   cardId: Scalars['String']['output'];
@@ -237,6 +238,7 @@ export type CardTransactionConnection = {
 export enum CardTransactionType {
   Cashout = 'Cashout',
   Charge = 'Charge',
+  Repair = 'Repair',
   TopUp = 'TopUp',
 }
 
@@ -307,6 +309,15 @@ export type DeviceTransactionsArgs = {
 export enum DeviceType {
   ContactlessTerminal = 'CONTACTLESS_TERMINAL',
   Ipad = 'IPAD',
+}
+
+export enum DirectusPixelImageFormat {
+  Auto = 'auto',
+  Jpg = 'jpg',
+  Original = 'original',
+  Png = 'png',
+  Tiff = 'tiff',
+  Webp = 'webp',
 }
 
 export type Event = Node & {
@@ -429,6 +440,7 @@ export type MissingTransaction = Transaction & {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  addBandApplicationTag: BandApplication;
   createBandApplication: BandApplication;
   createBandApplicationComment: BandApplication;
   createNonceRequest?: Maybe<Scalars['String']['output']>;
@@ -437,9 +449,15 @@ export type Mutation = {
   markBandApplicationContacted: BandApplication;
   nonceFromRequest?: Maybe<Scalars['String']['output']>;
   rateBandApplication: BandApplication;
+  removeBandApplicationTag: BandApplication;
   updateBandApplication: BandApplication;
   updateDeviceProductList: Device;
   upsertProductList: ProductList;
+};
+
+export type MutationAddBandApplicationTagArgs = {
+  bandApplicationId: Scalars['ID']['input'];
+  tag: Scalars['String']['input'];
 };
 
 export type MutationCreateBandApplicationArgs = {
@@ -478,6 +496,11 @@ export type MutationNonceFromRequestArgs = {
 export type MutationRateBandApplicationArgs = {
   bandApplicationId: Scalars['ID']['input'];
   rating?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type MutationRemoveBandApplicationTagArgs = {
+  bandApplicationId: Scalars['ID']['input'];
+  tag: Scalars['String']['input'];
 };
 
 export type MutationUpdateBandApplicationArgs = {
@@ -616,6 +639,7 @@ export type PixelImage = Asset & {
 };
 
 export type PixelImageScaledUriArgs = {
+  format?: InputMaybe<DirectusPixelImageFormat>;
   height?: InputMaybe<Scalars['Int']['input']>;
   width?: InputMaybe<Scalars['Int']['input']>;
 };
@@ -677,6 +701,7 @@ export type ProductListSalesNumbersArgs = {
 export type Query = {
   __typename?: 'Query';
   areas: Array<Area>;
+  bandApplicationTags: Array<Scalars['String']['output']>;
   bandPlaying?: Maybe<BandPlaying>;
   cardStatus: CardStatus;
   checkDuplicateApplication?: Maybe<ObfuscatedBandApplication>;
@@ -1430,6 +1455,7 @@ export type BandApplcationsQueryVariables = Exact<{
 
 export type BandApplcationsQuery = {
   __typename?: 'Query';
+  bandApplicationTags: Array<string>;
   node?:
     | {__typename?: 'Area'}
     | {__typename?: 'BandApplication'}
@@ -1453,6 +1479,7 @@ export type BandApplcationsQuery = {
           spotifyMonthlyListeners?: number | null;
           numberOfArtists?: number | null;
           numberOfNonMaleArtists?: number | null;
+          tags: Array<string>;
           comments: {
             __typename?: 'BandApplicationCommentsConnection';
             totalCount: number;
@@ -1510,7 +1537,7 @@ export type CardInfoQuery = {
             depositAfter: number;
             depositBefore: number;
             deviceTime: Date;
-            Order: Array<{
+            Order?: {
               __typename?: 'Order';
               total: number;
               items: Array<{
@@ -1523,7 +1550,7 @@ export type CardInfoQuery = {
                   name: string;
                 } | null;
               }>;
-            }>;
+            } | null;
           }>;
         };
       }
@@ -1870,7 +1897,11 @@ export function useApplicationDetailsQuery(
   baseOptions: Apollo.QueryHookOptions<
     ApplicationDetailsQuery,
     ApplicationDetailsQueryVariables
-  >,
+  > &
+    (
+      | {variables: ApplicationDetailsQueryVariables; skip?: boolean}
+      | {skip: boolean}
+    ),
 ) {
   const options = {...defaultOptions, ...baseOptions};
   return Apollo.useQuery<
@@ -1891,12 +1922,17 @@ export function useApplicationDetailsLazyQuery(
   >(ApplicationDetailsDocument, options);
 }
 export function useApplicationDetailsSuspenseQuery(
-  baseOptions?: Apollo.SuspenseQueryHookOptions<
-    ApplicationDetailsQuery,
-    ApplicationDetailsQueryVariables
-  >,
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        ApplicationDetailsQuery,
+        ApplicationDetailsQueryVariables
+      >,
 ) {
-  const options = {...defaultOptions, ...baseOptions};
+  const options =
+    baseOptions === Apollo.skipToken
+      ? baseOptions
+      : {...defaultOptions, ...baseOptions};
   return Apollo.useSuspenseQuery<
     ApplicationDetailsQuery,
     ApplicationDetailsQueryVariables
@@ -2176,12 +2212,17 @@ export function useProductAdditivesLazyQuery(
   >(ProductAdditivesDocument, options);
 }
 export function useProductAdditivesSuspenseQuery(
-  baseOptions?: Apollo.SuspenseQueryHookOptions<
-    ProductAdditivesQuery,
-    ProductAdditivesQueryVariables
-  >,
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        ProductAdditivesQuery,
+        ProductAdditivesQueryVariables
+      >,
 ) {
-  const options = {...defaultOptions, ...baseOptions};
+  const options =
+    baseOptions === Apollo.skipToken
+      ? baseOptions
+      : {...defaultOptions, ...baseOptions};
   return Apollo.useSuspenseQuery<
     ProductAdditivesQuery,
     ProductAdditivesQueryVariables
@@ -2241,7 +2282,11 @@ export function useDeviceTransactionsQuery(
   baseOptions: Apollo.QueryHookOptions<
     DeviceTransactionsQuery,
     DeviceTransactionsQueryVariables
-  >,
+  > &
+    (
+      | {variables: DeviceTransactionsQueryVariables; skip?: boolean}
+      | {skip: boolean}
+    ),
 ) {
   const options = {...defaultOptions, ...baseOptions};
   return Apollo.useQuery<
@@ -2262,12 +2307,17 @@ export function useDeviceTransactionsLazyQuery(
   >(DeviceTransactionsDocument, options);
 }
 export function useDeviceTransactionsSuspenseQuery(
-  baseOptions?: Apollo.SuspenseQueryHookOptions<
-    DeviceTransactionsQuery,
-    DeviceTransactionsQueryVariables
-  >,
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        DeviceTransactionsQuery,
+        DeviceTransactionsQueryVariables
+      >,
 ) {
-  const options = {...defaultOptions, ...baseOptions};
+  const options =
+    baseOptions === Apollo.skipToken
+      ? baseOptions
+      : {...defaultOptions, ...baseOptions};
   return Apollo.useSuspenseQuery<
     DeviceTransactionsQuery,
     DeviceTransactionsQueryVariables
@@ -2321,7 +2371,8 @@ export function useProductListQuery(
   baseOptions: Apollo.QueryHookOptions<
     ProductListQuery,
     ProductListQueryVariables
-  >,
+  > &
+    ({variables: ProductListQueryVariables; skip?: boolean} | {skip: boolean}),
 ) {
   const options = {...defaultOptions, ...baseOptions};
   return Apollo.useQuery<ProductListQuery, ProductListQueryVariables>(
@@ -2342,12 +2393,17 @@ export function useProductListLazyQuery(
   );
 }
 export function useProductListSuspenseQuery(
-  baseOptions?: Apollo.SuspenseQueryHookOptions<
-    ProductListQuery,
-    ProductListQueryVariables
-  >,
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        ProductListQuery,
+        ProductListQueryVariables
+      >,
 ) {
-  const options = {...defaultOptions, ...baseOptions};
+  const options =
+    baseOptions === Apollo.skipToken
+      ? baseOptions
+      : {...defaultOptions, ...baseOptions};
   return Apollo.useSuspenseQuery<ProductListQuery, ProductListQueryVariables>(
     ProductListDocument,
     options,
@@ -2485,7 +2541,11 @@ export function useRevenueDetailsQuery(
   baseOptions: Apollo.QueryHookOptions<
     RevenueDetailsQuery,
     RevenueDetailsQueryVariables
-  >,
+  > &
+    (
+      | {variables: RevenueDetailsQueryVariables; skip?: boolean}
+      | {skip: boolean}
+    ),
 ) {
   const options = {...defaultOptions, ...baseOptions};
   return Apollo.useQuery<RevenueDetailsQuery, RevenueDetailsQueryVariables>(
@@ -2506,12 +2566,17 @@ export function useRevenueDetailsLazyQuery(
   );
 }
 export function useRevenueDetailsSuspenseQuery(
-  baseOptions?: Apollo.SuspenseQueryHookOptions<
-    RevenueDetailsQuery,
-    RevenueDetailsQueryVariables
-  >,
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        RevenueDetailsQuery,
+        RevenueDetailsQueryVariables
+      >,
 ) {
-  const options = {...defaultOptions, ...baseOptions};
+  const options =
+    baseOptions === Apollo.skipToken
+      ? baseOptions
+      : {...defaultOptions, ...baseOptions};
   return Apollo.useSuspenseQuery<
     RevenueDetailsQuery,
     RevenueDetailsQueryVariables
@@ -2532,6 +2597,7 @@ export type RevenueDetailsQueryResult = Apollo.QueryResult<
 >;
 export const BandApplcationsDocument = gql`
   query BandApplcations($id: ID!) {
+    bandApplicationTags
     node(id: $id) {
       ... on Event {
         bandApplication {
@@ -2550,6 +2616,7 @@ export const BandApplcationsDocument = gql`
           comments {
             totalCount
           }
+          tags
           ...ContactedBy
           ...Rating
         }
@@ -2580,7 +2647,11 @@ export function useBandApplcationsQuery(
   baseOptions: Apollo.QueryHookOptions<
     BandApplcationsQuery,
     BandApplcationsQueryVariables
-  >,
+  > &
+    (
+      | {variables: BandApplcationsQueryVariables; skip?: boolean}
+      | {skip: boolean}
+    ),
 ) {
   const options = {...defaultOptions, ...baseOptions};
   return Apollo.useQuery<BandApplcationsQuery, BandApplcationsQueryVariables>(
@@ -2601,12 +2672,17 @@ export function useBandApplcationsLazyQuery(
   >(BandApplcationsDocument, options);
 }
 export function useBandApplcationsSuspenseQuery(
-  baseOptions?: Apollo.SuspenseQueryHookOptions<
-    BandApplcationsQuery,
-    BandApplcationsQueryVariables
-  >,
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        BandApplcationsQuery,
+        BandApplcationsQueryVariables
+      >,
 ) {
-  const options = {...defaultOptions, ...baseOptions};
+  const options =
+    baseOptions === Apollo.skipToken
+      ? baseOptions
+      : {...defaultOptions, ...baseOptions};
   return Apollo.useSuspenseQuery<
     BandApplcationsQuery,
     BandApplcationsQueryVariables
@@ -2678,7 +2754,8 @@ export const CardInfoDocument = gql`
  * });
  */
 export function useCardInfoQuery(
-  baseOptions: Apollo.QueryHookOptions<CardInfoQuery, CardInfoQueryVariables>,
+  baseOptions: Apollo.QueryHookOptions<CardInfoQuery, CardInfoQueryVariables> &
+    ({variables: CardInfoQueryVariables; skip?: boolean} | {skip: boolean}),
 ) {
   const options = {...defaultOptions, ...baseOptions};
   return Apollo.useQuery<CardInfoQuery, CardInfoQueryVariables>(
@@ -2699,12 +2776,14 @@ export function useCardInfoLazyQuery(
   );
 }
 export function useCardInfoSuspenseQuery(
-  baseOptions?: Apollo.SuspenseQueryHookOptions<
-    CardInfoQuery,
-    CardInfoQueryVariables
-  >,
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<CardInfoQuery, CardInfoQueryVariables>,
 ) {
-  const options = {...defaultOptions, ...baseOptions};
+  const options =
+    baseOptions === Apollo.skipToken
+      ? baseOptions
+      : {...defaultOptions, ...baseOptions};
   return Apollo.useSuspenseQuery<CardInfoQuery, CardInfoQueryVariables>(
     CardInfoDocument,
     options,
@@ -2777,12 +2856,14 @@ export function useDevicesLazyQuery(
   );
 }
 export function useDevicesSuspenseQuery(
-  baseOptions?: Apollo.SuspenseQueryHookOptions<
-    DevicesQuery,
-    DevicesQueryVariables
-  >,
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<DevicesQuery, DevicesQueryVariables>,
 ) {
-  const options = {...defaultOptions, ...baseOptions};
+  const options =
+    baseOptions === Apollo.skipToken
+      ? baseOptions
+      : {...defaultOptions, ...baseOptions};
   return Apollo.useSuspenseQuery<DevicesQuery, DevicesQueryVariables>(
     DevicesDocument,
     options,
@@ -2906,12 +2987,17 @@ export function useProductListsLazyQuery(
   );
 }
 export function useProductListsSuspenseQuery(
-  baseOptions?: Apollo.SuspenseQueryHookOptions<
-    ProductListsQuery,
-    ProductListsQueryVariables
-  >,
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        ProductListsQuery,
+        ProductListsQueryVariables
+      >,
 ) {
-  const options = {...defaultOptions, ...baseOptions};
+  const options =
+    baseOptions === Apollo.skipToken
+      ? baseOptions
+      : {...defaultOptions, ...baseOptions};
   return Apollo.useSuspenseQuery<ProductListsQuery, ProductListsQueryVariables>(
     ProductListsDocument,
     options,
@@ -3047,12 +3133,17 @@ export function usePublicProductPrintLazyQuery(
   >(PublicProductPrintDocument, options);
 }
 export function usePublicProductPrintSuspenseQuery(
-  baseOptions?: Apollo.SuspenseQueryHookOptions<
-    PublicProductPrintQuery,
-    PublicProductPrintQueryVariables
-  >,
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        PublicProductPrintQuery,
+        PublicProductPrintQueryVariables
+      >,
 ) {
-  const options = {...defaultOptions, ...baseOptions};
+  const options =
+    baseOptions === Apollo.skipToken
+      ? baseOptions
+      : {...defaultOptions, ...baseOptions};
   return Apollo.useSuspenseQuery<
     PublicProductPrintQuery,
     PublicProductPrintQueryVariables
@@ -3137,7 +3228,8 @@ export const RevenueDocument = gql`
  * });
  */
 export function useRevenueQuery(
-  baseOptions: Apollo.QueryHookOptions<RevenueQuery, RevenueQueryVariables>,
+  baseOptions: Apollo.QueryHookOptions<RevenueQuery, RevenueQueryVariables> &
+    ({variables: RevenueQueryVariables; skip?: boolean} | {skip: boolean}),
 ) {
   const options = {...defaultOptions, ...baseOptions};
   return Apollo.useQuery<RevenueQuery, RevenueQueryVariables>(
@@ -3158,12 +3250,14 @@ export function useRevenueLazyQuery(
   );
 }
 export function useRevenueSuspenseQuery(
-  baseOptions?: Apollo.SuspenseQueryHookOptions<
-    RevenueQuery,
-    RevenueQueryVariables
-  >,
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<RevenueQuery, RevenueQueryVariables>,
 ) {
-  const options = {...defaultOptions, ...baseOptions};
+  const options =
+    baseOptions === Apollo.skipToken
+      ? baseOptions
+      : {...defaultOptions, ...baseOptions};
   return Apollo.useSuspenseQuery<RevenueQuery, RevenueQueryVariables>(
     RevenueDocument,
     options,
@@ -3222,12 +3316,14 @@ export function useViewerLazyQuery(
   );
 }
 export function useViewerSuspenseQuery(
-  baseOptions?: Apollo.SuspenseQueryHookOptions<
-    ViewerQuery,
-    ViewerQueryVariables
-  >,
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<ViewerQuery, ViewerQueryVariables>,
 ) {
-  const options = {...defaultOptions, ...baseOptions};
+  const options =
+    baseOptions === Apollo.skipToken
+      ? baseOptions
+      : {...defaultOptions, ...baseOptions};
   return Apollo.useSuspenseQuery<ViewerQuery, ViewerQueryVariables>(
     ViewerDocument,
     options,
