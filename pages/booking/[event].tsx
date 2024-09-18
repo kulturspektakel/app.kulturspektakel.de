@@ -1,4 +1,4 @@
-import {Avatar, Table, theme, Tooltip, Typography} from 'antd';
+import {Avatar, Table, Tag, theme, Tooltip, Typography} from 'antd';
 import React, {useMemo, useRef, useState} from 'react';
 import {gql} from '@apollo/client';
 import {
@@ -124,6 +124,7 @@ export default function Booking() {
     <div style={{width: '100%', height: '100vh'}} ref={target}>
       <QuickType data={dataSource} onSelect={setSelected} />
       <MemoizedTable
+        tags={data?.bandApplicationTags ?? []}
         loading={loading}
         dataSource={dataSource}
         setSelected={setSelected}
@@ -175,11 +176,13 @@ const MemoizedTable = React.memo(
     loading,
     dataSource,
     height,
+    tags,
   }: {
     dataSource: RecordType[];
     loading: boolean;
     setSelected: (id: string) => void;
     height: number;
+    tags: string[];
   }) => {
     const {token} = theme.useToken();
     const ids = useMemo(
@@ -287,7 +290,7 @@ const MemoizedTable = React.memo(
           {
             key: 'city',
             title: 'Ort',
-            width: 300,
+            width: 200,
             dataIndex: 'city',
             sorter: (a, b) => (a.distance ?? 0) - (b.distance ?? 0),
             render: (_, {city, distance}) => (
@@ -401,6 +404,26 @@ const MemoizedTable = React.memo(
                   </Tooltip>
                 </Center>
               ) : null,
+          },
+          {
+            key: 'tags',
+            dataIndex: 'tags',
+            width: 150,
+            title: 'Tags',
+            filterMultiple: true,
+            filters: tags.map((tag) => ({text: tag, value: tag})),
+            onFilter: (value, {tags}) => tags.some((t) => t === value),
+            render: (_, {tags}) => (
+              <Center>
+                <span>
+                  {tags.map((tag) => (
+                    <Tag onClick={() => {}} key={tag} color="blue">
+                      {tag}
+                    </Tag>
+                  ))}
+                </span>
+              </Center>
+            ),
           },
         ]}
         dataSource={dataSource}

@@ -914,6 +914,7 @@ export type ApplicationDetailsQueryVariables = Exact<{
 
 export type ApplicationDetailsQuery = {
   __typename?: 'Query';
+  bandApplicationTags: Array<string>;
   node?:
     | {__typename: 'Area'}
     | {
@@ -941,6 +942,7 @@ export type ApplicationDetailsQuery = {
         spotifyMonthlyListeners?: number | null;
         website?: string | null;
         genre?: string | null;
+        tags: Array<string>;
         genreCategory: GenreCategory;
         demoEmbed?: string | null;
         demoEmbedType?: DemoEmbedType | null;
@@ -1232,6 +1234,34 @@ export type BandApplicationRatingMutation = {
         profilePicture?: string | null;
       };
     }>;
+  };
+};
+
+export type AddTagMutationVariables = Exact<{
+  tag: Scalars['String']['input'];
+  bandApplicationId: Scalars['ID']['input'];
+}>;
+
+export type AddTagMutation = {
+  __typename?: 'Mutation';
+  addBandApplicationTag: {
+    __typename?: 'BandApplication';
+    id: string;
+    tags: Array<string>;
+  };
+};
+
+export type RemoveTagMutationVariables = Exact<{
+  tag: Scalars['String']['input'];
+  bandApplicationId: Scalars['ID']['input'];
+}>;
+
+export type RemoveTagMutation = {
+  __typename?: 'Mutation';
+  removeBandApplicationTag: {
+    __typename?: 'BandApplication';
+    id: string;
+    tags: Array<string>;
   };
 };
 
@@ -1863,6 +1893,7 @@ export const ApplicationDetailsDocument = gql`
         }
         website
         genre
+        tags
         genreCategory
         ...Demo
         ...GoogleMaps
@@ -1870,6 +1901,7 @@ export const ApplicationDetailsDocument = gql`
         ...BandApplicationTimeline
       }
     }
+    bandApplicationTags
   }
   ${DemoFragmentDoc}
   ${GoogleMapsFragmentDoc}
@@ -2162,6 +2194,106 @@ export type BandApplicationRatingMutationResult =
 export type BandApplicationRatingMutationOptions = Apollo.BaseMutationOptions<
   BandApplicationRatingMutation,
   BandApplicationRatingMutationVariables
+>;
+export const AddTagDocument = gql`
+  mutation AddTag($tag: String!, $bandApplicationId: ID!) {
+    addBandApplicationTag(tag: $tag, bandApplicationId: $bandApplicationId) {
+      id
+      tags
+    }
+  }
+`;
+export type AddTagMutationFn = Apollo.MutationFunction<
+  AddTagMutation,
+  AddTagMutationVariables
+>;
+
+/**
+ * __useAddTagMutation__
+ *
+ * To run a mutation, you first call `useAddTagMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddTagMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addTagMutation, { data, loading, error }] = useAddTagMutation({
+ *   variables: {
+ *      tag: // value for 'tag'
+ *      bandApplicationId: // value for 'bandApplicationId'
+ *   },
+ * });
+ */
+export function useAddTagMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    AddTagMutation,
+    AddTagMutationVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useMutation<AddTagMutation, AddTagMutationVariables>(
+    AddTagDocument,
+    options,
+  );
+}
+export type AddTagMutationHookResult = ReturnType<typeof useAddTagMutation>;
+export type AddTagMutationResult = Apollo.MutationResult<AddTagMutation>;
+export type AddTagMutationOptions = Apollo.BaseMutationOptions<
+  AddTagMutation,
+  AddTagMutationVariables
+>;
+export const RemoveTagDocument = gql`
+  mutation RemoveTag($tag: String!, $bandApplicationId: ID!) {
+    removeBandApplicationTag(tag: $tag, bandApplicationId: $bandApplicationId) {
+      id
+      tags
+    }
+  }
+`;
+export type RemoveTagMutationFn = Apollo.MutationFunction<
+  RemoveTagMutation,
+  RemoveTagMutationVariables
+>;
+
+/**
+ * __useRemoveTagMutation__
+ *
+ * To run a mutation, you first call `useRemoveTagMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveTagMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeTagMutation, { data, loading, error }] = useRemoveTagMutation({
+ *   variables: {
+ *      tag: // value for 'tag'
+ *      bandApplicationId: // value for 'bandApplicationId'
+ *   },
+ * });
+ */
+export function useRemoveTagMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    RemoveTagMutation,
+    RemoveTagMutationVariables
+  >,
+) {
+  const options = {...defaultOptions, ...baseOptions};
+  return Apollo.useMutation<RemoveTagMutation, RemoveTagMutationVariables>(
+    RemoveTagDocument,
+    options,
+  );
+}
+export type RemoveTagMutationHookResult = ReturnType<
+  typeof useRemoveTagMutation
+>;
+export type RemoveTagMutationResult = Apollo.MutationResult<RemoveTagMutation>;
+export type RemoveTagMutationOptions = Apollo.BaseMutationOptions<
+  RemoveTagMutation,
+  RemoveTagMutationVariables
 >;
 export const ProductAdditivesDocument = gql`
   query ProductAdditives {

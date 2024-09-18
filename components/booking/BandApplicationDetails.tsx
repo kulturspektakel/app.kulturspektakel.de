@@ -30,6 +30,7 @@ import {GENRE_CATEGORIES, GENRE_ICONS} from 'pages/booking/[event]';
 import dynamic from 'next/dynamic';
 import useViewerContext from 'utils/useViewerContext';
 import NonMale from './NonMale';
+import Tags from './Tags';
 
 const LazyGoogleMap = dynamic(() => import('./GoogleMaps'), {
   loading: () => <Skeleton.Image active className={styles.mapInner} />,
@@ -66,6 +67,7 @@ gql`
         }
         website
         genre
+        tags
         genreCategory
         ...Demo
         ...GoogleMaps
@@ -73,6 +75,8 @@ gql`
         ...BandApplicationTimeline
       }
     }
+
+    bandApplicationTags
   }
 
   fragment ContactedBy on BandApplication {
@@ -157,7 +161,10 @@ export default function BandApplicationDetails({
     >
       <Row gutter={24}>
         {data?.node?.__typename === 'BandApplication' ? (
-          <DrawerContent {...data?.node} />
+          <DrawerContent
+            tagOptions={data?.bandApplicationTags}
+            {...data?.node}
+          />
         ) : (
           <>
             <Col span={12}>
@@ -180,7 +187,9 @@ export default function BandApplicationDetails({
 type Props = Extract<
   ApplicationDetailsQuery['node'],
   {__typename?: 'BandApplication'}
->;
+> & {
+  tagOptions: string[];
+};
 
 function DrawerContent(props: Props) {
   const [contacted] = useMarkAsContextedMutation();
@@ -408,6 +417,12 @@ function DrawerContent(props: Props) {
             )}
           </Col>
         </Row>
+        <Typography.Title level={5}>Tags</Typography.Title>
+        <Tags
+          options={props.tagOptions}
+          tags={props.tags}
+          bandApplicationId={props.id}
+        />
         <BandApplicationTimeline
           id={props.id}
           createdAt={props.createdAt}
