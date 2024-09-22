@@ -384,27 +384,27 @@ const MemoizedTable = React.memo(
               </Center>
             ),
           },
-          {
-            key: 'comments',
-            dataIndex: 'comments',
-            width: 50,
-            render: (_, {comments}) =>
-              comments.totalCount > 0 ? (
-                <Center>
-                  <Tooltip
-                    title={`${comments.totalCount} Kommentar${
-                      comments.totalCount !== 1 ? 'e' : ''
-                    }`}
-                    placement="left"
-                  >
-                    <CommentOutlined
-                      style={{fontSize: 20, color: token.colorPrimary}}
-                      rev={undefined}
-                    />
-                  </Tooltip>
-                </Center>
-              ) : null,
-          },
+          // {
+          //   key: 'comments',
+          //   dataIndex: 'comments',
+          //   width: 50,
+          //   render: (_, {comments}) =>
+          //     comments.totalCount > 0 ? (
+          //       <Center>
+          //         <Tooltip
+          //           title={`${comments.totalCount} Kommentar${
+          //             comments.totalCount !== 1 ? 'e' : ''
+          //           }`}
+          //           placement="left"
+          //         >
+          //           <CommentOutlined
+          //             style={{fontSize: 20, color: token.colorPrimary}}
+          //             rev={undefined}
+          //           />
+          //         </Tooltip>
+          //       </Center>
+          //     ) : null,
+          // },
           {
             key: 'tags',
             dataIndex: 'tags',
