@@ -112,18 +112,20 @@ export default function RevenueDetails({
       {chartData && (
         <Column
           className={styles.chart}
-          isStack
-          seriesField="payment"
+          stack
+          colorField="payment"
           data={chartData}
           xField="time"
           yField="value"
-          tooltip={{
-            // @ts-ignore: https://github.com/ant-design/ant-design-charts/issues/1474
-            formatter: (datum: Datum) => ({
-              name: paymentName(datum.payment as OrderPayment),
-              value: datum.value,
-            }),
-          }}
+          tooltip={
+            {
+              // @ts-ignore: https://github.com/ant-design/ant-design-charts/issues/1474
+              // formatter: (datum: Datum) => ({
+              //   name: paymentName(datum.payment as OrderPayment),
+              //   value: datum.value,
+              // }),
+            }
+          }
           legend={{
             position: 'bottom',
             itemName: {
