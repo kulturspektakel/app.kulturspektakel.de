@@ -279,10 +279,15 @@ const MemoizedTable = React.memo(
                   </>
                 ) : null}
                 {genre && (
-                  <>
-                    <br />
+                  <div
+                    style={{
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                    }}
+                  >
                     {genre}
-                  </>
+                  </div>
                 )}
               </>
             ),
